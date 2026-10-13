@@ -42,10 +42,23 @@ def best(o):
     priced = [d for d in o["dupes"] if d["price100"] and d["link"]]
     return (priced or o["dupes"])[0]
 
-def img(url, alt, eager=False):
+from urllib.parse import quote
+def rs(url, w):
+    """Version redimensionnée en WebP (proxy d'images de Higgsfield)."""
+    return f"https://images.higgs.ai/?default=1&output=webp&url={quote(url, safe='')}&w={w}&q=80"
+def img(url, alt, eager=False, ws=(480, 800), sizes="(max-width:720px) 90vw, 40vw", crop=True):
     if not url: return ""
+    if crop:  # tout en 3:4, recadré sur le flacon
+        return img_c(url, alt, eager, ws, sizes)
     load_attr = 'fetchpriority="high"' if eager else 'loading="lazy"'
-    return f'<img src="{e(url)}" alt="{e(alt)}" {load_attr} decoding="async">'
+    srcset = ", ".join(f"{e(rs(url, w))} {w}w" for w in ws)
+    return f'<img src="{e(rs(url, ws[-1]))}" srcset="{srcset}" sizes="{sizes}" alt="{e(alt)}" {load_attr} decoding="async">'
+
+def img_c(url, alt, eager, ws, sizes):
+    load_attr = 'fetchpriority="high"' if eager else 'loading="lazy"'
+    r = lambda w: rs(url, w) + f"&h={round(w*4/3)}&fit=cover&a=attention"
+    srcset = ", ".join(f"{e(r(w))} {w}w" for w in ws)
+    return f'<img src="{e(r(ws[-1]))}" srcset="{srcset}" sizes="{sizes}" alt="{e(alt)}" {load_attr} decoding="async">'
 
 def match(pct, big=False):
     """Indice : un chiffre et un fin trait qui se remplit."""
@@ -53,7 +66,7 @@ def match(pct, big=False):
 
 def thumb(url, name, color):
     if url:
-        return f'<span class="thumb">{img(url, name)}</span>'
+        return f'<span class="thumb">{img(url, name, ws=(160,), sizes="72px")}</span>'
     return f'<span class="thumb mono" style="--c:{color or GOLD}">{e(name[:1])}</span>'
 
 SEARCH_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>'
@@ -122,7 +135,7 @@ def build():
     if (ROOT / "src/assets").exists(): shutil.copytree(ROOT / "src/assets", DIST / "assets")
     (DIST / "assets").mkdir(exist_ok=True)
     (DIST / "assets/config.js").write_text("window.OLFA=" + json.dumps({"form": CFG.get("form")}) + ";")
-    idx = [{"n": o["name"], "b": o["brand"], "s": o["slug"], "i": o["image"] or "", "a": [x["name"] + " " + x["brand"] for x in o["dupes"]]} for o in data]
+    idx = [{"n": o["name"], "b": o["brand"], "s": o["slug"], "i": rs(o["image"], 96) if o["image"] else "", "a": [x["name"] + " " + x["brand"] for x in o["dupes"]]} for o in data]
     (DIST / "assets/search.json").write_text(json.dumps(idx, ensure_ascii=False))
 
     # ---------- accueil ----------
@@ -148,13 +161,14 @@ def build():
 
     def uni(slug, title, key, text, q, cls=""):
         o = by[slug]
-        return f'''<a class="uni {cls} reveal" href="annuaire/?l={q}" style="--c:{o["color"] or GOLD}"><span class="u-img">{img(o["image"], o["name"] + " de " + o["brand"])}</span>
+        pic = images.get("_u_aventus") if slug == "aventus-creed" else o["image"]
+        return f'''<a class="uni {cls} reveal" href="annuaire/?l={q}" style="--c:{o["color"] or GOLD}"><span class="u-img">{img(pic, o["name"] + " de " + o["brand"], ws=(600, 1000), sizes="(max-width:720px) 92vw, 50vw", crop=False)}</span>
 <span class="u-txt"><span class="u-n">{cnt[key]} parfums</span><b>{title}</b><span class="u-p">{text}</span></span></a>'''
 
     top = [o for o in data if o["level"].startswith("Top") and best(o)["price100"] and best(o)["link"]][:10]
     deals_json = e(json.dumps(deals, ensure_ascii=False))
     home = f'''<section class="hero">
-<div class="hero-media" aria-hidden="true">{img(images["_hero"], "", eager=True)}<div class="mist"><i></i><i></i></div></div>
+<div class="hero-media" aria-hidden="true">{img(images["_hero"], "", eager=True, ws=(1000, 1600, 2400), sizes="100vw", crop=False)}<div class="mist"><i></i><i></i></div></div>
 <div class="wrap hero-copy"><h1>Le parfum de luxe que tu aimes, <span>pour une fraction du prix.</span></h1>
 <p class="lead">{len(data)} grands parfums, leur alternative la plus proche et ce que tu économises vraiment.</p>
 {search_box("")}
