@@ -111,7 +111,8 @@ def search_box(rel, big=True):
 <div class="suggest" id="suggest" role="listbox"></div></div>'''
 
 def email_form(source):
-    return f'''<form class="form" data-source="{source}" novalidate>
+    return f'''<form class="form" name="top30" method="POST" data-netlify="true" netlify-honeypot="site" data-source="{source}" novalidate>
+<input type="hidden" name="form-name" value="top30"><input type="hidden" name="source" value="{source}"><p hidden><label>Ne pas remplir <input name="site"></label></p>
 <label class="sr" for="em-{source}">Ton adresse e-mail</label>
 <input id="em-{source}" type="email" name="email" required placeholder="ton@email.fr" autocomplete="email">
 <button class="btn" type="submit">Recevoir le PDF</button>

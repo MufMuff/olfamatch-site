@@ -173,7 +173,8 @@
 <p class="disclaimer">Indice calculé par Olfamatch à partir de sources publiques, pas une mesure en laboratoire. Une alternative reste un autre parfum : proche, pas identique.</p></section>
 <section class="sec"><div class="band"><div><h2>Le Top 30 en PDF, gratuit</h2>
 <p class="sub" style="margin:0">Les 30 alternatives les plus sûres, sur une page à garder dans ton téléphone pour ta prochaine parfumerie.</p>
-<ul><li>10 grands classiques</li><li>10 parfums très demandés</li><li>10 parfums de niche</li></ul></div><form class="form" data-source="home" novalidate>
+<ul><li>10 grands classiques</li><li>10 parfums très demandés</li><li>10 parfums de niche</li></ul></div><form class="form" name="top30" method="POST" data-netlify="true" netlify-honeypot="site" data-source="home" novalidate>
+<input type="hidden" name="form-name" value="top30"><input type="hidden" name="source" value="home"><p hidden><label>Ne pas remplir <input name="site"></label></p>
 <label class="sr" for="em-home">Ton adresse e-mail</label>
 <input id="em-home" type="email" name="email" required placeholder="ton@email.fr" autocomplete="email">
 <button class="btn" type="submit">Recevoir le PDF</button>

@@ -98,13 +98,11 @@
       const btn = form.querySelector("button");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { ok.hidden = false; ok.textContent = "Cette adresse ne semble pas valide. Vérifie-la et réessaie."; return; }
       const cfg = (window.OLFA || {}).form;
-      if (!cfg) { ok.hidden = false; ok.textContent = "L'envoi du PDF arrive très bientôt. Repasse dans quelques jours."; return; }
       btn.disabled = true; btn.textContent = "Envoi…";
-      const body = new FormData();
-      body.append("fields[email]", email);
-      body.append("ml-submit", "1");
-      body.append("anticsrf", "true");
-      fetch(cfg, { method: "POST", body, mode: "no-cors" })
+      if (cfg) { const ml = new FormData(); ml.append("fields[email]", email); ml.append("ml-submit", "1"); ml.append("anticsrf", "true"); fetch(cfg, { method: "POST", body: ml, mode: "no-cors" }).catch(() => {}); }
+      const data = new URLSearchParams(new FormData(form));
+      fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data.toString() })
+        .then(r => { if (!r.ok) throw new Error(r.status); })
         .then(() => { form.email.value = ""; ok.hidden = false; ok.innerHTML = 'C\'est bon ! <a href="' + root() + 'top-30/olfamatch-top-30.pdf" download style="color:inherit;font-weight:600">Télécharge ton Top 30 ici</a>.'; btn.textContent = "Merci"; })
         .catch(() => { ok.hidden = false; ok.textContent = "L'envoi a échoué. Réessaie dans un instant."; btn.disabled = false; btn.textContent = "Recevoir le PDF"; });
     });
