@@ -39,8 +39,9 @@ euro = lambda x: "" if x is None else f"{round(x)} €"
 by = {o["slug"]: o for o in data}
 
 def best(o):
-    priced = [d for d in o["dupes"] if d["price100"] and d["link"]]
-    return (priced or o["dupes"])[0]
+    """La plus ressemblante qui a un lien d'achat (à égalité, celle qui a un prix), sinon la plus ressemblante."""
+    linked = [d for d in o["dupes"] if d["link"]] or o["dupes"]
+    return max(linked, key=lambda d: (d["index"] or 0, 1 if d["price100"] else 0))
 
 from urllib.parse import quote
 def rs(url, w):
