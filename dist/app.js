@@ -89,6 +89,7 @@
   }
 
   /* Formulaires e-mail (MailerLite) */
+  const root = () => (document.querySelector('link[rel=stylesheet][href$="style.css"]').getAttribute("href").replace("style.css", ""));
   document.querySelectorAll("form.form").forEach(form => {
     form.addEventListener("submit", ev => {
       ev.preventDefault();
@@ -104,7 +105,7 @@
       body.append("ml-submit", "1");
       body.append("anticsrf", "true");
       fetch(cfg, { method: "POST", body, mode: "no-cors" })
-        .then(() => { form.email.value = ""; ok.hidden = false; ok.textContent = "C'est envoyé. Regarde ta boîte mail (et tes spams) dans quelques minutes."; btn.textContent = "PDF envoyé"; })
+        .then(() => { form.email.value = ""; ok.hidden = false; ok.innerHTML = 'C\'est bon ! <a href="' + root() + 'top-30/olfamatch-top-30.pdf" download style="color:inherit;font-weight:600">Télécharge ton Top 30 ici</a>.'; btn.textContent = "Merci"; })
         .catch(() => { ok.hidden = false; ok.textContent = "L'envoi a échoué. Réessaie dans un instant."; btn.disabled = false; btn.textContent = "Recevoir le PDF"; });
     });
   });
