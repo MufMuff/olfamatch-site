@@ -57,7 +57,7 @@ tmp = ROOT / "build_pdf.html"
 tmp.write_text(doc)
 out = ROOT / "dist/top-30/olfamatch-top-30.pdf"
 js = f'''const {{chromium}}=require('playwright');(async()=>{{const b=await chromium.launch();const p=await b.newPage();
-await p.goto('{tmp.resolve().as_uri()}');await p.waitForTimeout(500);await p.pdf({{path:'{out}',format:'A4',printBackground:true,preferCSSPageSize:true}});await b.close();}})();'''
+await p.goto('{tmp.resolve().as_uri()}');await p.waitForTimeout(500);await p.pdf({{path:'{out}',format:'A4',printBackground:true,preferCSSPageSize:true}});await p.setViewportSize({{width:794,height:1123}});await p.emulateMedia({{media:'print'}});await p.screenshot({{path:'{out.parent / 'apercu.png'}',clip:{{x:0,y:0,width:794,height:1123}}}});await b.close();}})();'''
 env = dict(os.environ, NODE_PATH=subprocess.check_output(["npm", "root", "-g"]).decode().strip())
 subprocess.run(["node", "-e", js], check=True, env=env)
 tmp.unlink()

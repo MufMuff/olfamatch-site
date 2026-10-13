@@ -40,23 +40,50 @@
     document.addEventListener("click", ev => { if (!box.contains(ev.target)) list.classList.remove("open"); });
   }
 
-  /* Vitrine de l'accueil : un seul mouvement, l'échange des paires */
-  const show = document.querySelector(".showcase[data-pairs]");
-  if (show && !reduced) {
-    const pairs = JSON.parse(show.dataset.pairs);
-    const slot = show.querySelector(".slot");
-    let i = 0;
-    setInterval(() => {
-      i = (i + 1) % pairs.length;
-      slot.classList.add("fade");
-      setTimeout(() => {
-        const p = pairs[i];
-        slot.querySelectorAll("[data-k]").forEach(el => { el.textContent = p[el.dataset.k]; });
-        show.href = show.getAttribute("href").replace(/alternative\/[^/]+\//, "alternative/" + p.s + "/");
-        slot.classList.remove("fade");
-      }, 450);
-    }, 3800);
+  /* Compteur de prix */
+  const countTo = (el, from, to, ms) => {
+    if (reduced) { el.textContent = to + " €"; return; }
+    const t0 = performance.now();
+    const step = t => {
+      const k = Math.min(1, (t - t0) / ms), v = from + (to - from) * (1 - Math.pow(1 - k, 3));
+      el.textContent = Math.round(v) + " €";
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+
+  /* Carte prix du haut : le prix descend, puis la paire change */
+  const deal = document.querySelector(".deal[data-deals]");
+  if (deal) {
+    const deals = JSON.parse(deal.dataset.deals);
+    const set = (k, v) => deal.querySelectorAll(`[data-k="${k}"]`).forEach(el => { el.textContent = v; });
+    const show = p => {
+      set("o", p.o); set("a", p.a); set("ab", p.ab); set("op", p.op + " €"); set("sv", "−" + p.sv + " %");
+      deal.setAttribute("href", deal.getAttribute("href").replace(/alternative\/[^/]+\//, "alternative/" + p.s + "/"));
+      countTo(deal.querySelector('[data-k="ap"]'), p.op, p.ap, 1600);
+    };
+    show(deals[0]);
+    if (!reduced) {
+      let i = 0;
+      setInterval(() => {
+        i = (i + 1) % deals.length;
+        deal.classList.add("fade");
+        setTimeout(() => { show(deals[i]); deal.classList.remove("fade"); }, 380);
+      }, 4800);
+    }
   }
+
+  /* Apparition au défilement + flacons qui se remplissent + prix qui descendent */
+  document.querySelectorAll(".rows.reveal .row").forEach((r, i) => r.style.setProperty("--i", i));
+  const onIn = el => {
+    el.classList.add("in");
+    el.querySelectorAll("em[data-from]").forEach(x => countTo(x, +x.dataset.from, +x.dataset.to, 1800));
+  };
+  const els = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && !reduced) {
+    const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { onIn(en.target); io.unobserve(en.target); } }), { threshold: .18 });
+    els.forEach(el => io.observe(el));
+  } else els.forEach(el => el.classList.add("in"));
 
   /* Annuaire : filtre texte + catégories */
   const dir = document.getElementById("dir");
@@ -68,6 +95,8 @@
     const state = { l: "", g: "" };
     const params = new URLSearchParams(location.search);
     if (params.get("q")) input.value = params.get("q");
+    const lv = params.get("l");
+    if (lv) { state.l = lv; document.querySelectorAll('.chip[data-f="l"]').forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === lv))); }
     const apply = () => {
       const words = norm(input.value).trim().split(/\s+/).filter(Boolean);
       let n = 0;
