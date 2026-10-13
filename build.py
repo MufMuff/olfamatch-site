@@ -100,7 +100,7 @@ def page(path, title, desc, body, nav="", amb=None, cls=""):
 <link rel="canonical" href="{url}"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}">
 <meta property="og:type" content="website"><meta property="og:url" content="{url}"><meta name="theme-color" content="#160A13"><script>document.documentElement.classList.add("js")</script>
 <link rel="icon" href="{rel}favicon.svg" type="image/svg+xml"><link rel="preload" href="{rel}assets/fonts/bodoni.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="{rel}style.css"></head><body class="{cls}">
-<div class="amb" aria-hidden="true"></div>
+<div class="amb" aria-hidden="true" style="--glow:{amb or "#5a2140"}"></div>
 <header class="top"><div class="wrap top-in"><a class="logo" href="{rel}">olfa<b>match</b></a>
 <nav class="nav"><a href="{rel}annuaire/"{cur("annuaire")}>Annuaire</a><a href="{rel}top-30/"{cur("top30")}>Top 30 gratuit</a>
 <button class="s-open" type="button" aria-label="Rechercher un parfum">{SEARCH_SVG}</button></nav></div></header>
@@ -221,7 +221,7 @@ def build():
         c = o["color"] or b["color"] or GOLD
         media = f'<div class="f-media">{img(o["image"], o["name"] + " de " + o["brand"], eager=True)}</div>' if o["image"] else f'<div class="f-media type" aria-hidden="true"><span>{e(o["name"])}</span></div>'
         save = f'<p class="f-save">Tu économises <b>{b["saving"]} %</b> à quantité égale.</p>' if b["saving"] else ""
-        bmedia = f'<div class="b-media">{img(b["image"], b["name"] + " de " + b["brand"])}</div>' if b["image"] else f'<div class="b-media type" aria-hidden="true"><span>{e(b["name"])}</span></div>'
+        bmedia = f'<div class="b-media">{img(b["image"], b["name"] + " de " + b["brand"])}</div>' if b["image"] else ""
         note = f'<p class="note">{e(b["note"])}</p>' if b["note"] else ""
         ns = b["sources"] or 0
         others = ""
@@ -236,7 +236,7 @@ def build():
         body = f'''<section class="f-hero"><div class="wrap f-grid">{media}
 <div class="f-info"><p class="crumbs"><a href="{rel}annuaire/">Annuaire</a> / {e(o["brand"])}</p>
 <h1><small>Alternatives à</small>{e(o["name"])}</h1><p class="meta">{e(o["brand"])} · {e(o["gender"])} · {lvl(o["level"])}</p>{oprice}</div></div></section>
-<section class="wrap best reveal" style="--c:{b["color"] or c}">{bmedia}<div class="b-info"><p class="tag">Notre meilleure alternative</p><h2>{e(b["name"])}</h2><p class="brand">{e(b["brand"])}</p>
+<section class="wrap best reveal{"" if b["image"] else " solo"}" style="--c:{b["color"] or c}">{bmedia}<div class="b-info"><p class="tag">Notre meilleure alternative</p><h2>{e(b["name"])}</h2><p class="brand">{e(b["brand"])}</p>
 <div class="facts">{match(b["index"], big=True)}<span class="src">{ns} source{"s" if ns > 1 else ""} indépendante{"s" if ns > 1 else ""}</span></div>
 {save}{note}{srcs(b)}{buy(b, True)}</div></section>
 {others_html}

@@ -2,6 +2,7 @@
   const norm = s => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const root = document.documentElement;
+  const amb = document.querySelector(".amb");
 
   /* En-tête qui se floute au défilement + léger mouvement de la photo d'ouverture */
   const top = document.querySelector(".top");
@@ -112,7 +113,7 @@
     let cur = -1;
     const activate = i => {
       if (i === cur) return; cur = i;
-      root.style.setProperty("--amb", slides[i].dataset.c);
+      amb.style.setProperty("--glow", slides[i].dataset.c);
       fire(slides[i]);
       if (prev) { prev.disabled = i === 0; next.disabled = i === slides.length - 1; }
     };
@@ -129,11 +130,11 @@
     next && next.addEventListener("click", () => go(1));
     slider.addEventListener("keydown", ev => { if (ev.key === "ArrowRight") { ev.preventDefault(); go(1); } if (ev.key === "ArrowLeft") { ev.preventDefault(); go(-1); } });
     // la couleur change quand on arrive sur le carrousel, et revient en le quittant
-    const heroAmb = getComputedStyle(root).getPropertyValue("--amb");
+    const heroAmb = amb.style.getPropertyValue("--glow");
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(es => es.forEach(en => {
         if (en.isIntersecting) { cur = -1; activate(nearest()); }
-        else root.style.setProperty("--amb", heroAmb);
+        else amb.style.setProperty("--glow", heroAmb);
       }), { threshold: .45 }).observe(slider);
     } else activate(0);
   }
