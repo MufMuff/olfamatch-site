@@ -2,4 +2,4 @@
   publish = "dist"
 
 [images]
-  remote_images = ["https://d8j0ntlcm91z4\\.cloudfront\\.net/.*"]
+  remote_images = ["https://d8j0ntlcm91z4.cloudfront.net/.*"]
