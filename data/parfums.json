@@ -1099,6 +1099,27 @@
      "https://scentverdict.com/perfume/le-labo-santal-33-eau-de-parfum/dupes"
     ],
     "image": null
+   },
+   {
+    "id": 242,
+    "brand": "Dossier",
+    "name": "Woody Sandalwood",
+    "index": 75,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Marque américaine, pas trouvée sur Amazon.fr.",
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, osmoz.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/dossier-woody-sandalwood-eau-de-parfum",
+     "https://scentverdict.com/compare/dossier-woody-sandalwood-eau-de-parfum/le-labo-santal-33-eau-de-parfum",
+     "https://www.osmoz.com/inspiration/questions-selections/550/santal-33-dossier-co"
+    ],
+    "image": null
    }
   ],
   "image": null
@@ -1731,6 +1752,48 @@
      "https://melissajanelee.com/maison-alhambra-dupes/"
     ],
     "image": null
+   },
+   {
+    "id": 236,
+    "brand": "Maison Alhambra",
+    "name": "Tobacco Touch",
+    "index": 95,
+    "sources": 4,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Aussi vendu sous le nom Eternal Touch.",
+    "priceDetail": null,
+    "sourceSites": "aromaauthority.com, scentverdict.com, dupedrop.co, skool.com",
+    "sourceLinks": [
+     "https://aromaauthority.com/alternatives/tobacco-touch-review/",
+     "https://scentverdict.com/perfume/maison-alhambra-tobacco-touch-eau-de-parfum",
+     "https://www.dupedrop.co/dupe/maison-alhambra-tobacco-touch",
+     "https://www.skool.com/bos/dueling-dupes-tobacco-vanille-vs-tobacco-touch"
+    ],
+    "image": null
+   },
+   {
+    "id": 237,
+    "brand": "Al Haramain",
+    "name": "Amber Oud Tobacco Edition",
+    "index": 75,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": null,
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, lemon8-app.com",
+    "sourceLinks": [
+     "https://scentverdict.com/compare/al-haramain-amber-oud-tobacco-edition-eau-de-parfum/tom-ford-tobacco-vanille-eau-de-parfum",
+     "https://www.lemon8-app.com/@luxicei/7469662084469408257?region=sg"
+    ],
+    "image": null
    }
   ],
   "image": null
@@ -1880,6 +1943,48 @@
     "sourceLinks": [
      "https://pickmyclone.com/clone/armaf-rugir",
      "https://thescentbase.com/perfumes/armaf/rugir"
+    ],
+    "image": null
+   },
+   {
+    "id": 221,
+    "brand": "Al Haramain",
+    "name": "Détour Noir",
+    "index": 85,
+    "sources": 3,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B07HG3M5TK?tag=olfamatch-21",
+    "price100": 27.1,
+    "saving": 88,
+    "note": null,
+    "priceDetail": "27.10 € / 100 ml (notino.fr)",
+    "sourceSites": "scento.com, parfumo.com, chaosfragrances.com",
+    "sourceLinks": [
+     "https://www.scento.com/blog/best-marly-layton-dupes-cheaper-picks",
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313",
+     "https://www.chaosfragrances.com/blogs/fragrance-guides/best-parfums-de-marly-layton-clones"
+    ],
+    "image": null
+   },
+   {
+    "id": 222,
+    "brand": "Orientica",
+    "name": "Royal Bleu",
+    "index": 80,
+    "sources": 3,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B0BGYD7GVM?tag=olfamatch-21",
+    "price100": null,
+    "saving": null,
+    "note": "Format 80 ml.",
+    "priceDetail": null,
+    "sourceSites": "scento.com, parfumo.com, chaosfragrances.com",
+    "sourceLinks": [
+     "https://www.scento.com/blog/best-marly-layton-dupes-cheaper-picks",
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313",
+     "https://www.chaosfragrances.com/blogs/fragrance-guides/best-parfums-de-marly-layton-clones"
     ],
     "image": null
    }
@@ -6478,6 +6583,713 @@
      "https://tiendalafe.com/products/lattafa-hayaati-edp-100ml-u-copia",
      "https://erosperfumeoutlet.com/producto/armaf-tag-uomo-nero-edition-dition-olympiad-edp-100ml-para-hombre/",
      "https://www.fragrantica.com/perfume/Armaf/Tag-Him-Uomo-Nero-90410.html"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Initio",
+  "name": "Side Effect",
+  "gender": "Mixte",
+  "rank": 158,
+  "level": "Niche",
+  "price100": 311.11,
+  "slug": "side-effect-initio",
+  "priceDetail": "280.00 € / 90 ml (galerieslafayette.com)",
+  "dupes": [
+   {
+    "id": 215,
+    "brand": "French Avenue",
+    "name": "After Effect",
+    "index": 85,
+    "sources": 5,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B09LMBY23C?tag=olfamatch-21",
+    "price100": null,
+    "saving": null,
+    "note": "Extrait de parfum, format 80 ml.",
+    "priceDetail": null,
+    "sourceSites": "scento.com, fragranzo.com, dupenose.com, scentclones.com, fragrantica.com",
+    "sourceLinks": [
+     "https://www.scento.com/blog/best-initio-side-effect-dupes",
+     "https://www.fragranzo.com/blog/best-dupes-for-initio-side-effect/",
+     "https://dupenose.com/listings/side-effect-dupes/",
+     "https://scentclones.com/best-initio-dupes/"
+    ],
+    "image": null
+   },
+   {
+    "id": 216,
+    "brand": "Lattafa",
+    "name": "Bade'e Al Oud Amethyst",
+    "index": 55,
+    "sources": 2,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B097V46KFD?tag=olfamatch-21",
+    "price100": 35.75,
+    "saving": 89,
+    "note": "Plus rosé et oud, proche de l'ambiance plutôt que de la formule.",
+    "priceDetail": "35.75 € / 100 ml (Amazon.fr)",
+    "sourceSites": "scento.com, fragranzo.com",
+    "sourceLinks": [
+     "https://www.scento.com/blog/best-initio-side-effect-dupes",
+     "https://www.fragranzo.com/blog/best-dupes-for-initio-side-effect/"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Initio",
+  "name": "Oud for Happiness",
+  "gender": "Mixte",
+  "rank": 159,
+  "level": "Niche",
+  "price100": 355.56,
+  "slug": "oud-for-happiness-initio",
+  "priceDetail": "320.00 € / 90 ml (galerieslafayette.com)",
+  "dupes": [
+   {
+    "id": 217,
+    "brand": "French Avenue",
+    "name": "Happiness Oud",
+    "index": 90,
+    "sources": 3,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B0BTTWV5DF?tag=olfamatch-21",
+    "price100": null,
+    "saving": null,
+    "note": "Extrait de parfum, format 80 ml. Ajoute cèdre et oud au cœur.",
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, fragranzo.com, fragrantica.com",
+    "sourceLinks": [
+     "https://scentverdict.com/compare/french-avenue-happiness-oud-eau-de-parfum/initio-parfums-prives-oud-for-happiness-eau-de-parfum",
+     "https://www.fragranzo.com/?p=9593",
+     "https://www.fragrantica.com/perfume/French-Avenue/Happiness-Oud-104494.html"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Initio",
+  "name": "Rehab",
+  "gender": "Mixte",
+  "rank": 160,
+  "level": "Niche",
+  "price100": 322.22,
+  "slug": "rehab-initio",
+  "priceDetail": "290.00 € / 90 ml (galerieslafayette.com)",
+  "dupes": [
+   {
+    "id": 218,
+    "brand": "The Dua Brand",
+    "name": "Action Nova",
+    "index": 75,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Marque américaine, vendue surtout sur son site.",
+    "priceDetail": null,
+    "sourceSites": "fragranzo.com, 10fragrances.com",
+    "sourceLinks": [
+     "https://www.fragranzo.com/?p=9577",
+     "https://10fragrances.com/colognes-similar-to-initio-rehab/"
+    ],
+    "image": null
+   },
+   {
+    "id": 219,
+    "brand": "Viktor&Rolf",
+    "name": "Spicebomb Extreme",
+    "index": 60,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Alternative de grande parfumerie, plus épicée que l'original.",
+    "priceDetail": null,
+    "sourceSites": "perfumenez.com, fragranzo.com",
+    "sourceLinks": [
+     "https://perfumenez.com/blogs/perfume-alternatives/initio-rehab",
+     "https://www.fragranzo.com/?p=9577"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Initio",
+  "name": "Musk Therapy",
+  "gender": "Mixte",
+  "rank": 161,
+  "level": "Niche",
+  "price100": 322.22,
+  "slug": "musk-therapy-initio",
+  "priceDetail": "290.00 € / 90 ml (notino.fr)",
+  "dupes": [
+   {
+    "id": 220,
+    "brand": "Maison Alhambra",
+    "name": "Infini Musk",
+    "index": 80,
+    "sources": 5,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Ouverture plus hespéridée que l'original.",
+    "priceDetail": null,
+    "sourceSites": "scento.com, fragrantica.com, scentclones.com, anabis.com, tiktok.com",
+    "sourceLinks": [
+     "https://www.scento.com/blog/best-musk-therapy-dupes",
+     "https://www.fragrantica.com/board/viewtopic.php?id=316912",
+     "https://scentclones.com/best-initio-dupes/",
+     "https://www.anabis.com/fr/Maison-Alhambra-Infini-Musk-EdP-100ml.html"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Parfums de Marly",
+  "name": "Delina Exclusif",
+  "gender": "Femme",
+  "rank": 162,
+  "level": "Niche",
+  "price100": 406.67,
+  "slug": "delina-exclusif-parfums-de-marly",
+  "priceDetail": "305.00 € / 75 ml (notino.fr)",
+  "dupes": [
+   {
+    "id": 223,
+    "brand": "Armaf",
+    "name": "Club de Nuit Impériale Woman",
+    "index": 70,
+    "sources": 2,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B0CL3JNHNL?tag=olfamatch-21",
+    "price100": 35.13,
+    "saving": 91,
+    "note": "Format 200 ml.",
+    "priceDetail": "70.27 € / 200 ml (Amazon.fr)",
+    "sourceSites": "scentverdict.com, parfumo.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/parfums-de-marly-delina-exclusif-parfum/dupes",
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Parfums de Marly",
+  "name": "Valaya",
+  "gender": "Femme",
+  "rank": 163,
+  "level": "Niche",
+  "price100": 380.0,
+  "slug": "valaya-parfums-de-marly",
+  "priceDetail": "285.00 € / 75 ml (notino.fr)",
+  "dupes": [
+   {
+    "id": 224,
+    "brand": "Afnan",
+    "name": "Mystique Bouquet",
+    "index": 80,
+    "sources": 3,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B07W6WQ89L?tag=olfamatch-21",
+    "price100": 48.62,
+    "saving": 87,
+    "note": "Format 80 ml. Un peu plus fruité que l'original.",
+    "priceDetail": "38.90 € / 80 ml (notino.fr)",
+    "sourceSites": "scentverdict.com, scento.com, fragrantica.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/parfums-de-marly-valaya-eau-de-parfum/dupes",
+     "https://www.scento.com/fr/blog/best-marly-valaya-dupes-cheaper-picks",
+     "https://www.fragrantica.com/perfume/Afnan/Mystique-Bouquet-92434.html"
+    ],
+    "image": null
+   },
+   {
+    "id": 225,
+    "brand": "Zara",
+    "name": "Sublime Epoque",
+    "index": 65,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Vendu en boutique Zara et sur zara.com.",
+    "priceDetail": null,
+    "sourceSites": "fragranzo.com, scento.com",
+    "sourceLinks": [
+     "https://www.fragranzo.com/?p=9216",
+     "https://www.scento.com/fr/blog/best-marly-valaya-dupes-cheaper-picks"
+    ],
+    "image": null
+   },
+   {
+    "id": 226,
+    "brand": "Lattafa",
+    "name": "Musk Mood",
+    "index": 60,
+    "sources": 2,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B07MY88RZT?tag=olfamatch-21",
+    "price100": 22.2,
+    "saving": 94,
+    "note": "Plus centré sur le musc.",
+    "priceDetail": "22.20 € / 100 ml (notino.fr)",
+    "sourceSites": "fragranzo.com, scento.com",
+    "sourceLinks": [
+     "https://www.fragranzo.com/?p=9216",
+     "https://www.scento.com/fr/blog/best-marly-valaya-dupes-cheaper-picks"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Parfums de Marly",
+  "name": "Percival",
+  "gender": "Mixte",
+  "rank": 164,
+  "level": "Niche",
+  "price100": 232.0,
+  "slug": "percival-parfums-de-marly",
+  "priceDetail": "290.00 € / 125 ml (notino.fr)",
+  "dupes": [
+   {
+    "id": 227,
+    "brand": "Ahmed Al Maghribi",
+    "name": "Kaaf",
+    "index": 70,
+    "sources": 3,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B0F5WSMWGZ?tag=olfamatch-21",
+    "price100": null,
+    "saving": null,
+    "note": null,
+    "priceDetail": null,
+    "sourceSites": "parfumo.com, chaosfragrances.com, imixxperfumes.com",
+    "sourceLinks": [
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313",
+     "https://www.chaosfragrances.com/blogs/fragrance-guides/best-parfums-de-marly-percival-clones",
+     "https://imixxperfumes.com/parfums-de-marly-percival-clone/"
+    ],
+    "image": null
+   },
+   {
+    "id": 228,
+    "brand": "Montblanc",
+    "name": "Legend Blue",
+    "index": 55,
+    "sources": 2,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B0CV42D8T3?tag=olfamatch-21",
+    "price100": 48.95,
+    "saving": 79,
+    "note": "Alternative de grande parfumerie, même esprit frais et lavandé.",
+    "priceDetail": "48.95 € / 100 ml (achatmoinscher.com)",
+    "sourceSites": "chaosfragrances.com, imixxperfumes.com",
+    "sourceLinks": [
+     "https://www.chaosfragrances.com/blogs/fragrance-guides/best-parfums-de-marly-percival-clones",
+     "https://imixxperfumes.com/parfums-de-marly-percival-clone/"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Parfums de Marly",
+  "name": "Sedley",
+  "gender": "Mixte",
+  "rank": 165,
+  "level": "Niche",
+  "price100": 216.0,
+  "slug": "sedley-parfums-de-marly",
+  "priceDetail": "270.00 € / 125 ml (fragrancepassion.fr)",
+  "dupes": [
+   {
+    "id": 229,
+    "brand": "Lattafa",
+    "name": "Maahir Legacy",
+    "index": 80,
+    "sources": 3,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B0BTPBZD1M?tag=olfamatch-21",
+    "price100": 28.9,
+    "saving": 87,
+    "note": null,
+    "priceDetail": "28.90 € / 100 ml (notino.fr)",
+    "sourceSites": "scentverdict.com, hotukdeals.com, dupejoy.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/parfums-de-marly-sedley-eau-de-parfum/dupes",
+     "https://www.hotukdeals.com/deals/lattafa-maahir-legacy-100ml-edp-spray-200ml-perfume-spray-300ml-air-freshener-gift-set-with-code-dupe-of-pdm-sedley-4914919",
+     "https://dupejoy.com/posts/best-parfums-de-marly-dupes/"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Parfums de Marly",
+  "name": "Kalan",
+  "gender": "Mixte",
+  "rank": 166,
+  "level": "Niche",
+  "price100": 232.0,
+  "slug": "kalan-parfums-de-marly",
+  "priceDetail": "290.00 € / 125 ml (notino.fr)",
+  "dupes": [
+   {
+    "id": 230,
+    "brand": "Maison Alhambra",
+    "name": "Kalos",
+    "index": 70,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": null,
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, parfumo.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/parfums-de-marly-kalan-eau-de-parfum/dupes",
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313"
+    ],
+    "image": null
+   },
+   {
+    "id": 231,
+    "brand": "Zimaya",
+    "name": "Red Carpet Paragon",
+    "index": 70,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": null,
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, parfumo.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/parfums-de-marly-kalan-eau-de-parfum/dupes",
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Parfums de Marly",
+  "name": "Carlisle",
+  "gender": "Mixte",
+  "rank": 167,
+  "level": "Niche",
+  "price100": 260.0,
+  "slug": "carlisle-parfums-de-marly",
+  "priceDetail": "325.00 € / 125 ml (notino.fr)",
+  "dupes": [
+   {
+    "id": 232,
+    "brand": "Maison Alhambra",
+    "name": "Cassius",
+    "index": 75,
+    "sources": 3,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Pomme plus gourmande, ouverture moins fine.",
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, parfumo.com, fragrantica.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/parfums-de-marly-carlisle-eau-de-parfum/dupes",
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313",
+     "https://www.fragrantica.com/perfume/Maison-Alhambra/Cassius-95509.html"
+    ],
+    "image": null
+   },
+   {
+    "id": 233,
+    "brand": "Ard Al Zaafaran",
+    "name": "Tafakhar",
+    "index": 60,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": null,
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, parfumo.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/parfums-de-marly-carlisle-eau-de-parfum/dupes",
+     "https://www.parfumo.com/Users/Garnele/top_picks/6313"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Creed",
+  "name": "Royal Oud",
+  "gender": "Mixte",
+  "rank": 168,
+  "level": "Niche",
+  "price100": null,
+  "slug": "royal-oud-creed",
+  "priceDetail": null,
+  "dupes": [
+   {
+    "id": 234,
+    "brand": "Paris Corner",
+    "name": "Ministry of Oud – Oud Royal",
+    "index": 75,
+    "sources": 2,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Gamme Ministry of Oud de Paris Corner.",
+    "priceDetail": null,
+    "sourceSites": "youtube.com, fragplace.com",
+    "sourceLinks": [
+     "https://www.youtube.com/watch?v=4AqwuBeVC8w",
+     "https://www.youtube.com/watch?v=DvD8RWITDyQ",
+     "https://fragplace.com/en/fragrances/23282/ministry-of-oud/oud-royal"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Creed",
+  "name": "Millésime Impérial",
+  "gender": "Mixte",
+  "rank": 169,
+  "level": "Niche",
+  "price100": null,
+  "slug": "millesime-imperial-creed",
+  "priceDetail": null,
+  "dupes": [
+   {
+    "id": 235,
+    "brand": "Armaf",
+    "name": "Club de Nuit Milestone",
+    "index": 85,
+    "sources": 3,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B07Z2723TS?tag=olfamatch-21",
+    "price100": null,
+    "saving": null,
+    "note": "Format 105 ml.",
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, perfumenez.com, youtube.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/armaf-club-de-nuit-milestone-eau-de-parfum",
+     "https://perfumenez.com/?p=35789",
+     "https://www.youtube.com/watch?v=AcBtbHgV4h0"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Tom Ford",
+  "name": "Tuscan Leather",
+  "gender": "Mixte",
+  "rank": 170,
+  "level": "Niche",
+  "price100": null,
+  "slug": "tuscan-leather-tom-ford",
+  "priceDetail": null,
+  "dupes": [
+   {
+    "id": 238,
+    "brand": "Maison Alhambra",
+    "name": "Toscano Leather",
+    "index": 95,
+    "sources": 4,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": null,
+    "priceDetail": null,
+    "sourceSites": "thescentatlas.com, basenotes.com, lemon8-app.com, scentverdict.com",
+    "sourceLinks": [
+     "https://thescentatlas.com/fragrance/maison-alhambra-toscano-leather",
+     "https://basenotes.com/threads/tuscano-leather-by-maison-alhambra-inspired-by-tf-tuscan-leather.531201/",
+     "https://www.lemon8-app.com/@chubbybulma409/7366073746572018182?region=us",
+     "https://scentverdict.com/compare/maison-alhambra-toscano-leather-eau-de-parfum/tom-ford-tuscan-leather-eau-de-parfum"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Tom Ford",
+  "name": "Rose Prick",
+  "gender": "Mixte",
+  "rank": 171,
+  "level": "Niche",
+  "price100": null,
+  "slug": "rose-prick-tom-ford",
+  "priceDetail": null,
+  "dupes": [
+   {
+    "id": 239,
+    "brand": "Maison Alhambra",
+    "name": "Rose Petals",
+    "index": 95,
+    "sources": 4,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Désormais vendu sous le nom Pink Velvet.",
+    "priceDetail": null,
+    "sourceSites": "disfragancias.com, tonkava.com, youtube.com, tiktok.com",
+    "sourceLinks": [
+     "https://disfragancias.com/products/maison-alhambra-rose-petals-alternativa-de-tom-ford-rose-prick",
+     "https://tonkava.com/dupes/tom-ford-rose-prick",
+     "https://www.youtube.com/watch?v=VDlQqB2VIPA",
+     "https://www.tiktok.com/@cyn.rigal/video/7380797758636051718"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Kilian",
+  "name": "Angels' Share",
+  "gender": "Mixte",
+  "rank": 172,
+  "level": "Niche",
+  "price100": null,
+  "slug": "angels-share-kilian",
+  "priceDetail": null,
+  "dupes": [
+   {
+    "id": 240,
+    "brand": "Lattafa",
+    "name": "Khamrah",
+    "index": 95,
+    "sources": 6,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": null,
+    "priceDetail": null,
+    "sourceSites": "intenseoud.com, parfuminspirations.com, accordtwin.com, myperfumeshop.com, signaturescentperfumes.blog, ifragranceofficial.com",
+    "sourceLinks": [
+     "https://www.intenseoud.com/blogs/news-1/kilian-angels-share-dupe-introducing-lattafa-khamrah",
+     "https://parfuminspirations.com/en/blogs/fragrance-inspirations/best-angels-share-kilian-dupe-khamrah-lattafa",
+     "https://accordtwin.com/dupes/kilian-angels-share/",
+     "https://ifragranceofficial.com/angels-share-and-lattafa-khamrah/"
+    ],
+    "image": null
+   },
+   {
+    "id": 241,
+    "brand": "Maison Alhambra",
+    "name": "Kismet Angel",
+    "index": 95,
+    "sources": 4,
+    "top30": false,
+    "shop": null,
+    "link": null,
+    "price100": null,
+    "saving": null,
+    "note": "Parfois vendu sous le nom Kismet Magic.",
+    "priceDetail": null,
+    "sourceSites": "aromaauthority.com, dubaiesencias.com, youtube.com, ifragranceofficial.com",
+    "sourceLinks": [
+     "https://aromaauthority.com/alternatives/kismet-angel-review/",
+     "https://dubaiesencias.com/en/products/kismet-angel-maison-alhambra-100-ml",
+     "https://www.youtube.com/watch?v=HtkcYawSo4M",
+     "https://ifragranceofficial.com/angels-share-vs-kismet-angel-khamrah/"
+    ],
+    "image": null
+   }
+  ],
+  "image": null
+ },
+ {
+  "brand": "Montale",
+  "name": "Intense Café",
+  "gender": "Mixte",
+  "rank": 173,
+  "level": "Niche",
+  "price100": null,
+  "slug": "intense-cafe-montale",
+  "priceDetail": null,
+  "dupes": [
+   {
+    "id": 243,
+    "brand": "Zara",
+    "name": "Rose Gourmand",
+    "index": 75,
+    "sources": 2,
+    "top30": false,
+    "shop": "Amazon.fr",
+    "link": "https://www.amazon.fr/dp/B0CVVW872N?tag=olfamatch-21",
+    "price100": null,
+    "saving": null,
+    "note": "Format 80 ml.",
+    "priceDetail": null,
+    "sourceSites": "scentverdict.com, parfumo.com",
+    "sourceLinks": [
+     "https://scentverdict.com/perfume/zara-rose-gourmand-eau-de-parfum",
+     "https://www.parfumo.com/Perfumes/Zara/rose-gourmand-women"
     ],
     "image": null
    }
