@@ -1,0 +1,178 @@
+@font-face{font-family:"Bodoni Moda";src:url("assets/fonts/bodoni.woff2") format("woff2");font-weight:400 900;font-display:swap}
+@font-face{font-family:"Hanken Grotesk";src:url("assets/fonts/hanken-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Hanken Grotesk";src:url("assets/fonts/hanken-600.woff2") format("woff2");font-weight:600;font-display:swap}
+:root{
+  --bg:#1C0E19;
+  --surface:#2A1424;
+  --surface-2:#341A2D;
+  --line:#4A2A41;
+  --gold:#C8A15A;
+  --gold-soft:#E2C68E;
+  --ivory:#F2E4D8;
+  --rose:#CF9C93;
+  --muted:#A8919B;
+  --serif:"Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --sans:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --wrap:1120px;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ivory);font-family:var(--sans);font-size:17px;line-height:1.55;
+  background-image:radial-gradient(1200px 600px at 85% -10%, #3B1733 0%, transparent 60%);background-repeat:no-repeat}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{font-family:var(--serif);font-size:26px;letter-spacing:.02em;text-decoration:none;color:var(--ivory)}
+.logo b{color:var(--gold);font-weight:500}
+.nav{display:flex;gap:22px;font-size:15px}
+.nav a{text-decoration:none;color:var(--muted)}
+.nav a:hover,.nav a[aria-current]{color:var(--ivory)}
+
+/* hero */
+.hero{padding:48px 0 40px;display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:end}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,6.4vw,78px);line-height:1.02;margin:0 0 22px;letter-spacing:-.01em}
+.hero p.lead{color:var(--muted);max-width:34em;margin:0 0 28px;font-size:18px}
+.search{position:relative;max-width:560px}
+.search input{width:100%;font:inherit;font-size:18px;color:var(--ivory);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:17px 22px 17px 52px;outline:none}
+.search input::placeholder{color:#8a737e}
+.search input:focus{border-color:var(--gold)}
+.search svg{position:absolute;left:20px;top:50%;transform:translateY(-50%);opacity:.7}
+.suggest{position:absolute;left:0;right:0;top:calc(100% + 8px);background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;z-index:20;display:none}
+.suggest.open{display:block}
+.suggest a{display:flex;justify-content:space-between;gap:12px;padding:12px 18px;text-decoration:none;border-top:1px solid var(--line)}
+.suggest a:first-child{border-top:0}
+.suggest a:hover,.suggest a.active{background:#40203A}
+.suggest .s-name{font-family:var(--serif);font-size:18px}
+.suggest .s-brand{color:var(--muted);font-size:14px}
+.suggest .s-empty{padding:14px 18px;color:var(--muted)}
+.quick{margin-top:16px;font-size:14px;color:var(--muted)}
+.quick a{color:var(--ivory);margin-right:12px}
+
+/* hero showcase: the rotating label */
+.showcase{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px 28px 24px;position:relative;min-height:290px}
+.showcase .from{color:var(--muted);font-size:15px}
+.showcase .orig{font-family:var(--serif);font-size:24px;margin:2px 0 14px}
+.showcase .prices{display:flex;align-items:baseline;gap:16px;margin:4px 0 16px}
+.showcase .old{font-family:var(--serif);font-size:30px;color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.showcase .new{font-family:var(--serif);font-size:72px;line-height:1;color:var(--gold-soft)}
+.showcase .alt{font-size:16px}
+.showcase .alt strong{font-family:var(--serif);font-weight:500;font-size:20px}
+.showcase .slot{transition:opacity .45s ease}
+.showcase .slot.fade{opacity:0}
+.showcase .unit{color:var(--muted);font-size:13px;margin-top:14px}
+
+/* section heads */
+.sec{padding:56px 0}
+.sec h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,4vw,44px);margin:0 0 8px;line-height:1.1}
+.sec .sub{color:var(--muted);margin:0 0 28px;max-width:40em}
+
+/* pair rows (label style) */
+.rows{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:44px 1.25fr 1.25fr 130px 150px;gap:18px;align-items:center;padding:18px 4px;border-bottom:1px solid var(--line);text-decoration:none}
+a.row:hover{background:linear-gradient(90deg,transparent,rgba(200,161,90,.06),transparent)}
+.row .o-name,.row .a-name{font-family:var(--serif);font-size:21px;line-height:1.15}
+.row .o-brand,.row .a-brand{color:var(--muted);font-size:14px}
+.row .a-name{color:var(--gold-soft)}
+.row .price-pair{font-family:var(--serif);text-align:right}
+.row .price-pair s{color:var(--muted);font-size:16px;display:block}
+.row .price-pair span{font-size:26px}
+.row .save{justify-self:end;font-size:15px;color:var(--bg);background:var(--gold);border-radius:999px;padding:5px 12px;white-space:nowrap}
+.row .noprice{color:var(--muted);font-size:14px;text-align:right}
+
+/* the bottle gauge */
+.bottle{width:34px;height:46px;position:relative}
+.bottle svg{width:100%;height:100%}
+.gauge-label{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}
+
+/* method */
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.method h3{font-family:var(--serif);font-weight:400;font-size:22px;margin:0 0 6px}
+.method p{margin:0;color:var(--muted);font-size:16px}
+.disclaimer{color:var(--muted);font-size:14px;margin-top:22px}
+
+/* email band */
+.band{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+.band h2{margin-bottom:10px}
+.band ul{margin:14px 0 0;padding-left:18px;color:var(--muted)}
+.form{display:flex;flex-direction:column;gap:12px}
+.form input[type=email]{font:inherit;font-size:17px;color:var(--ivory);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.form input[type=email]:focus{border-color:var(--gold);outline:none}
+.btn{font:inherit;font-size:17px;font-weight:600;border:0;border-radius:12px;padding:15px 22px;background:var(--gold);color:#22101C;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.btn:hover{background:var(--gold-soft)}
+.btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold-soft)}
+.form small{color:var(--muted);font-size:13px}
+.form .ok{color:var(--gold-soft)}
+
+/* directory */
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.chip{font:inherit;font-size:15px;color:var(--ivory);background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#22101C}
+.count{color:var(--muted);font-size:14px;margin:6px 0 14px}
+.empty{color:var(--muted);padding:28px 4px}
+
+/* perfume page */
+.crumbs{font-size:14px;color:var(--muted);margin:8px 0 26px}
+.crumbs a{color:var(--muted)}
+.p-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;border-bottom:1px solid var(--line);padding-bottom:26px}
+.p-head h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,60px);line-height:1.04;margin:0}
+.p-head .meta{color:var(--muted);margin-top:10px}
+.p-head .o-price{font-family:var(--serif);font-size:40px;text-align:right}
+.p-head .o-price small{display:block;font-family:var(--sans);font-size:14px;color:var(--muted)}
+.alt-card{display:grid;grid-template-columns:88px 1fr auto;gap:24px;padding:28px 0;border-bottom:1px solid var(--line);align-items:start}
+.alt-card .bottle{width:64px;height:86px}
+.alt-card h2{font-family:var(--serif);font-weight:400;font-size:32px;margin:0;line-height:1.1}
+.alt-card .brand{color:var(--muted)}
+.alt-card .facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin:14px 0 10px;font-size:15px}
+.alt-card .facts b{font-family:var(--serif);font-weight:500;font-size:20px;color:var(--gold-soft)}
+.alt-card .note{color:var(--muted);font-size:15px;margin:6px 0}
+.alt-card details{margin-top:8px;color:var(--muted);font-size:14px}
+.alt-card details a{color:var(--muted);word-break:break-all}
+.alt-card .buy{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:190px}
+.alt-card .buy .price{font-family:var(--serif);font-size:44px;line-height:1;text-align:right}
+.alt-card .buy .price small{display:block;font-family:var(--sans);font-size:13px;color:var(--muted)}
+.aff{font-size:12.5px;color:var(--muted);text-align:right}
+.photo{border-radius:12px;overflow:hidden;background:var(--surface)}
+.photo img{width:100%;height:auto}
+
+/* footer */
+footer{border-top:1px solid var(--line);margin-top:40px;padding:34px 0 50px;color:var(--muted);font-size:14px}
+footer .cols{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+footer a{color:var(--muted)}
+footer p{max-width:46em;margin:0 0 8px}
+
+/* responsive */
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:32px;padding-top:24px}
+  .band{grid-template-columns:1fr;padding:28px}
+  .method{grid-template-columns:1fr;gap:18px}
+}
+@media (max-width:720px){
+  body{font-size:16px}
+  .nav{gap:14px;font-size:14px}
+  .row{grid-template-columns:38px 1fr auto;grid-template-areas:"g o p" "g a s";gap:4px 14px;padding:16px 2px}
+  .row .gauge{grid-area:g}
+  .row .orig{grid-area:o}
+  .row .altn{grid-area:a}
+  .row .price-pair{grid-area:p}
+  .row .save,.row .noprice{grid-area:s}
+  .row .o-name,.row .a-name{font-size:18px}
+  .row .price-pair span{font-size:22px}
+  .alt-card{grid-template-columns:56px 1fr;gap:16px}
+  .alt-card .bottle{width:46px;height:62px}
+  .alt-card .buy{grid-column:1 / -1;min-width:0}
+  .alt-card .buy .price{text-align:left}
+  .aff{text-align:left}
+  .p-head{grid-template-columns:1fr}
+  .p-head .o-price{text-align:left}
+  .showcase .new{font-size:58px}
+}
+@media (prefers-reduced-motion:reduce){.showcase .slot{transition:none}}
+.filters .sep{width:1px;background:var(--line);margin:0 6px}
+@media (max-width:720px){.filters .sep{width:100%;height:0;margin:0}}
+.showcase .from span{color:var(--ivory)}

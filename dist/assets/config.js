@@ -1,0 +1,1 @@
+window.OLFA={"form": "https://assets.mailerlite.com/jsonp/2709028/forms/201239903959254306/subscribe"};

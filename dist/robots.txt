@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://olfamatch.netlify.app/sitemap.xml
