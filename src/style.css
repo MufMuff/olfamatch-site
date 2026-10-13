@@ -240,10 +240,10 @@ body{overflow-x:clip}
 .duel .save{font-weight:600;font-size:14px;color:#22101C;background:var(--gold);border-radius:999px;padding:4px 11px}
 /* univers */
 .unis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.uni{position:relative;display:block;aspect-ratio:3/4.1;border-radius:22px;overflow:hidden;text-decoration:none;border:1px solid var(--line)}
-.uni img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.uni{position:relative;display:block;aspect-ratio:3/4.8;background:#170A14;border-radius:22px;overflow:hidden;text-decoration:none;border:1px solid var(--line)}
+.uni img{position:absolute;top:0;left:0;width:100%;aspect-ratio:3/4;object-fit:cover;transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
 .uni:hover img{transform:scale(1.07)}
-.uni::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(20,9,18,.96) 0%,rgba(20,9,18,.55) 38%,transparent 65%)}
+.uni::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#170A14 0%,#170A14 22%,rgba(23,10,20,.6) 34%,transparent 46%)}
 .uni-txt{position:absolute;left:0;right:0;bottom:0;padding:24px;z-index:1}
 .uni .n{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
 .uni h3{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.05;margin:6px 0 8px}
@@ -276,8 +276,11 @@ body{overflow-x:clip}
 .js .reveal.in .liq{transform:none}
 @media (max-width:900px){
   .unis{grid-template-columns:1fr}
-  .uni{aspect-ratio:1/1}
-  .uni img{object-position:50% 35%}
+  .uni{aspect-ratio:auto;display:grid;grid-template-columns:40% 1fr;min-height:200px}
+  .uni img{position:static;height:100%;aspect-ratio:auto}
+  .uni::after{display:none}
+  .uni-txt{position:static;padding:18px;align-self:center}
+  .uni h3{font-size:24px}
   .duel{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "m m"}
   .duel .side,.duel .side:last-child{grid-template-columns:1fr;text-align:left}
   .duel .side:first-child{grid-area:a}.duel .side:last-child{grid-area:b}.duel .side:last-child img{order:0}.duel .side:last-child figcaption{text-align:left}
