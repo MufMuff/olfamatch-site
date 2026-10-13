@@ -124,8 +124,7 @@ def cdn(url, w):
     return "/.netlify/images?url=" + quote(url, safe="") + f"&w={w}&fm=webp&q=80"
 def pic(url, alt, sizes, ws=(480, 900), eager=False):
     if not url: return ""
-    srcset = ", ".join(f"{cdn(url, w)} {w}w" for w in ws)
-    return f'<img src="{cdn(url, ws[-1])}" srcset="{srcset}" sizes="{sizes}" alt="{e(alt)}" {"fetchpriority=\"high\"" if eager else "loading=\"lazy\""} decoding="async">'
+    return f'<img src="{e(url)}" alt="{e(alt)}" {"fetchpriority=\"high\"" if eager else "loading=\"lazy\""} decoding="async">'
 
 def pdf_band(source):
     return f'''<div class="band band2"><div class="phone reveal" aria-hidden="true"><div class="notch"></div><div class="screen"><img src="/top-30/apercu.png" alt="" loading="lazy"></div></div>
