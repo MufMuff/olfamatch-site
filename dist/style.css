@@ -260,8 +260,8 @@ body{overflow-x:clip}
 .phone{position:relative;width:250px;aspect-ratio:9/18.5;margin:0 auto;border-radius:38px;background:#0E070C;padding:11px;box-shadow:0 0 0 1px #5a3a50,0 30px 60px -20px rgba(0,0,0,.7),0 0 80px -10px rgba(200,161,90,.25);rotate:-4deg}
 .phone .notch{position:absolute;top:18px;left:50%;width:74px;height:20px;background:#0E070C;border-radius:12px;transform:translateX(-50%);z-index:2}
 .phone .screen{width:100%;height:100%;border-radius:28px;overflow:hidden;background:var(--bg)}
-.phone .screen img{width:100%;animation:scrollPdf 14s ease-in-out infinite alternate}
-@keyframes scrollPdf{0%,15%{transform:translateY(0)}85%,100%{transform:translateY(-22%)}}
+.phone .screen img{width:190%;max-width:none;margin-top:28px;animation:scrollPdf 16s ease-in-out infinite}
+@keyframes scrollPdf{0%,12%{transform:translate(-4%,0)}40%,52%{transform:translate(-45%,-14%)}80%,92%{transform:translate(-4%,-30%)}100%{transform:translate(-4%,0)}}
 /* fiches avec photo */
 .p-head.has-photo{grid-template-columns:200px 1fr auto}
 .o-photo img{width:200px;aspect-ratio:3/4;object-fit:cover;border-radius:18px;border:1px solid var(--line)}
