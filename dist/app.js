@@ -1,27 +1,55 @@
 (function () {
   const norm = s => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const root = document.documentElement;
   const amb = document.querySelector(".amb");
+  const ROOT = document.body.dataset.root || "";
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* navigation privée : on fait sans */ } }
+  };
 
-  /* En-tête qui se floute au défilement + léger mouvement de la photo d'ouverture */
+  /* Index des parfums (recherche, ma liste, déjà vus) */
+  let idxP = null;
+  const loadIdx = () => idxP || (idxP = fetch(ROOT + "assets/search.json").then(x => x.json())
+    .then(j => j.map(o => ({ ...o, h: norm(o.n + " " + o.b + " " + o.a.join(" ")) }))));
+  const big = u => u ? u.replace("&w=96", "&w=320&h=426&fit=cover&a=attention") : "";
+
+  /* En-tête qui se floute au défilement + léger mouvement de l'ouverture */
   const top = document.querySelector(".top");
-  const heroImg = document.querySelector(".hero-media img");
+  const heroMedia = [...document.querySelectorAll(".hero-media img, .hero-media .lv")];
   const onScroll = () => {
     const y = window.scrollY;
     top.classList.toggle("scrolled", y > 30);
-    if (heroImg && !reduced && y < 1000) heroImg.style.transform = `translateY(${y * 0.18}px)`;
+    if (heroMedia.length && !reduced && y < 1000) heroMedia.forEach(m => { m.style.transform = `translateY(${y * 0.18}px)`; });
   };
   window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
 
+  /* Vidéos en boucle : chargées seulement près de l'écran, en pause hors de l'écran */
+  const conn = navigator.connection || {};
+  const noVideo = reduced || conn.saveData || /2g/.test(conn.effectiveType || "");
+  const vids = [...document.querySelectorAll("video.lv[data-src]")];
+  if (!noVideo && vids.length) {
+    const start = v => {
+      if (!v.src) { v.src = v.dataset.src; v.addEventListener("playing", () => v.classList.add("on"), { once: true }); }
+      const p = v.play(); if (p && p.catch) p.catch(() => {});
+    };
+    const vio = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(en => {
+      const v = en.target;
+      if (en.isIntersecting) { if (v.dataset.eager && !v.dataset.ready) return; start(v); } else if (v.src) v.pause();
+    }), { rootMargin: "250px 0px" }) : null;
+    vids.forEach(v => vio ? vio.observe(v) : null);
+    // la vidéo d'ouverture attend que la page soit chargée pour ne pas ralentir l'affichage
+    const eager = vids.filter(v => v.dataset.eager);
+    const go = () => setTimeout(() => eager.forEach(v => { v.dataset.ready = 1; const r = v.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) start(v); }), 500);
+    if (document.readyState === "complete") go(); else window.addEventListener("load", go);
+  }
+
   /* Recherche avec suggestions (toutes les boîtes de la page) */
-  let idx = null;
-  const loadIdx = r => idx ? Promise.resolve(idx) :
-    fetch(r + "assets/search.json").then(x => x.json()).then(j => (idx = j.map(o => ({ ...o, h: norm(o.n + " " + o.b + " " + o.a.join(" ")) }))));
   document.querySelectorAll(".search[data-root]").forEach(box => {
-    const rel = box.dataset.root, input = box.querySelector("input"), list = box.querySelector(".suggest");
+    const input = box.querySelector("input"), list = box.querySelector(".suggest");
     let active = -1;
-    const render = q => {
+    const render = (idx, q) => {
       const nq = norm(q).trim();
       if (!nq) { list.classList.remove("open"); return; }
       const words = nq.split(/\s+/);
@@ -29,14 +57,14 @@
         .sort((a, b) => (norm(a.n).startsWith(nq) ? -1 : 0) - (norm(b.n).startsWith(nq) ? -1 : 0)).slice(0, 7);
       active = -1;
       list.innerHTML = items.length
-        ? items.map(o => `<a role="option" href="${rel}alternative/${o.s}/"><span class="s-img">${o.i ? `<img src="${o.i}" alt="" loading="lazy">` : o.n[0]}</span><span class="s-name">${o.n}</span><span class="s-brand">${o.b}</span></a>`).join("")
-        : `<div class="s-empty">Pas encore dans l'annuaire. Écris-nous le nom en commentaire sur TikTok, on le cherche.</div>`;
+        ? items.map(o => `<a role="option" href="${ROOT}alternative/${o.s}/"><span class="s-img">${o.i ? `<img src="${esc(o.i)}" alt="" loading="lazy">` : esc(o.n[0])}</span><span class="s-name">${esc(o.n)}<small>→ ${esc(o.x)}${o.v ? " · −" + o.v + " %" : ""}</small></span><span class="s-brand">${esc(o.b)}</span></a>`).join("")
+        : `<div class="s-empty">Pas encore dans l'annuaire. Essaie le <a href="${ROOT}quiz/">quiz</a>, ou écris-nous le nom en commentaire sur TikTok : on le cherche.</div>`;
       list.classList.add("open");
     };
-    input.addEventListener("input", () => loadIdx(rel).then(() => render(input.value)));
-    input.addEventListener("focus", () => loadIdx(rel));
+    input.addEventListener("input", () => loadIdx().then(idx => render(idx, input.value)));
+    input.addEventListener("focus", () => loadIdx());
     input.addEventListener("keydown", ev => {
-      const links = list.querySelectorAll("a");
+      const links = list.querySelectorAll("a[role=option]");
       if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
         if (!links.length) return;
         ev.preventDefault();
@@ -59,7 +87,7 @@
   ov.addEventListener("click", ev => { if (ev.target === ov) closeOv(); });
   document.addEventListener("keydown", ev => {
     if (ev.key === "Escape" && !ov.hidden) closeOv();
-    if (ev.key === "/" && ov.hidden && !/input|textarea/i.test(document.activeElement.tagName)) { ev.preventDefault(); openOv(); }
+    if (ev.key === "/" && ov.hidden && !/input|textarea|select/i.test(document.activeElement.tagName)) { ev.preventDefault(); openOv(); }
   });
 
   /* Compteur de prix */
@@ -88,6 +116,7 @@
     if (!reduced) {
       let i = 0;
       setInterval(() => {
+        if (document.hidden) return;
         i = (i + 1) % deals.length;
         deal.classList.add("fade");
         setTimeout(() => { show(deals[i]); deal.classList.remove("fade"); }, 380);
@@ -95,15 +124,23 @@
     }
   }
 
-  /* Apparitions au défilement */
+  /* Apparitions au défilement (+ compteurs) */
+  const countNum = (el, to, ms) => {
+    if (reduced) { el.textContent = to.toLocaleString("fr-FR"); return; }
+    const t0 = performance.now();
+    const step = t => { const k = Math.min(1, (t - t0) / ms); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))).toLocaleString("fr-FR"); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
   const fire = el => {
     el.classList.add("in");
-    el.querySelectorAll("em[data-from]").forEach(x => { if (!x.dataset.done) { x.dataset.done = 1; countTo(x, +x.dataset.from, +x.dataset.to, 1600); } });
+    el.querySelectorAll("[data-from]").forEach(x => { if (!x.dataset.done) { x.dataset.done = 1; countTo(x, +x.dataset.from, +x.dataset.to, 1600); } });
+    el.querySelectorAll("[data-count]").forEach(x => { if (!x.dataset.done) { x.dataset.done = 1; countNum(x, +x.dataset.count, 1400); } });
   };
   const io = "IntersectionObserver" in window && !reduced
     ? new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { fire(en.target); io.unobserve(en.target); } }), { threshold: .15 })
     : null;
-  document.querySelectorAll(".reveal").forEach(el => io ? io.observe(el) : fire(el));
+  const watch = el => io ? io.observe(el) : fire(el);
+  document.querySelectorAll(".reveal").forEach(watch);
 
   /* Carrousel des paires : la lumière du site prend la couleur du flacon affiché */
   const slider = document.querySelector(".slider");
@@ -129,7 +166,6 @@
     prev && prev.addEventListener("click", () => go(-1));
     next && next.addEventListener("click", () => go(1));
     slider.addEventListener("keydown", ev => { if (ev.key === "ArrowRight") { ev.preventDefault(); go(1); } if (ev.key === "ArrowLeft") { ev.preventDefault(); go(-1); } });
-    // la couleur change quand on arrive sur le carrousel, et revient en le quittant
     const heroAmb = amb.style.getPropertyValue("--glow");
     if ("IntersectionObserver" in window) {
       new IntersectionObserver(es => es.forEach(en => {
@@ -171,22 +207,176 @@
     apply();
   }
 
-  /* Formulaires e-mail */
-  const base = () => document.querySelector('link[rel=stylesheet][href$="style.css"]').getAttribute("href").replace("style.css", "");
+  /* Ma liste (cœurs) : enregistrée dans le navigateur */
+  const favBadge = document.querySelector(".fav-n"), favLink = document.querySelector(".n-fav");
+  const favs = () => store.get("om_fav", []);
+  const paintBadge = () => { const n = favs().length; if (favBadge) { favBadge.hidden = !n; favBadge.textContent = n; } };
+  paintBadge();
+  const toggleFav = slug => {
+    let f = favs();
+    const on = !f.includes(slug);
+    f = on ? [slug, ...f] : f.filter(s => s !== slug);
+    store.set("om_fav", f); paintBadge();
+    if (on && favLink && !reduced) { favLink.classList.add("bump"); setTimeout(() => favLink.classList.remove("bump"), 350); }
+    return on;
+  };
+  document.querySelectorAll(".fav[data-s]").forEach(b => {
+    const s = b.dataset.s, lab = b.querySelector(".sr");
+    const paint = on => { b.setAttribute("aria-pressed", String(on)); if (lab) lab.textContent = on ? "Retirer de ma liste" : "Ajouter à ma liste"; };
+    paint(favs().includes(s));
+    b.addEventListener("click", () => {
+      const on = toggleFav(s); paint(on);
+      if (on && !reduced) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); }
+    });
+  });
+
+  /* Petites cartes parfum générées à partir de l'index */
+  const pcard = (o, extra = "") => `<a class="pcard" href="${ROOT}alternative/${o.s}/" style="--c:${esc(o.c)}">${extra}<span class="pc-img">${o.i ? `<img src="${esc(big(o.i))}" alt="${esc(o.n)}" loading="lazy">` : `<span class="c-mono" style="--c:${esc(o.c)}">${esc(o.n[0])}</span>`}</span>
+<span class="pc-txt"><b>${esc(o.n)}</b><i>${esc(o.b)}</i><span class="pc-alt">→ ${esc(o.x)}${o.v ? ` <em>−${o.v} %</em>` : ""}</span></span></a>`;
+
+  const favList = document.getElementById("fav-list");
+  if (favList) {
+    const emptyBox = document.querySelector(".fav-empty");
+    const draw = () => loadIdx().then(idx => {
+      const f = favs(), by = Object.fromEntries(idx.map(o => [o.s, o]));
+      const items = f.map(s => by[s]).filter(Boolean);
+      favList.className = items.length ? "pcards" : "";
+      favList.innerHTML = items.map(o => pcard(o, `<button class="pc-x" type="button" data-x="${esc(o.s)}" aria-label="Retirer ${esc(o.n)} de ma liste">×</button>`)).join("");
+      emptyBox.hidden = items.length > 0;
+    });
+    favList.addEventListener("click", ev => {
+      const x = ev.target.closest(".pc-x"); if (!x) return;
+      ev.preventDefault(); toggleFav(x.dataset.x); draw();
+    });
+    draw();
+  }
+
+  /* Parfums déjà regardés : retenus sur la fiche, proposés sur l'accueil */
+  const favBtn = document.querySelector(".v-cta .fav[data-s]");
+  if (favBtn) {
+    const s = favBtn.dataset.s;
+    store.set("om_seen", [s, ...store.get("om_seen", []).filter(x => x !== s)].slice(0, 12));
+  }
+  const recent = document.querySelector(".recent");
+  if (recent) {
+    const seen = store.get("om_seen", []);
+    if (seen.length) loadIdx().then(idx => {
+      const by = Object.fromEntries(idx.map(o => [o.s, o]));
+      const items = seen.map(s => by[s]).filter(Boolean).slice(0, 6);
+      if (!items.length) return;
+      recent.querySelector(".pcards").innerHTML = items.map(o => pcard(o)).join("");
+      recent.hidden = false;
+    });
+  }
+
+  /* Fiche : anneau de ressemblance, économie qui défile, barre d'achat */
+  const ring = document.querySelector(".vs-ring");
+  if (ring) setTimeout(() => ring.classList.add("in"), reduced ? 0 : 450);
+  const vb = document.querySelector(".v-save b[data-to]");
+  if (vb) countTo(vb, 0, +vb.dataset.to, 1700);
+  const sbar = document.querySelector(".sbar"), cta = document.querySelector(".v-cta");
+  if (sbar && cta && "IntersectionObserver" in window) {
+    let past = false, foot = false;
+    const paint = () => sbar.classList.toggle("show", past && !foot);
+    new IntersectionObserver(([en]) => { past = !en.isIntersecting && en.boundingClientRect.top < 0; paint(); }).observe(cta);
+    const end = document.querySelector("#echantillon") || document.querySelector("footer");
+    new IntersectionObserver(([en]) => { foot = en.isIntersecting || en.boundingClientRect.top < 0; paint(); }).observe(end);
+    sbar.hidden = false;
+  }
+
+  /* Formulaires : PDF du Top 30 ou « préviens-moi » pour les échantillons */
   document.querySelectorAll("form.form").forEach(form => {
+    const kind = form.dataset.kind || "pdf";
     form.addEventListener("submit", ev => {
       ev.preventDefault();
       const email = form.email.value.trim();
-      const ok = form.querySelector(".ok"), btn = form.querySelector("button");
+      const ok = form.querySelector(".ok"), btn = form.querySelector("button[type=submit]");
+      const label = btn.textContent;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { ok.hidden = false; ok.textContent = "Cette adresse ne semble pas valide. Vérifie-la et réessaie."; return; }
       const cfg = (window.OLFA || {}).form;
       btn.disabled = true; btn.textContent = "Envoi…";
-      if (cfg) { const ml = new FormData(); ml.append("fields[email]", email); ml.append("ml-submit", "1"); ml.append("anticsrf", "true"); fetch(cfg, { method: "POST", body: ml, mode: "no-cors" }).catch(() => {}); }
+      if (cfg && kind === "pdf") { const ml = new FormData(); ml.append("fields[email]", email); ml.append("ml-submit", "1"); ml.append("anticsrf", "true"); fetch(cfg, { method: "POST", body: ml, mode: "no-cors" }).catch(() => {}); }
       const data = new URLSearchParams(new FormData(form));
       fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data.toString() })
         .then(r => { if (!r.ok) throw new Error(r.status); })
-        .then(() => { form.email.value = ""; ok.hidden = false; ok.innerHTML = 'C\'est bon ! <a href="' + base() + 'top-30/olfamatch-top-30.pdf" download style="color:inherit;font-weight:600">Télécharge ton Top 30 ici</a>.'; btn.textContent = "Merci"; })
-        .catch(() => { ok.hidden = false; ok.textContent = "L'envoi a échoué. Réessaie dans un instant."; btn.disabled = false; btn.textContent = "Recevoir le PDF"; });
+        .then(() => {
+          form.email.value = ""; ok.hidden = false; form.classList.add("done");
+          if (kind === "pdf") { ok.innerHTML = 'C\'est bon ! <a href="' + ROOT + 'top-30/olfamatch-top-30.pdf" download style="color:inherit;font-weight:600">Télécharge ton Top 30 ici</a>.'; btn.textContent = "Merci"; }
+          else { ok.textContent = "C'est noté ! Tu recevras un e-mail dès que c'est disponible."; btn.textContent = "C'est noté"; }
+        })
+        .catch(() => { ok.hidden = false; ok.textContent = "L'envoi a échoué. Réessaie dans un instant."; btn.disabled = false; btn.textContent = label; });
     });
   });
+
+  /* Quiz */
+  const quiz = document.querySelector(".quiz");
+  if (quiz) {
+    const steps = [...quiz.querySelectorAll(".qstep")];
+    const res = quiz.querySelector(".qres"), back = quiz.querySelector(".qback"), prog = quiz.querySelector(".qz-prog");
+    const st = { g: null, f: [], t: null, p: null };
+    let at = 0, data = null;
+    const loadQ = () => data ? Promise.resolve(data) : fetch(ROOT + "assets/quiz.json").then(r => r.json()).then(j => (data = j));
+    loadQ();
+    const show = i => {
+      at = i;
+      steps.forEach((s, k) => { s.hidden = k !== i; });
+      res.hidden = i < steps.length;
+      back.hidden = i === 0;
+      prog.style.setProperty("--q", Math.round(Math.min(i, steps.length) / steps.length * 100) + "%");
+      if (i > 0) quiz.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      if (i === steps.length) results();
+    };
+    const pre = new URLSearchParams(location.search).get("f");
+    steps.forEach((s, k) => {
+      const key = s.dataset.step, multi = +(s.dataset.multi || 0);
+      const opts = [...s.querySelectorAll(".qopt")], nxt = s.querySelector(".qnext");
+      const paint = () => { opts.forEach(o => o.setAttribute("aria-pressed", String(multi ? st.f.includes(o.dataset.v) : st[key] === o.dataset.v))); if (nxt) nxt.disabled = !st.f.length; };
+      if (multi && pre && opts.some(o => o.dataset.v === pre)) { st.f = [pre]; paint(); }
+      opts.forEach(o => o.addEventListener("click", () => {
+        const v = o.dataset.v;
+        if (multi) {
+          st.f = st.f.includes(v) ? st.f.filter(x => x !== v) : [...st.f, v].slice(-multi);
+          paint();
+        } else { st[key] = v; paint(); setTimeout(() => show(k + 1), reduced ? 0 : 260); }
+      }));
+      if (nxt) nxt.addEventListener("click", () => show(k + 1));
+    });
+    back.addEventListener("click", () => show(Math.max(0, at - 1)));
+    quiz.querySelector(".qrestart").addEventListener("click", () => {
+      st.g = st.t = st.p = null; st.f = [];
+      steps.forEach(s => s.querySelectorAll(".qopt").forEach(o => o.setAttribute("aria-pressed", "false")));
+      const n = quiz.querySelector(".qnext"); if (n) n.disabled = true;
+      show(0);
+    });
+    const LAB = { frais: "Frais", floral: "Floral", gourmand: "Gourmand", boise: "Boisé", ambre: "Ambré" };
+    const results = () => loadQ().then(all => {
+      const okG = o => !st.g || o.g === st.g || o.g === "Mixte";
+      const score = o => {
+        let s = st.f.reduce((a, k) => a + (o.f[k] || 0), 0) / Math.max(1, st.f.length);
+        if (st.t === "jour") s += .25 * ((o.f.frais || 0) + (o.f.floral || 0)) - .1 * (o.f.ambre || 0);
+        if (st.t === "soir") s += .25 * ((o.f.ambre || 0) + (o.f.gourmand || 0) + .5 * (o.f.boise || 0)) - .1 * (o.f.frais || 0);
+        return s + .25 * (o.m || 0) / 100 + .12 * Math.max(0, 1 - (o.r || 999) / 450) + .04 * (o.i ? 1 : 0);
+      };
+      let pool = all.filter(okG), relaxed = false;
+      if (st.p) {
+        const b = pool.filter(o => o.xp <= +st.p);
+        if (b.filter(o => score(o) > .5).length >= 3) pool = b; else relaxed = true;
+      }
+      const seen = new Set(), out = [];
+      pool.map(o => [score(o), o]).sort((a, b) => b[0] - a[0]).forEach(([, o]) => {
+        if (out.length < 6 && !seen.has(o.x)) { seen.add(o.x); out.push(o); }
+      });
+      const bits = [st.g === "Femme" ? "Pour elle" : st.g === "Homme" ? "Pour lui" : null, st.f.map(k => LAB[k]).join(" + "),
+        st.t === "jour" ? "la journée" : st.t === "soir" ? "le soir" : null, st.p ? "moins de " + st.p + " € les 100 ml" : null].filter(Boolean);
+      quiz.querySelector(".qres-sub").textContent = bits.join(" · ") + (relaxed ? ". Peu d'alternatives à ce prix pour ce style : on t'a aussi mis les plus proches au-dessus de ton budget." : ".");
+      quiz.querySelector(".qcards").innerHTML = out.map((o, i) => {
+        const im = (u, n) => u ? `<img src="${esc(u)}" alt="${esc(n)}" loading="lazy">` : `<span class="c-mono" style="--c:${esc(o.c)}">${esc(n[0])}</span>`;
+        return `<a class="qcard" href="${ROOT}alternative/${o.s}/" style="--c:${esc(o.c)};--i:${i}"><span class="qc-imgs">${im(o.i, o.n)}${im(o.xi, o.x)}<span class="match"><b>${o.m}<small> %</small></b><em>ressemblance</em></span></span>
+<span class="qc-txt"><span class="o">L'alternative à <b>${esc(o.n)}</b> (${esc(o.b)})</span><span class="a">${esc(o.x)}</span><span class="ab">${esc(o.xb)}</span>
+<span class="p">${o.op ? `<s>${o.op} €</s>` : ""}<strong>${o.xp} €</strong>${o.v ? `<em>−${o.v} %</em>` : ""}</span></span></a>`;
+      }).join("") || `<p class="sub">Aucun parfum ne correspond. Essaie avec une autre famille.</p>`;
+      store.set("om_quiz", { ...st, at: Date.now() });
+    });
+    show(0);
+  }
 })();

@@ -1,0 +1,1602 @@
+{
+"libre-yves-saint-laurent": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"sauvage-dior": {
+"frais": 0.7,
+"boise": 0.3
+},
+"la-vie-est-belle-lancome": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"paradoxe-prada": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"baccarat-rouge-540-maison-francis-kurkdjian": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"aventus-creed": {
+"boise": 0.7,
+"frais": 0.3
+},
+"black-opium-yves-saint-laurent": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"coco-mademoiselle-chanel": {
+"floral": 0.7,
+"boise": 0.3
+},
+"bleu-de-chanel-edp-chanel": {
+"frais": 0.7,
+"boise": 0.3
+},
+"j-adore-dior": {
+"floral": 1.0
+},
+"sauvage-elixir-dior": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"le-male-jean-paul-gaultier": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"stronger-with-you-intensely-giorgio-armani": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"for-her-edp-narciso-rodriguez": {
+"floral": 1.0
+},
+"l-interdit-givenchy": {
+"floral": 0.7,
+"boise": 0.3
+},
+"n5-chanel": {
+"floral": 1.0
+},
+"yum-boujee-marshmallow-81-kayali": {
+"gourmand": 1.0
+},
+"vanilla-28-kayali": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"lost-cherry-tom-ford": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"santal-33-le-labo": {
+"boise": 1.0
+},
+"love-don-t-be-shy-kilian": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"dior-homme-intense-dior": {
+"floral": 0.7,
+"boise": 0.3
+},
+"y-edp-yves-saint-laurent": {
+"frais": 0.7,
+"boise": 0.3
+},
+"myslf-yves-saint-laurent": {
+"floral": 0.7,
+"boise": 0.3
+},
+"paradigme-prada": {
+"ambre": 0.7,
+"frais": 0.3
+},
+"good-girl-carolina-herrera": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"my-way-giorgio-armani": {
+"floral": 1.0
+},
+"born-in-roma-donna-valentino": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"born-in-roma-uomo-valentino": {
+"boise": 0.7,
+"frais": 0.3
+},
+"le-male-elixir-jean-paul-gaultier": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"la-nuit-de-l-homme-yves-saint-laurent": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"1-million-rabanne": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"eros-edt-versace": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"tobacco-vanille-tom-ford": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"delina-parfums-de-marly": {
+"floral": 1.0
+},
+"layton-parfums-de-marly": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"angel-s-share-kilian": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"alien-mugler": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"angel-mugler": {
+"gourmand": 1.0
+},
+"this-is-her-zadig-voltaire": {
+"gourmand": 1.0
+},
+"la-petite-robe-noire-guerlain": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"miss-dior-edp-dior": {
+"floral": 1.0
+},
+"terre-d-hermes-hermes": {
+"boise": 0.7,
+"frais": 0.3
+},
+"acqua-di-gio-giorgio-armani": {
+"frais": 1.0
+},
+"invictus-rabanne": {
+"frais": 1.0
+},
+"idole-lancome": {
+"floral": 1.0
+},
+"bianco-latte-giardini-di-toscana": {
+"gourmand": 1.0
+},
+"flowerbomb-viktor-rolf": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"chance-eau-tendre-chanel": {
+"floral": 0.7,
+"frais": 0.3
+},
+"oud-wood-tom-ford": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"imagination-louis-vuitton": {
+"frais": 0.7,
+"boise": 0.3
+},
+"naxos-xerjoff": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"althair-parfums-de-marly": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"green-irish-tweed-creed": {
+"frais": 0.7,
+"boise": 0.3
+},
+"silver-mountain-water-creed": {
+"frais": 1.0
+},
+"scandal-femme-jean-paul-gaultier": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"ultra-male-jean-paul-gaultier": {
+"gourmand": 1.0
+},
+"le-beau-jean-paul-gaultier": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"boss-bottled-hugo-boss": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"phantom-rabanne": {
+"frais": 0.7,
+"gourmand": 0.3
+},
+"explorer-montblanc": {
+"boise": 0.7,
+"frais": 0.3
+},
+"legend-montblanc": {
+"frais": 1.0
+},
+"encre-noire-lalique": {
+"boise": 1.0
+},
+"flower-by-kenzo-kenzo": {
+"floral": 1.0
+},
+"narciso-poudree-narciso-rodriguez": {
+"floral": 1.0
+},
+"daisy-marc-jacobs": {
+"floral": 0.7,
+"frais": 0.3
+},
+"lady-million-rabanne": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"hypnotic-poison-dior": {
+"gourmand": 1.0
+},
+"irresistible-givenchy": {
+"floral": 1.0
+},
+"la-nuit-tresor-lancome": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"cheirosa-62-sol-de-janeiro": {
+"gourmand": 1.0
+},
+"black-orchid-tom-ford": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"ombre-leather-tom-ford": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"neroli-portofino-tom-ford": {
+"frais": 1.0
+},
+"wood-sage-sea-salt-jo-malone": {
+"frais": 0.7,
+"boise": 0.3
+},
+"english-pear-freesia-jo-malone": {
+"floral": 0.7,
+"frais": 0.3
+},
+"gypsy-water-byredo": {
+"boise": 0.7,
+"frais": 0.3
+},
+"mojave-ghost-byredo": {
+"floral": 0.7,
+"boise": 0.3
+},
+"good-girl-gone-bad-kilian": {
+"floral": 1.0
+},
+"oud-for-greatness-initio": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"erba-pura-xerjoff": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"grand-soir-maison-francis-kurkdjian": {
+"ambre": 1.0
+},
+"ombre-nomade-louis-vuitton": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"missing-person-phlur": {
+"floral": 0.7,
+"frais": 0.3
+},
+"replica-jazz-club-maison-margiela": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"replica-by-the-fireplace-maison-margiela": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"libre-intense-yves-saint-laurent": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"fahrenheit-dior": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"allure-homme-sport-chanel": {
+"frais": 1.0
+},
+"light-blue-femme-dolce-gabbana": {
+"frais": 1.0
+},
+"bright-crystal-versace": {
+"floral": 0.7,
+"frais": 0.3
+},
+"crystal-noir-versace": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"bloom-gucci": {
+"floral": 1.0
+},
+"212-vip-men-carolina-herrera": {
+"frais": 0.7,
+"ambre": 0.3
+},
+"yum-pistachio-gelato-33-kayali": {
+"gourmand": 1.0
+},
+"bleu-de-chanel-edt-chanel": {
+"frais": 0.7,
+"boise": 0.3
+},
+"invictus-victory-rabanne": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"invictus-legend-rabanne": {
+"frais": 0.7,
+"ambre": 0.3
+},
+"eros-energy-versace": {
+"frais": 1.0
+},
+"born-in-roma-uomo-coral-fantasy-valentino": {
+"frais": 0.7,
+"boise": 0.3
+},
+"y-le-parfum-yves-saint-laurent": {
+"ambre": 0.7,
+"frais": 0.3
+},
+"la-nuit-de-l-homme-bleu-electrique-yves-saint-laurent": {
+"frais": 0.7,
+"ambre": 0.3
+},
+"platinum-egoiste-chanel": {
+"frais": 0.7,
+"boise": 0.3
+},
+"acqua-di-gio-profondo-giorgio-armani": {
+"frais": 1.0
+},
+"legend-intense-montblanc": {
+"frais": 0.7,
+"ambre": 0.3
+},
+"1-million-elixir-rabanne": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"light-blue-forever-pour-homme-dolce-gabbana": {
+"frais": 1.0
+},
+"homme-sport-dior": {
+"frais": 1.0
+},
+"aqva-bvlgari": {
+"frais": 1.0
+},
+"mon-paris-yves-saint-laurent": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"miss-dior-blooming-bouquet-dior": {
+"floral": 0.7,
+"frais": 0.3
+},
+"bombshell-victoria-s-secret": {
+"floral": 0.7,
+"frais": 0.3
+},
+"scandal-pour-homme-jean-paul-gaultier": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"mystery-tobacco-carolina-herrera": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"l-interdit-rouge-givenchy": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"narciso-ambree-narciso-rodriguez": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"narciso-rouge-narciso-rodriguez": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"accento-xerjoff": {
+"floral": 0.7,
+"frais": 0.3
+},
+"atomic-rose-initio": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"paragon-initio": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"kirke-tiziana-terenzi": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"guidance-amouage": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"reflection-man-amouage": {
+"floral": 0.7,
+"frais": 0.3
+},
+"bibliotheque-byredo": {
+"gourmand": 0.7,
+"boise": 0.3
+},
+"gris-charnel-bdk-parfums": {
+"boise": 0.7,
+"floral": 0.3
+},
+"blue-talisman-ex-nihilo": {
+"frais": 0.7,
+"boise": 0.3
+},
+"l-immensite-louis-vuitton": {
+"frais": 1.0
+},
+"pacific-chill-louis-vuitton": {
+"frais": 1.0
+},
+"ganymede-marc-antoine-barrois": {
+"boise": 0.7,
+"frais": 0.3
+},
+"megamare-orto-parisi": {
+"frais": 1.0
+},
+"instant-crush-mancera": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"coco-vanille-mancera": {
+"gourmand": 1.0
+},
+"escapade-gourmande-maison-mataha": {
+"gourmand": 1.0
+},
+"hacivat-nishane": {
+"frais": 0.7,
+"boise": 0.3
+},
+"herod-parfums-de-marly": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"greenley-parfums-de-marly": {
+"frais": 1.0
+},
+"haltane-parfums-de-marly": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"pegasus-parfums-de-marly": {
+"gourmand": 1.0
+},
+"oriana-parfums-de-marly": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"centaurus-creed": {
+"boise": 0.7,
+"frais": 0.3
+},
+"vodka-on-the-rocks-kilian": {
+"frais": 1.0
+},
+"ebene-fume-tom-ford": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"bitter-peach-tom-ford": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"electric-cherry-tom-ford": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"fabulous-tom-ford": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"molecule-01-escentric-molecules": {
+"boise": 1.0
+},
+"another-13-le-labo": {
+"boise": 0.7,
+"frais": 0.3
+},
+"tuxedo-yves-saint-laurent": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"side-effect-initio": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"oud-for-happiness-initio": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"rehab-initio": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"musk-therapy-initio": {
+"floral": 0.7,
+"frais": 0.3
+},
+"delina-exclusif-parfums-de-marly": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"valaya-parfums-de-marly": {
+"floral": 0.7,
+"frais": 0.3
+},
+"percival-parfums-de-marly": {
+"frais": 1.0
+},
+"sedley-parfums-de-marly": {
+"frais": 1.0
+},
+"kalan-parfums-de-marly": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"carlisle-parfums-de-marly": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"royal-oud-creed": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"millesime-imperial-creed": {
+"frais": 1.0
+},
+"tuscan-leather-tom-ford": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"rose-prick-tom-ford": {
+"floral": 1.0
+},
+"intense-cafe-montale": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"dior-homme-2020-dior": {
+"boise": 0.7,
+"floral": 0.3
+},
+"dior-homme-parfum-dior": {
+"boise": 0.7,
+"floral": 0.3
+},
+"allure-homme-edition-blanche-chanel": {
+"frais": 0.7,
+"gourmand": 0.3
+},
+"bleu-de-chanel-parfum-chanel": {
+"boise": 0.7,
+"frais": 0.3
+},
+"armani-code-edt-giorgio-armani": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"acqua-di-gio-parfum-giorgio-armani": {
+"frais": 0.7,
+"boise": 0.3
+},
+"armani-code-absolu-giorgio-armani": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"luna-rossa-carbon-prada": {
+"frais": 0.7,
+"boise": 0.3
+},
+"luna-rossa-black-prada": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"l-homme-prada": {
+"frais": 0.7,
+"floral": 0.3
+},
+"born-in-roma-uomo-intense-valentino": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"eros-flame-versace": {
+"ambre": 0.7,
+"frais": 0.3
+},
+"dylan-blue-pour-homme-versace": {
+"frais": 1.0
+},
+"pour-homme-versace": {
+"frais": 1.0
+},
+"le-male-le-parfum-jean-paul-gaultier": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"le-beau-le-parfum-jean-paul-gaultier": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"the-most-wanted-azzaro": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"wanted-by-night-azzaro": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"pure-xs-rabanne": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"1-million-parfum-rabanne": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"gentleman-reserve-privee-givenchy": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"gentleman-edp-boisee-givenchy": {
+"boise": 0.7,
+"gourmand": 0.3
+},
+"boss-the-scent-hugo-boss": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"the-one-for-men-edp-dolce-gabbana": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"k-by-dolce-gabbana-dolce-gabbana": {
+"frais": 0.7,
+"boise": 0.3
+},
+"man-in-black-bvlgari": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"man-wood-essence-bvlgari": {
+"boise": 0.7,
+"frais": 0.3
+},
+"l-homme-yves-saint-laurent": {
+"frais": 0.7,
+"boise": 0.3
+},
+"grey-vetiver-tom-ford": {
+"boise": 0.7,
+"frais": 0.3
+},
+"h24-hermes": {
+"frais": 0.7,
+"boise": 0.3
+},
+"hero-burberry": {
+"boise": 0.7,
+"frais": 0.3
+},
+"polo-red-ralph-lauren": {
+"frais": 0.7,
+"ambre": 0.3
+},
+"bad-boy-carolina-herrera": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"spicebomb-extreme-viktor-rolf": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"a-men-pure-havane-mugler": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"l-homme-ideal-guerlain": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"coco-noir-chanel": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"gabrielle-chanel": {
+"floral": 1.0
+},
+"poison-girl-dior": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"miss-dior-absolutely-blooming-dior": {
+"floral": 0.7,
+"frais": 0.3
+},
+"la-vie-est-belle-l-elixir-lancome": {
+"gourmand": 1.0
+},
+"si-passione-giorgio-armani": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"candy-prada": {
+"gourmand": 1.0
+},
+"flora-gorgeous-gardenia-gucci": {
+"floral": 1.0
+},
+"rush-gucci": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"born-in-roma-donna-intense-valentino": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"voce-viva-valentino": {
+"floral": 1.0
+},
+"alien-goddess-mugler": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"her-burberry": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"very-good-girl-carolina-herrera": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"212-vip-rose-carolina-herrera": {
+"floral": 0.7,
+"frais": 0.3
+},
+"fame-rabanne": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"olympea-rabanne": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"perfect-marc-jacobs": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"miracle-lancome": {
+"floral": 0.7,
+"frais": 0.3
+},
+"amor-amor-cacharel": {
+"floral": 0.7,
+"frais": 0.3
+},
+"mon-guerlain-guerlain": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"shalimar-guerlain": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"la-belle-jean-paul-gaultier": {
+"gourmand": 1.0
+},
+"velvet-orchid-tom-ford": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"cloud-ariana-grande": {
+"gourmand": 1.0
+},
+"not-a-perfume-juliette-has-a-gun": {
+"boise": 0.7,
+"frais": 0.3
+},
+"you-glossier": {
+"floral": 0.7,
+"boise": 0.3
+},
+"vanilla-candy-rock-sugar-42-kayali": {
+"gourmand": 1.0
+},
+"lovefest-burning-cherry-48-kayali": {
+"gourmand": 1.0
+},
+"devotion-dolce-gabbana": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"viking-creed": {
+"frais": 0.7,
+"boise": 0.3
+},
+"himalaya-creed": {
+"frais": 0.7,
+"boise": 0.3
+},
+"aventus-for-her-creed": {
+"floral": 0.7,
+"frais": 0.3
+},
+"absolu-aventus-creed": {
+"boise": 0.7,
+"frais": 0.3
+},
+"wind-flowers-creed": {
+"floral": 1.0
+},
+"alexandria-ii-xerjoff": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"erba-gold-xerjoff": {
+"frais": 0.7,
+"gourmand": 0.3
+},
+"40-knots-xerjoff": {
+"frais": 0.7,
+"boise": 0.3
+},
+"casamorati-lira-xerjoff": {
+"gourmand": 1.0
+},
+"interlude-man-amouage": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"jubilation-xxv-amouage": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"epic-man-amouage": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"elysium-pour-homme-roja-parfums": {
+"frais": 0.7,
+"boise": 0.3
+},
+"enigma-roja-parfums": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"ani-nishane": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"wulong-cha-nishane": {
+"frais": 1.0
+},
+"hundred-silent-ways-nishane": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"fan-your-flames-nishane": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"black-phantom-kilian": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"roses-on-ice-kilian": {
+"floral": 0.7,
+"frais": 0.3
+},
+"straight-to-heaven-kilian": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"moonlight-in-heaven-kilian": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"intoxicated-kilian": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"apple-brandy-on-the-rocks-kilian": {
+"gourmand": 0.7,
+"boise": 0.3
+},
+"rolling-in-love-kilian": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"oud-satin-mood-maison-francis-kurkdjian": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"aqua-universalis-maison-francis-kurkdjian": {
+"frais": 0.7,
+"floral": 0.3
+},
+"gentle-fluidity-gold-maison-francis-kurkdjian": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"gentle-fluidity-silver-maison-francis-kurkdjian": {
+"frais": 0.7,
+"boise": 0.3
+},
+"amyris-homme-maison-francis-kurkdjian": {
+"boise": 0.7,
+"gourmand": 0.3
+},
+"724-maison-francis-kurkdjian": {
+"frais": 0.7,
+"floral": 0.3
+},
+"baccarat-rouge-540-extrait-maison-francis-kurkdjian": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"portrait-of-a-lady-frederic-malle": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"carnal-flower-frederic-malle": {
+"floral": 1.0
+},
+"musc-ravageur-frederic-malle": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"rose-31-le-labo": {
+"floral": 0.7,
+"boise": 0.3
+},
+"the-noir-29-le-labo": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"bergamote-22-le-labo": {
+"frais": 1.0
+},
+"bal-d-afrique-byredo": {
+"frais": 0.7,
+"floral": 0.3
+},
+"rose-of-no-man-s-land-byredo": {
+"floral": 1.0
+},
+"blanche-byredo": {
+"floral": 0.7,
+"frais": 0.3
+},
+"philosykos-diptyque": {
+"frais": 0.7,
+"boise": 0.3
+},
+"tam-dao-diptyque": {
+"boise": 1.0
+},
+"do-son-diptyque": {
+"floral": 1.0
+},
+"african-leather-memo-paris": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"black-aoud-montale": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"roses-musk-montale": {
+"floral": 1.0
+},
+"arabians-tonka-montale": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"red-tobacco-mancera": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"cedrat-boise-mancera": {
+"frais": 0.7,
+"boise": 0.3
+},
+"roses-vanille-mancera": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"afternoon-swim-louis-vuitton": {
+"frais": 1.0
+},
+"meteore-louis-vuitton": {
+"frais": 0.7,
+"boise": 0.3
+},
+"sur-la-route-louis-vuitton": {
+"frais": 0.7,
+"boise": 0.3
+},
+"attrape-reves-louis-vuitton": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"fleur-narcotique-ex-nihilo": {
+"floral": 1.0
+},
+"layton-exclusif-parfums-de-marly": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"safanad-parfums-de-marly": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"soleil-blanc-tom-ford": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"noir-extreme-tom-ford": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"tobacco-oud-tom-ford": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"oud-minerale-tom-ford": {
+"boise": 0.7,
+"frais": 0.3
+},
+"vanilla-sex-tom-ford": {
+"gourmand": 1.0
+},
+"cafe-rose-tom-ford": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"jasmin-rouge-tom-ford": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"x-for-men-clive-christian": {
+"boise": 0.7,
+"frais": 0.3
+},
+"bleecker-street-bond-no-9": {
+"frais": 0.7,
+"boise": 0.3
+},
+"oud-maracuja-maison-crivelli": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"b683-marc-antoine-barrois": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"halfeti-penhaligon-s": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"the-tragedy-of-lord-george-penhaligon-s": {
+"gourmand": 0.7,
+"boise": 0.3
+},
+"tygar-bvlgari": {
+"frais": 0.7,
+"boise": 0.3
+},
+"replica-coffee-break-maison-margiela": {
+"gourmand": 1.0
+},
+"terroni-orto-parisi": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"explorer-platinum-montblanc": {
+"frais": 0.7,
+"boise": 0.3
+},
+"terre-d-hermes-parfum-hermes": {
+"boise": 0.7,
+"frais": 0.3
+},
+"egoiste-chanel": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"kenzo-homme-kenzo": {
+"frais": 0.7,
+"boise": 0.3
+},
+"oud-ispahan-dior": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"goddess-burberry": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"777-god-of-fire-stephane-humbert-lucas": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"tobacolor-dior": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"flora-by-gucci-gucci": {
+"floral": 0.7,
+"frais": 0.3
+},
+"stronger-with-you-edt-giorgio-armani": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"valentino-uomo-valentino": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"black-xs-homme-rabanne": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"babycat-yves-saint-laurent": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"myrrh-tonka-jo-malone": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"guilty-pour-homme-gucci": {
+"frais": 0.7,
+"boise": 0.3
+},
+"polo-blue-ralph-lauren": {
+"frais": 1.0
+},
+"virgin-island-water-creed": {
+"frais": 0.7,
+"gourmand": 0.3
+},
+"eilish-billie-eilish": {
+"gourmand": 1.0
+},
+"cheirosa-71-sol-de-janeiro": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"carved-oud-thameen": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"le-beau-paradise-garden-jean-paul-gaultier": {
+"frais": 0.7,
+"gourmand": 0.3
+},
+"because-it-s-you-giorgio-armani": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"torino21-xerjoff": {
+"frais": 1.0
+},
+"3-l-imperatrice-dolce-gabbana": {
+"frais": 1.0
+},
+"spicebomb-viktor-rolf": {
+"ambre": 1.0
+},
+"feve-delicieuse-dior": {
+"gourmand": 1.0
+},
+"irish-leather-memo-paris": {
+"ambre": 0.7,
+"frais": 0.3
+},
+"perfect-intense-marc-jacobs": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"la-vie-est-belle-intensement-lancome": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"tribeca-bond-no-9": {
+"gourmand": 1.0
+},
+"valentino-donna-valentino": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"good-girl-blush-carolina-herrera": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"stronger-with-you-absolutely-giorgio-armani": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"vert-malachite-armani-prive": {
+"floral": 1.0
+},
+"declaration-cartier": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"euphoria-calvin-klein": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"nina-nina-ricci": {
+"gourmand": 0.7,
+"frais": 0.3
+},
+"manifesto-yves-saint-laurent": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"orange-blossom-jo-malone": {
+"floral": 0.7,
+"frais": 0.3
+},
+"blossom-love-amouage": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"viva-la-juicy-juicy-couture": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"amber-absolute-tom-ford": {
+"ambre": 1.0
+},
+"cherry-smoke-tom-ford": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"l-eau-d-issey-pour-homme-issey-miyake": {
+"frais": 1.0
+},
+"black-afgano-nasomatto": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"les-sables-roses-louis-vuitton": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"symphony-louis-vuitton": {
+"frais": 1.0
+},
+"angel-nova-mugler": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"invictus-aqua-rabanne": {
+"frais": 1.0
+},
+"cool-water-davidoff": {
+"frais": 1.0
+},
+"invite-only-amber-23-kayali": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"mango-skin-vilhelm-parfumerie": {
+"frais": 0.7,
+"gourmand": 0.3
+},
+"blanche-bete-les-liquides-imaginaires": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"tonka-cola-mancera": {
+"gourmand": 1.0
+},
+"scandal-pour-homme-absolu-jean-paul-gaultier": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"so-scandal-jean-paul-gaultier": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"fierce-abercrombie-fitch": {
+"frais": 0.7,
+"boise": 0.3
+},
+"n-5-floral-amber-sensual-musk-rosendo-mateu": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"pegasus-exclusif-parfums-de-marly": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"oajan-parfums-de-marly": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"black-saffron-byredo": {
+"ambre": 1.0
+},
+"italian-leather-memo-paris": {
+"ambre": 0.7,
+"frais": 0.3
+},
+"carmina-creed": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"l-12-12-blanc-lacoste": {
+"frais": 1.0
+},
+"magnetism-escada": {
+"gourmand": 1.0
+},
+"fantasy-britney-spears": {
+"gourmand": 1.0
+},
+"colonia-acqua-di-parma": {
+"frais": 1.0
+},
+"bois-imperial-essential-parfums": {
+"boise": 1.0
+},
+"patchouli-intense-nicolai": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"orage-louis-vuitton": {
+"boise": 0.7,
+"frais": 0.3
+},
+"contre-moi-louis-vuitton": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"nuit-de-feu-louis-vuitton": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"matiere-noire-louis-vuitton": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"nouveau-monde-louis-vuitton": {
+"ambre": 1.0
+},
+"ambre-levant-louis-vuitton": {
+"ambre": 1.0
+},
+"ambre-nuit-dior": {
+"ambre": 0.7,
+"floral": 0.3
+},
+"bois-d-argent-dior": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"jasmin-des-anges-dior": {
+"floral": 1.0
+},
+"deja-vu-white-flower-57-kayali": {
+"floral": 1.0
+},
+"vanilla-royale-sugared-patchouli-64-kayali": {
+"gourmand": 1.0
+},
+"eden-sparkling-lychee-39-kayali": {
+"floral": 0.7,
+"frais": 0.3
+},
+"the-wedding-silk-santal-36-kayali": {
+"boise": 0.7,
+"floral": 0.3
+},
+"pi-givenchy": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"for-her-pure-musc-narciso-rodriguez": {
+"floral": 1.0
+},
+"intense-oud-gucci": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"oud-royal-armani-prive": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"wanted-azzaro": {
+"frais": 0.7,
+"ambre": 0.3
+},
+"hypnose-lancome": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"212-sexy-carolina-herrera": {
+"gourmand": 0.7,
+"floral": 0.3
+},
+"ch-men-carolina-herrera": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"mimosa-cardamom-jo-malone": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"nectarine-blossom-honey-jo-malone": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"peony-blush-suede-jo-malone": {
+"floral": 1.0
+},
+"be-delicious-dkny": {
+"frais": 0.7,
+"floral": 0.3
+},
+"jasmin-noir-bvlgari": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"amber-aoud-roja-parfums": {
+"ambre": 1.0
+},
+"acqua-di-sale-profumum-roma": {
+"frais": 1.0
+},
+"replica-bubble-bath-maison-margiela": {
+"frais": 0.7,
+"floral": 0.3
+},
+"replica-beach-walk-maison-margiela": {
+"frais": 0.7,
+"gourmand": 0.3
+},
+"pour-homme-extreme-bottega-veneta": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"acqua-di-gioia-giorgio-armani": {
+"frais": 0.7,
+"floral": 0.3
+},
+"rouge-malachite-armani-prive": {
+"floral": 1.0
+},
+"invictus-victory-elixir-rabanne": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"olympea-intense-rabanne": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"invictus-platinum-rabanne": {
+"frais": 1.0
+},
+"1-million-lucky-rabanne": {
+"gourmand": 0.7,
+"boise": 0.3
+},
+"m7-yves-saint-laurent": {
+"boise": 0.7,
+"ambre": 0.3
+},
+"coromandel-chanel": {
+"ambre": 0.7,
+"boise": 0.3
+},
+"nomade-chloe": {
+"floral": 0.7,
+"boise": 0.3
+},
+"chloe-eau-de-parfum-chloe": {
+"floral": 1.0
+},
+"a-men-mugler": {
+"gourmand": 0.7,
+"ambre": 0.3
+},
+"gaultier-divine-jean-paul-gaultier": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"uomo-intense-valentino": {
+"ambre": 0.7,
+"gourmand": 0.3
+},
+"flowerbomb-ruby-orchid-viktor-rolf": {
+"floral": 0.7,
+"gourmand": 0.3
+},
+"dylan-purple-versace": {
+"floral": 0.7,
+"frais": 0.3
+},
+"polo-black-ralph-lauren": {
+"frais": 0.7,
+"boise": 0.3
+},
+"ralph-s-club-ralph-lauren": {
+"frais": 0.7,
+"boise": 0.3
+},
+"mandarino-di-amalfi-tom-ford": {
+"frais": 1.0
+},
+"tubereuse-nue-tom-ford": {
+"floral": 0.7,
+"ambre": 0.3
+},
+"myrrhe-mystere-tom-ford": {
+"ambre": 1.0
+},
+"scent-of-peace-bond-no-9": {
+"floral": 0.7,
+"frais": 0.3
+},
+"viking-cologne-creed": {
+"frais": 1.0
+},
+"casamorati-italica-xerjoff": {
+"gourmand": 1.0
+},
+"opus-vii-amouage": {
+"ambre": 0.7,
+"boise": 0.3
+}
+}
