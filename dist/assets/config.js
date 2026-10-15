@@ -1,1 +1,1 @@
-window.OLFA={"form": "https://assets.mailerlite.com/jsonp/2709028/forms/201239903959254306/subscribe"};
+window.OLFA={"form": "https://assets.mailerlite.com/jsonp/2709028/forms/201239903959254306/subscribe", "form_ech": "https://assets.mailerlite.com/jsonp/2709028/forms/201386250641343757/subscribe"};

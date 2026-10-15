@@ -293,12 +293,13 @@
       const ok = form.querySelector(".ok"), btn = form.querySelector("button[type=submit]");
       const label = btn.textContent;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { ok.hidden = false; ok.textContent = "Cette adresse ne semble pas valide. Vérifie-la et réessaie."; return; }
-      const cfg = (window.OLFA || {}).form;
+      const O = window.OLFA || {}, cfg = kind === "pdf" ? O.form : O.form_ech;
       btn.disabled = true; btn.textContent = "Envoi…";
-      if (cfg && kind === "pdf") { const ml = new FormData(); ml.append("fields[email]", email); ml.append("ml-submit", "1"); ml.append("anticsrf", "true"); fetch(cfg, { method: "POST", body: ml, mode: "no-cors" }).catch(() => {}); }
-      const data = new URLSearchParams(new FormData(form));
-      fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data.toString() })
-        .then(r => { if (!r.ok) throw new Error(r.status); })
+      // Inscription envoyée à MailerLite (liste « Top 30 PDF » ou « Échantillons »). Les robots qui remplissent le champ caché sont ignorés.
+      const bot = form.site && form.site.value;
+      const ml = new FormData(); ml.append("fields[email]", email); ml.append("ml-submit", "1"); ml.append("anticsrf", "true");
+      if (kind !== "pdf" && form.parfum && form.parfum.value) ml.append("fields[parfum]", form.parfum.value);
+      (bot || !cfg ? Promise.resolve() : fetch(cfg, { method: "POST", body: ml, mode: "no-cors" }))
         .then(() => {
           form.email.value = ""; ok.hidden = false; form.classList.add("done");
           if (kind === "pdf") { ok.innerHTML = 'C\'est bon ! <a href="' + ROOT + 'top-30/olfamatch-top-30.pdf" download style="color:inherit;font-weight:600">Télécharge ton Top 30 ici</a>.'; btn.textContent = "Merci"; }

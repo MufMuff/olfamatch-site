@@ -3,7 +3,8 @@ les règles Amazon interdisent leurs liens dans les documents hors ligne)."""
 import json, html, subprocess, os
 from pathlib import Path
 ROOT = Path(__file__).parent
-SITE = "https://olfamatch.netlify.app"
+CFG = json.loads((ROOT / "data/config.json").read_text())
+SITE = CFG.get("site", "https://olfamatch.netlify.app")
 data = json.loads((ROOT / "data/parfums.json").read_text())
 e = lambda s: html.escape(str(s or ""))
 F = (ROOT / "src/assets/fonts").resolve().as_uri()
@@ -51,7 +52,7 @@ h2{{font-family:B;font-weight:400;font-size:17pt;margin:5mm 0 1.5mm;color:#E2C68
 <h1>Le Top 30 des alternatives</h1>
 <p class="lead">Les 30 paires les plus sûres de l'annuaire Olfamatch. Clique sur une ligne pour voir la fiche complète et où l'acheter au meilleur prix.</p>
 {body1}<p class="foot">Indice calculé par Olfamatch à partir de sources publiques, pas une mesure en laboratoire. Une alternative reste un autre parfum : proche, pas identique. Prix ramenés à 100 ml, relevés en octobre 2026.<br>
-Les noms de parfums et de marques appartiennent à leurs propriétaires et sont cités uniquement pour identifier les produits comparés. Annuaire complet : olfamatch.netlify.app</p></div><div class="pg" style="padding-top:9mm">{body2}
+Les noms de parfums et de marques appartiennent à leurs propriétaires et sont cités uniquement pour identifier les produits comparés. Annuaire complet : {SITE.split("//")[1]}</p></div><div class="pg" style="padding-top:9mm">{body2}
 </div></body></html>'''
 tmp = ROOT / "build_pdf.html"
 tmp.write_text(doc)

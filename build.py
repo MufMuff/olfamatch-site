@@ -10,8 +10,8 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).parent
 DIST = ROOT / "dist"
-SITE = "https://olfamatch.netlify.app"
 CFG = json.loads((ROOT / "data/config.json").read_text()) if (ROOT / "data/config.json").exists() else {}
+SITE = CFG.get("site", "https://olfamatch.netlify.app")
 data = json.loads((ROOT / "data/parfums.json").read_text())
 load = lambda n: json.loads((ROOT / f"data/{n}.json").read_text()) if (ROOT / f"data/{n}.json").exists() else {}
 images, colors, accords, media, familles = load("images"), load("colors"), load("accords"), load("media"), load("familles")
@@ -134,18 +134,18 @@ def search_box(rel, ident="q"):
 <div class="suggest" role="listbox"></div></div>'''
 
 def email_form(source):
-    return f'''<form class="form" name="top30" method="POST" data-netlify="true" netlify-honeypot="site" data-source="{source}" data-kind="pdf" novalidate>
-<input type="hidden" name="form-name" value="top30"><input type="hidden" name="source" value="{source}"><p hidden><label>Ne pas remplir <input name="site"></label></p>
+    return f'''<form class="form" name="top30" data-source="{source}" data-kind="pdf" novalidate>
+<input type="hidden" name="source" value="{source}"><p hidden><label>Ne pas remplir <input name="site"></label></p>
 <label class="sr" for="em-{source}">Ton adresse e-mail</label>
 <div class="field"><input id="em-{source}" type="email" name="email" required placeholder="ton@email.fr" autocomplete="email"><button class="btn" type="submit">Recevoir le PDF</button></div>
 <small>Un seul e-mail avec le PDF, puis de temps en temps une nouvelle alternative. Désinscription en un clic.</small>
 <p class="ok" hidden></p></form>'''
 
 def notify_form(source, parfum, label="Me prévenir"):
-    """Inscription « préviens-moi quand l'échantillon arrive » (formulaire Netlify « echantillon »)."""
+    """Inscription « préviens-moi quand l'échantillon arrive » (groupe MailerLite « Échantillons »)."""
     ident = re.sub(r"[^a-z0-9]+", "-", (source + "-" + parfum).lower())[:60]
-    return f'''<form class="form" name="echantillon" method="POST" data-netlify="true" netlify-honeypot="site" data-kind="notify" novalidate>
-<input type="hidden" name="form-name" value="echantillon"><input type="hidden" name="source" value="{e(source)}"><input type="hidden" name="parfum" value="{e(parfum)}"><p hidden><label>Ne pas remplir <input name="site"></label></p>
+    return f'''<form class="form" name="echantillon" data-kind="notify" novalidate>
+<input type="hidden" name="source" value="{e(source)}"><input type="hidden" name="parfum" value="{e(parfum)}"><p hidden><label>Ne pas remplir <input name="site"></label></p>
 <label class="sr" for="n-{ident}">Ton adresse e-mail</label>
 <div class="field"><input id="n-{ident}" type="email" name="email" required placeholder="ton@email.fr" autocomplete="email"><button class="btn" type="submit">{label}</button></div>
 <small>Un e-mail le jour où l'échantillon est disponible, c'est tout.</small>
@@ -264,7 +264,7 @@ def build():
     for f in ("style.css", "app.js", "favicon.svg"): shutil.copy(ROOT / "src" / f, DIST / f)
     if (ROOT / "src/assets").exists(): shutil.copytree(ROOT / "src/assets", DIST / "assets")
     (DIST / "assets").mkdir(exist_ok=True)
-    (DIST / "assets/config.js").write_text("window.OLFA=" + json.dumps({"form": CFG.get("form")}) + ";")
+    (DIST / "assets/config.js").write_text("window.OLFA=" + json.dumps({"form": CFG.get("form"), "form_ech": CFG.get("form_ech")}) + ";")
     def sidx(o):
         d = best(o)
         return {"n": o["name"], "b": o["brand"], "s": o["slug"], "i": rs(o["image"], 96) if o["image"] else "",
@@ -467,8 +467,8 @@ def build():
 <section class="wrap sec tight"><h2 class="h2 small">Les premiers au catalogue</h2><div class="pcards">{pick_html}</div></section>
 <section class="wrap sec" id="prevenir"><div class="notify"><div class="n-img">{img(media.get("sample_box"), "Une box d'échantillons", ws=(500, 800), sizes="(max-width:720px) 92vw, 380px", ratio=5/4)}</div>
 <div class="n-txt"><h2 class="h2 small">Préviens-moi<br><span>au lancement.</span></h2><p class="sub">Dis-nous quel parfum tu veux essayer en premier : les plus demandés arriveront d'abord.</p>
-<form class="form" name="echantillon" method="POST" data-netlify="true" netlify-honeypot="site" data-kind="notify" novalidate>
-<input type="hidden" name="form-name" value="echantillon"><input type="hidden" name="source" value="page-echantillons"><p hidden><label>Ne pas remplir <input name="site"></label></p>
+<form class="form" name="echantillon" data-kind="notify" novalidate>
+<input type="hidden" name="source" value="page-echantillons"><p hidden><label>Ne pas remplir <input name="site"></label></p>
 <label class="sel"><span>Le parfum que tu veux essayer</span><select name="parfum"><option value="">Choisis un parfum (facultatif)</option>{opts}</select></label>
 <label class="sr" for="n-ech">Ton adresse e-mail</label>
 <div class="field"><input id="n-ech" type="email" name="email" required placeholder="ton@email.fr" autocomplete="email"><button class="btn" type="submit">Me prévenir</button></div>
