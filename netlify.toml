@@ -1,2 +1,9 @@
 [build]
   publish = "dist"
+
+# Le site a déménagé sur Cloudflare Pages (15/10/2026) : l'ancienne adresse renvoie vers la nouvelle.
+[[redirects]]
+  from = "https://olfamatch.netlify.app/*"
+  to = "https://olfamatch.pages.dev/:splat"
+  status = 301
+  force = true
