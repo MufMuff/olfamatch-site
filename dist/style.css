@@ -268,6 +268,9 @@ main{min-height:60vh}
 .m-txt .fine{color:var(--muted)}
 
 /* bloc PDF */
+.t30h{margin:44px 0 14px}
+.samples .form{margin-top:22px}
+.samples .link{display:inline-block;margin-top:14px}
 .band{display:grid;grid-template-columns:300px 1fr;gap:64px;align-items:center;padding:56px;border-radius:28px;background:linear-gradient(135deg,color-mix(in oklab,var(--amb) 18%,var(--bg-2)),var(--bg-2) 60%);border:1px solid var(--line);overflow:hidden}
 .band-txt h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4vw,52px);line-height:1.02;margin:0 0 16px}
 .band-txt h2 span{color:var(--gold-soft)}

@@ -1,5 +1,5 @@
 """Génère le site statique Olfamatch dans dist/ à partir de data/parfums.json.
-Usage : python3 build.py   (puis python3 pdf_top30.py pour le PDF et son aperçu)
+Usage : python3 build.py
 Images : data/images.json  ("slug" pour l'original, "slug/idAlternative" pour une alternative).
 Couleurs : data/colors.json (mêmes clés) = couleur d'ambiance de chaque flacon.
 Accords : data/accords.json (mêmes clés) = accords principaux (source Fragrantica), en % du plus fort.
@@ -133,14 +133,6 @@ def search_box(rel, ident="q"):
 <input id="{ident}" type="search" autocomplete="off" placeholder="Ton parfum : Sauvage, Libre…" aria-autocomplete="list">
 <div class="suggest" role="listbox"></div></div>'''
 
-def email_form(source):
-    return f'''<form class="form" name="top30" data-source="{source}" data-kind="pdf" novalidate>
-<input type="hidden" name="source" value="{source}"><p hidden><label>Ne pas remplir <input name="site"></label></p>
-<label class="sr" for="em-{source}">Ton adresse e-mail</label>
-<div class="field"><input id="em-{source}" type="email" name="email" required placeholder="ton@email.fr" autocomplete="email"><button class="btn" type="submit">Recevoir le PDF</button></div>
-<small>Un seul e-mail avec le PDF, puis de temps en temps une nouvelle alternative. Désinscription en un clic.</small>
-<p class="ok" hidden></p></form>'''
-
 def notify_form(source, parfum, label="Me prévenir"):
     """Inscription « préviens-moi quand l'échantillon arrive » (groupe MailerLite « Échantillons »)."""
     ident = re.sub(r"[^a-z0-9]+", "-", (source + "-" + parfum).lower())[:60]
@@ -150,12 +142,6 @@ def notify_form(source, parfum, label="Me prévenir"):
 <div class="field"><input id="n-{ident}" type="email" name="email" required placeholder="ton@email.fr" autocomplete="email"><button class="btn" type="submit">{label}</button></div>
 <small>Un e-mail le jour où l'échantillon est disponible, c'est tout.</small>
 <p class="ok" hidden></p></form>'''
-
-def pdf_band(source):
-    return f'''<div class="band"><div class="phone reveal" aria-hidden="true"><div class="notch"></div><div class="screen"><img src="/top-30/apercu.png" alt="" loading="lazy"></div></div>
-<div class="band-txt"><h2>Le Top 30,<br><span>en PDF, gratuit.</span></h2>
-<p class="sub">Les 30 alternatives les plus sûres de l'annuaire : 10 grands classiques, 10 parfums très demandés, 10 parfums de niche. À garder dans ton téléphone pour ta prochaine parfumerie.</p>
-{email_form(source)}</div></div>'''
 
 def page(path, title, desc, body, nav="", amb=None, cls="", og=None):
     url = SITE + "/" + path.replace("index.html", "")
@@ -176,7 +162,7 @@ def page(path, title, desc, body, nav="", amb=None, cls="", og=None):
 <div class="overlay" hidden><div class="wrap"><button class="s-close" type="button">Fermer</button><p class="o-title">Quel parfum tu aimes ?</p>{search_box(rel, "q2")}</div></div>
 <main>{body}</main>
 <footer><div class="wrap"><div class="f-top"><a class="logo" href="{rel}">olfa<b>match</b></a>
-<p class="f-links"><a href="{rel}annuaire/">Annuaire</a><a href="{rel}quiz/">Quiz</a><a href="{rel}echantillons/">Échantillons</a><a href="{rel}ma-liste/">Ma liste</a><a href="{rel}top-30/">Top 30 gratuit</a><a href="{rel}mentions-legales/">Mentions légales</a><a href="https://www.tiktok.com/@olfamatch" rel="noopener">TikTok</a><a href="https://www.instagram.com/olfamatch" rel="noopener">Instagram</a></p></div>
+<p class="f-links"><a href="{rel}annuaire/">Annuaire</a><a href="{rel}quiz/">Quiz</a><a href="{rel}echantillons/">Échantillons</a><a href="{rel}ma-liste/">Ma liste</a><a href="{rel}top-30/">Top 30</a><a href="{rel}mentions-legales/">Mentions légales</a><a href="https://www.tiktok.com/@olfamatch" rel="noopener">TikTok</a><a href="https://www.instagram.com/olfamatch" rel="noopener">Instagram</a></p></div>
 <p>Olfamatch répertorie des parfums plus abordables proches de grands parfums, à partir de sources publiques. Les boutons d'achat sont des liens affiliés : Olfamatch touche une petite commission sur les achats, sans surcoût pour toi. En tant que Partenaire Amazon, Olfamatch réalise un bénéfice sur les achats remplissant les conditions requises.</p>
 <p>Les noms de parfums et de marques appartiennent à leurs propriétaires et sont cités uniquement pour identifier les produits comparés. Olfamatch n'est affilié à aucune de ces marques. Photos de flacons : illustrations. Familles olfactives : classement Olfamatch, complété par les accords principaux publiés par la communauté Fragrantica quand ils sont affichés.</p></div></footer>
 <script src="{rel}assets/config.js"></script><script src="{rel}app.js" defer></script></body></html>'''
@@ -348,11 +334,10 @@ def build():
 <section class="wrap sec samples reveal"><div class="sp-media">{img(media.get("sample_fill"), "Une fiole d'échantillon remplie à la pipette", ws=(800, 1400), sizes="(max-width:720px) 92vw, 55vw", crop=False)}{video("v_fill", media.get("sample_fill"))}</div>
 <div class="sp-txt"><p class="tag">Bientôt</p><h2 class="h2">Sens-le<br><span>avant d'acheter.</span></h2>
 <p class="sub">Des échantillons des alternatives les plus demandées, remplis à la main et envoyés chez toi. Pour essayer sur ta peau avant de commander le grand flacon.</p>
-<div class="offers">{offers_html}</div><a class="btn" href="echantillons/">Être prévenu du lancement</a></div></section>
+<div class="offers">{offers_html}</div>{notify_form("home", "", "Me prévenir")}<a class="link" href="echantillons/">Tout savoir sur les échantillons →</a></div></section>
 <section class="wrap sec manifesto reveal"><p class="big">On n'a rien senti à ta place.<br><span>On a tout croisé.</span></p>
 <div class="m-txt"><p>Chaque paire est confirmée par des comparatifs indépendants : plus ils sont nombreux, plus l'indice monte. On compare ensuite les ingrédients publiés des deux parfums, puis on ramène tous les prix à 100 ml pour que tu compares ce qui est comparable.</p>
-<p class="fine">Indice calculé par Olfamatch à partir de sources publiques, pas une mesure en laboratoire. Une alternative reste un autre parfum : proche, pas identique.</p></div></section>
-<section class="wrap sec">{pdf_band("home")}</section>'''
+<p class="fine">Indice calculé par Olfamatch à partir de sources publiques, pas une mesure en laboratoire. Une alternative reste un autre parfum : proche, pas identique.</p></div></section>'''
     page("index.html", "Olfamatch : l'alternative moins chère à ton parfum de luxe",
          f"Trouve l'alternative la plus proche de {len(data)} parfums de luxe et de niche, avec le prix et l'économie réalisée.", home, amb=colors.get("_hero"), cls="home", og=rs(images["_hero"], 1200))
 
@@ -429,8 +414,7 @@ def build():
 <div class="n-txt"><p class="tag">Bientôt</p><h2 class="h2 small">Sentir {e(b["name"])}<br><span>avant d'acheter.</span></h2>
 <p class="sub">On prépare des échantillons de 2 ml remplis à la main. Laisse ton e-mail : on te prévient le jour où celui-ci est disponible.</p>
 {notify_form("fiche", b["name"] + " (" + o["name"] + ")")}</div></div></section>
-<p class="wrap fine">Indice calculé par Olfamatch à partir de sources publiques, pas une mesure en laboratoire. Prix ramenés à 100 ml, relevés en octobre 2026 : ils peuvent avoir changé.</p>
-<section class="wrap sec">{pdf_band("fiche")}</section>{sbar}'''
+<p class="wrap fine">Indice calculé par Olfamatch à partir de sources publiques, pas une mesure en laboratoire. Prix ramenés à 100 ml, relevés en octobre 2026 : ils peuvent avoir changé.</p>{sbar}'''
         page(f'alternative/{o["slug"]}/index.html', title + " | Olfamatch",
              f'L\'alternative la plus proche de {o["name"]} ({o["brand"]}) : {b["name"]} de {b["brand"]}, indice de ressemblance {b["index"]} %.' + (f' Jusqu\'à {b["saving"]} % moins cher.' if b["saving"] else ""), body, amb=c, cls="fiche",
              og=rs(o["image"], 1200) if o["image"] else None)
@@ -446,8 +430,7 @@ def build():
 <div class="qstep" data-step="p" hidden><h2 class="q">Ton budget pour 100 ml ?</h2><div class="qopts"><button class="qopt" type="button" data-v="30">Moins de 30 €</button><button class="qopt" type="button" data-v="50">Moins de 50 €</button><button class="qopt" type="button" data-v="">Peu importe</button></div></div>
 <div class="qres" hidden><h2 class="q">Tes alternatives<span>.</span></h2><p class="sub qres-sub"></p><div class="qcards"></div>
 <div class="qres-end"><button class="btn ghost qrestart" type="button">Recommencer</button><a class="link" href="../annuaire/">Voir tout l'annuaire →</a></div></div>
-<button class="qback" type="button" hidden>← Retour</button></section>
-<section class="wrap sec">{pdf_band("quiz")}</section>'''
+<button class="qback" type="button" hidden>← Retour</button></section>'''
     page("quiz/index.html", "Quiz : trouve l'alternative à ton goût | Olfamatch",
          "Quatre questions sur ce que tu aimes sentir et ton budget, et Olfamatch te propose les alternatives qui te correspondent.", quizp, "quiz", cls="quizpage")
 
@@ -483,13 +466,16 @@ def build():
     page("ma-liste/index.html", "Ma liste | Olfamatch", "Les parfums que tu as gardés sur Olfamatch.", liste, "liste")
 
     # ---------- top 30 ----------
-    t30 = [(o, d) for o in data for d in o["dupes"] if d["top30"]]
-    lst = "".join(f'<li><a href="../alternative/{o["slug"]}/">{e(o["name"])}</a> → {e(d["name"])}</li>' for o, d in t30[:6])
+    t30o = []
+    for o in data:
+        if any(d["top30"] for d in o["dupes"]) and o not in t30o: t30o.append(o)
+    grp = "".join(f'''<h2 class="h2 small t30h">{titre}</h2><div class="rows">{"".join(row(o, "../", i) for i, o in enumerate([x for x in t30o if x["level"].startswith(lvl)]))}</div>'''
+                  for titre, lvl in [("Les grands classiques", "Top"), ("Les très demandés", "Demandé"), ("La niche", "Niche")] if any(x["level"].startswith(lvl) for x in t30o))
     top30 = f'''<section class="wrap sec first"><h1 class="h1">Le Top 30<span>.</span></h1>
-<p class="sub">Les 30 paires les plus sûres de l'annuaire : l'original, l'alternative, l'indice et l'économie, sur deux pages faciles à garder dans ton téléphone. On y trouve par exemple :</p>
-<ul class="t30">{lst}<li>… et 24 autres</li></ul></section><section class="wrap sec">{pdf_band("top30")}</section>'''
-    page("top-30/index.html", "Top 30 des alternatives aux parfums de luxe (PDF gratuit) | Olfamatch",
-         "Reçois gratuitement le PDF des 30 alternatives les plus sûres aux parfums de luxe et de niche.", top30, "top30")
+<p class="sub">Les {len(t30o)} paires les plus sûres de l'annuaire : celles que le plus de comparatifs indépendants confirment. Clique sur une ligne pour voir la fiche complète.</p>
+{grp}</section>'''
+    page("top-30/index.html", "Top 30 des alternatives aux parfums de luxe | Olfamatch",
+         "Les 30 alternatives les plus sûres aux parfums de luxe et de niche : grands classiques, parfums très demandés et niche, avec l'économie réalisée.", top30, "top30")
 
     ml = f'''<section class="wrap sec first legal"><h1 class="h1">Mentions légales<span>.</span></h1>
 <p><strong>Éditeur</strong><br>{e(CFG.get("editeur","Olfamatch"))}<br>Contact : <a href="mailto:olfamatch.contact@gmail.com">olfamatch.contact@gmail.com</a></p>
@@ -497,7 +483,7 @@ def build():
 <p><strong>Liens affiliés</strong><br>Les boutons d'achat renvoient vers des boutiques partenaires. Olfamatch touche une commission sur les achats effectués via ces liens, sans surcoût pour toi. En tant que Partenaire Amazon, Olfamatch réalise un bénéfice sur les achats remplissant les conditions requises.</p>
 <p><strong>Marques et visuels</strong><br>Les noms de parfums et de marques cités appartiennent à leurs propriétaires. Ils sont mentionnés uniquement pour identifier les produits comparés. Olfamatch n'est lié à aucune de ces marques. Les alternatives présentées sont des parfums distincts, proches dans leur style olfactif, et non des reproductions. Les photos de flacons et les vidéos sont des illustrations.</p>
 <p><strong>Indice de ressemblance et accords</strong><br>L'indice est calculé par Olfamatch à partir du nombre de sources publiques indépendantes qui rapprochent deux parfums et des ingrédients publiés. Ce n'est pas une mesure en laboratoire. Les familles olfactives sont un classement établi par Olfamatch. Les barres d'accords, quand elles sont affichées, reprennent les accords principaux publiés par la communauté Fragrantica.</p>
-<p><strong>Données personnelles</strong><br>L'adresse e-mail laissée pour recevoir le PDF ou être prévenu du lancement des échantillons sert uniquement à t'envoyer ce que tu as demandé et les nouveautés d'Olfamatch. Tu peux te désinscrire à tout moment avec le lien présent dans chaque e-mail, ou en écrivant à l'adresse de contact. « Ma liste » est enregistrée uniquement dans ton navigateur. Le site ne dépose pas de cookie publicitaire.</p></section>'''
+<p><strong>Données personnelles</strong><br>L'adresse e-mail laissée pour être prévenu du lancement des échantillons sert uniquement à te prévenir de ce lancement et à t'envoyer les nouveautés d'Olfamatch. Tu peux te désinscrire à tout moment avec le lien présent dans chaque e-mail, ou en écrivant à l'adresse de contact. « Ma liste » est enregistrée uniquement dans ton navigateur. Le site ne dépose pas de cookie publicitaire.</p></section>'''
     page("mentions-legales/index.html", "Mentions légales | Olfamatch", "Mentions légales du site Olfamatch.", ml)
     urls.append("mentions-legales/")
     page("404.html", "Page introuvable | Olfamatch", "Cette page n'existe pas.",
