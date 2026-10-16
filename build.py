@@ -4,9 +4,9 @@ Images : data/images.json  ("slug" pour l'original, "slug/idAlternative" pour un
 Couleurs : data/colors.json (mêmes clés) = couleur d'ambiance de chaque flacon.
 Accords : data/accords.json (mêmes clés) = accords principaux (source Fragrantica), en % du plus fort.
 Médias : data/media.json = vidéos et visuels générés (ouverture, univers, échantillons, familles)."""
-import json, html, shutil, re, math
+import json, html, shutil, re, math, subprocess, datetime
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 ROOT = Path(__file__).parent
 DIST = ROOT / "dist"
@@ -99,6 +99,31 @@ def fam_of(o):
     return {f: round((ac[f] + ed.get(f, 0)) / 2, 3) for f in FAM}
 for o in data: o["fam"] = fam_of(o)
 
+SITE_NAMES = {"pickmyclone.com": "PickMyClone", "scentverdict.com": "ScentVerdict", "scentonym.com": "Scentonym", "fragrantica.com": "Fragrantica",
+    "sniffalike.com": "Sniffalike", "melissajanelee.com": "Melissa Jane Lee", "chaosfragrances.com": "Chaos Fragrances", "scento.com": "Scento",
+    "fragdna.com": "FragDNA", "tonkava.com": "Tonkava", "youtube.com": "YouTube", "scentmetric.com": "ScentMetric", "thescentatlas.com": "The Scent Atlas",
+    "scentfile.com": "Scentfile", "perfumeclonefinder.com": "Perfume Clone Finder", "dupedex.com": "Dupedex", "fragranzo.com": "Fragranzo",
+    "10fragrances.com": "10 Fragrances", "parfumo.com": "Parfumo", "perfumenez.com": "Perfumenez", "reddit.com": "Reddit", "dupecabinet.com": "Dupe Cabinet",
+    "thescentbase.com": "The Scent Base", "theduabrand.com": "le site de Dua", "fragrancereview.com": "FragranceReview", "arabicparfums.com": "Arabic Parfums", "altscent.app": "AltScent",
+    "lemon8-app.com": "Lemon8", "osmoz.com": "Osmoz", "tiktok.com": "TikTok", "fragbar.com": "FragBar", "whowhatwear.com": "Who What Wear"}
+def site_name(url):
+    host = urlparse(url).netloc.lower().removeprefix("www.").removeprefix("fr.").removeprefix("m.")
+    if host in SITE_NAMES: return SITE_NAMES[host]
+    base = host.rsplit(".", 1)[0] if "." in host else host
+    return base.replace("-", " ").title()
+BRAND_SITES = ("theduabrand.com",)
+MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+def maj_date():
+    """Mois de la dernière mise à jour des données (date du dernier enregistrement de data/)."""
+    try:
+        d = subprocess.run(["git", "log", "-1", "--format=%cs", "--", "data/"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        y, m, _ = d.split("-")
+    except Exception:
+        t = datetime.date.today(); y, m = t.year, t.month
+    return f"{MOIS[int(m) - 1]} {y}"
+MAJ = maj_date()
+CONTACT = "olfamatch.contact@gmail.com"
+
 def rs(url, w):
     """Version redimensionnée en WebP (proxy d'images de Higgsfield)."""
     return f"https://images.higgs.ai/?default=1&output=webp&url={quote(url, safe='')}&w={w}&q=80"
@@ -148,6 +173,9 @@ def page(path, title, desc, body, nav="", amb=None, cls="", og=None):
     rel = "/" if path == "404.html" else "../" * path.count("/")
     cur = lambda n: ' aria-current="page"' if nav == n else ""
     ogimg = f'<meta property="og:image" content="{e(og)}">' if og else ""
+    # Grands titres : apparition ligne par ligne (voir app.js)
+    body = re.sub(r'<(h1|h2|p) class="(h1|h2|v-title|big)\b', r'<\1 data-split class="\2', body)
+    body = body.replace('<div class="wrap hero-copy"><h1>', '<div class="wrap hero-copy"><h1 data-split>')
     out = f'''<!doctype html><html lang="fr" style="--amb:{amb or "#5a2140"}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}">
@@ -364,7 +392,13 @@ def build():
         return f'<div class="buy {cls}"><small class="aff">Lien d\'achat bientôt disponible</small></div>'
     def srcs(d):
         if not d["sourceLinks"]: return ""
-        return '<details><summary>Les sources</summary><p>' + "<br>".join(f'<a href="{e(u)}" rel="nofollow noopener" target="_blank">{e(u)}</a>' for u in d["sourceLinks"]) + '</p></details>'
+        seen, links = set(), []
+        for u in d["sourceLinks"]:
+            n = site_name(u)
+            if n in seen: continue
+            seen.add(n); links.append(f'<a href="{e(u)}" rel="nofollow noopener" target="_blank">{e(n)}</a>')
+        txt = links[0] if len(links) == 1 else ", ".join(links[:-1]) + " et " + links[-1]
+        return f'<p class="srcs">Repéré par {txt}.</p>'
     RING = '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="r-bg"/><circle cx="60" cy="60" r="52" class="r-fg" pathLength="100"/></svg>'
     for o in data:
         rel = "../../"
@@ -383,6 +417,9 @@ def build():
         oprice = f'<s>{euro(o["price100"])}</s>' if o["price100"] else ""
         bprice = f'<strong>{euro(b["price100"])}</strong>' if b["price100"] else ""
         ns = b["sources"] or 0
+        own = any(urlparse(u).netloc.endswith(BRAND_SITES) for u in (b["sourceLinks"] or []))  # site de la marque de l'alternative : pas une source indépendante
+        ind = max(ns - (1 if own else 0), 0)
+        src_lbl = f'{ind} source{"s" if ind > 1 else ""} indépendante{"s" if ind > 1 else ""}' + (" + le site de la marque" if own else "")
         note = f'<p class="note">{e(b["note"])}</p>' if b["note"] else ""
         others = ""
         for d in o["dupes"]:
@@ -392,6 +429,7 @@ def build():
             others += f'''<article class="other reveal" style="--c:{d["color"] or GOLD}">{thumb(d["image"], d["name"], d["color"])}<div class="o-main"><h3>{e(d["name"])}</h3><p class="brand">{e(d["brand"])}</p><div class="facts">{facts}</div>{dn}{srcs(d)}</div>{buy(d)}</article>'''
         others_html = f'<section class="wrap sec tight" id="autres"><h2 class="h2 small">Les autres pistes</h2>{others}</section>' if others else ""
         rel_html = "".join(card(x, rel) for x in related(o))
+        report = "mailto:" + CONTACT + "?subject=" + quote(f'Erreur sur la fiche {o["name"]} ({o["brand"]})') + "&body=" + quote(f'Bonjour,\n\nSur la page {SITE}/alternative/{o["slug"]}/ :\n\n')
         title = f'Alternative à {o["name"]} de {o["brand"]}' + (f' : {b["name"]} (−{b["saving"]} %)' if b["saving"] else f' : {b["name"]}')
         sbar = (f'''<div class="sbar" hidden>{thumb(b["image"], b["name"], b["color"], 120, "44px")}<span class="sb-t"><b>{e(b["name"])}</b><i>{euro(b["price100"]) + " les 100 ml" if b["price100"] else e(b["brand"])}</i></span>
 <a class="btn" href="{e(b["link"])}" rel="sponsored nofollow noopener" target="_blank">Voir le prix</a></div>''' if b["link"] else "")
@@ -404,10 +442,12 @@ def build():
 <figure class="vs-card vs-a">{b_pic}<figcaption><span>L'alternative</span><b>{e(b["name"])}</b><i>{e(b["brand"])}</i>{bprice}</figcaption></figure></div>
 <div class="verdict">{vsave}<div class="v-cta">{vbuy}{fav}</div>
 <p class="v-more"><a href="#echantillon">Échantillon 2 ml : me prévenir</a>{' · <a href="#autres">' + str(len(o["dupes"])-1) + ' autre' + ("s" if len(o["dupes"]) > 2 else "") + ' piste' + ("s" if len(o["dupes"]) > 2 else "") + '</a>' if len(o["dupes"]) > 1 else ""}</p>
-{'<p class="aff">Lien affilié · ' + e(b["priceDetail"]) + '</p>' if b["link"] and b["priceDetail"] else ""}</div></div></section>
+{'<p class="aff">Lien affilié · ' + e(b["priceDetail"]) + '</p>' if b["link"] and b["priceDetail"] else ""}
+<p class="v-meta">Fiche mise à jour en {MAJ} · <a href="{e(report)}">Signaler une erreur</a></p></div></div></section>
+<div class="v-band" aria-hidden="true"><div class="vn-track">{('<span>' + e(o["name"]) + '</span><span class="alt">' + e(b["name"]) + '</span>') * 4}</div></div>
 {accords_block(o, b)}
 <section class="wrap sec tight why reveal" style="--c:{b["color"] or c}"><div><p class="tag">Pourquoi cette alternative</p><h2 class="h2 small">{e(b["name"])}<span>.</span></h2><p class="brand">{e(b["brand"])}</p>
-<div class="facts">{match(b["index"], big=True)}<span class="src">{ns} source{"s" if ns > 1 else ""} indépendante{"s" if ns > 1 else ""}</span></div>{note}{srcs(b)}</div>{buy(b, True)}</section>
+<div class="facts">{match(b["index"], big=True)}<span class="src">{src_lbl}</span></div>{note}{srcs(b)}</div>{buy(b, True)}</section>
 {others_html}
 <section class="wrap sec tight"><div class="sec-row"><h2 class="h2 small">Tu aimeras aussi</h2><a class="link" href="{rel}quiz/">Faire le quiz →</a></div><div class="pcards">{rel_html}</div></section>
 <section class="wrap sec" id="echantillon"><div class="notify"><div class="n-img">{img(media.get("sample_box"), "Une box d'échantillons de parfum", ws=(500, 800), sizes="(max-width:720px) 92vw, 380px", crop=True, ratio=5/4)}</div>

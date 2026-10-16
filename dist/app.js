@@ -142,6 +142,44 @@
   const watch = el => io ? io.observe(el) : fire(el);
   document.querySelectorAll(".reveal").forEach(watch);
 
+  /* Grands titres : chaque mot est glissé dans un cache, les lignes montent l'une après l'autre */
+  const splitTitle = el => {
+    const walk = node => [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        if (!n.textContent.trim()) return;
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(p => {
+          if (!p) return;
+          if (!p.trim()) { frag.appendChild(document.createTextNode(p)); return; }
+          const w = document.createElement("span"), i = document.createElement("span");
+          w.className = "sw"; i.className = "si"; i.textContent = p; w.appendChild(i); frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") walk(n);
+    });
+    walk(el);
+    const ws = [...el.querySelectorAll(".sw")];
+    const top = w => Math.round(w.getBoundingClientRect().top);
+    const lines = [...new Set(ws.map(top))].sort((a, b) => a - b);
+    ws.forEach(w => w.style.setProperty("--l", lines.indexOf(top(w))));
+    el.classList.add("split-ready");
+  };
+  document.querySelectorAll("[data-split]").forEach(el => { if (!reduced) splitTitle(el); else el.classList.add("split-ready"); watch(el); });
+
+  /* Passage d'une page à l'autre : le flacon cliqué « vole » jusqu'à la fiche (navigateurs récents) */
+  const clearVT = () => document.querySelectorAll("[data-vt]").forEach(x => { x.style.viewTransitionName = ""; delete x.dataset.vt; });
+  document.addEventListener("click", ev => {
+    const a = ev.target.closest && ev.target.closest('a[href*="alternative/"]');
+    if (!a || ev.defaultPrevented || ev.metaKey || ev.ctrlKey || ev.shiftKey || a.target === "_blank") return;
+    const pic = a.querySelector("img");
+    if (!pic) return;
+    clearVT();
+    const here = document.querySelector(".vs-o img");
+    if (here && here !== pic) { here.style.viewTransitionName = "none"; here.dataset.vt = 1; }
+    pic.style.viewTransitionName = "bottle"; pic.dataset.vt = 1;
+  });
+  window.addEventListener("pageshow", clearVT);
+
   /* Carrousel des paires : la lumière du site prend la couleur du flacon affiché */
   const slider = document.querySelector(".slider");
   if (slider) {
