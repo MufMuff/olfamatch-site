@@ -190,7 +190,7 @@ def page(path, title, desc, body, nav="", amb=None, cls="", og=None):
 <div class="overlay" hidden><div class="wrap"><button class="s-close" type="button">Fermer</button><p class="o-title">Quel parfum tu aimes ?</p>{search_box(rel, "q2")}</div></div>
 <main>{body}</main>
 <footer><div class="wrap"><div class="f-top"><a class="logo" href="{rel}">olfa<b>match</b></a>
-<p class="f-links"><a href="{rel}annuaire/">Annuaire</a><a href="{rel}quiz/">Quiz</a><a href="{rel}echantillons/">Échantillons</a><a href="{rel}ma-liste/">Ma liste</a><a href="{rel}top-30/">Top 30</a><a href="{rel}mentions-legales/">Mentions légales</a><a href="https://www.tiktok.com/@olfamatch" rel="noopener">TikTok</a><a href="https://www.instagram.com/olfamatch" rel="noopener">Instagram</a></p></div>
+<p class="f-links"><a href="{rel}annuaire/">Annuaire</a><a href="{rel}quiz/">Quiz</a><a href="{rel}echantillons/">Échantillons</a><a href="{rel}ma-liste/">Ma liste</a><a href="{rel}top-30/">Top 30</a><a href="{rel}pourquoi-olfamatch/">Pourquoi Olfamatch</a><a href="{rel}mentions-legales/">Mentions légales</a><a href="https://www.tiktok.com/@olfamatch" rel="noopener">TikTok</a><a href="https://www.instagram.com/olfamatch" rel="noopener">Instagram</a></p></div>
 <p>Olfamatch répertorie des parfums plus abordables proches de grands parfums, à partir de sources publiques. Les boutons d'achat sont des liens affiliés : Olfamatch touche une petite commission sur les achats, sans surcoût pour toi. En tant que Partenaire Amazon, Olfamatch réalise un bénéfice sur les achats remplissant les conditions requises.</p>
 <p>Les noms de parfums et de marques appartiennent à leurs propriétaires et sont cités uniquement pour identifier les produits comparés. Olfamatch n'est affilié à aucune de ces marques. Photos de flacons : illustrations. Familles olfactives : classement Olfamatch, complété par les accords principaux publiés par la communauté Fragrantica quand ils sont affichés.</p></div></footer>
 <script src="{rel}assets/config.js"></script><script src="{rel}app.js" defer></script></body></html>'''
@@ -517,9 +517,22 @@ def build():
     page("top-30/index.html", "Top 30 des alternatives aux parfums de luxe | Olfamatch",
          "Les 30 alternatives les plus sûres aux parfums de luxe et de niche : grands classiques, parfums très demandés et niche, avec l'économie réalisée.", top30, "top30")
 
+    apropos = f'''<section class="wrap sec first legal about"><p class="tag">Pourquoi Olfamatch</p><h1 class="h1">Le parfum qu'on aime,<br><span>sans le prix qui fait mal.</span></h1>
+<p class="lead">Olfamatch est né d'une passion pour le parfum, et d'une frustration : les parfums qu'on a vraiment envie de porter coûtent souvent 150, 200, parfois 300 € le flacon.</p>
+<p>En cherchant des alternatives moins chères, on tombe sur des dizaines de comparatifs, de vidéos et de forums. Ils ne disent pas tous la même chose, et on ne sait jamais à qui se fier.</p>
+<p>Alors j'ai voulu tout rassembler au même endroit. Pour chaque parfum, je recoupe les comparatifs publiés, je ne garde que les alternatives que d'autres ont déjà rapprochées, et j'affiche d'où vient l'info. Quand plusieurs sources indépendantes sont d'accord, l'indice de ressemblance monte. Quand une seule en parle, il reste prudent.</p>
+<p>Je ne prétends pas avoir senti chaque flacon. Mon travail, c'est de chercher, de recouper et de classer, pour que tu saches quoi aller sentir et combien tu peux économiser. Le dernier mot revient toujours à ton nez.</p>
+<p>Olfamatch est un petit projet indépendant, en France. Il n'est lié à aucune marque. Le site est gratuit : il vit des petites commissions sur les liens d'achat, sans surcoût pour toi.</p>
+<p>Une erreur, une alternative oubliée, un parfum que tu aimerais voir ici ? Écris-moi à <a href="mailto:{CONTACT}">{CONTACT}</a>. Je lis tout et je corrige.</p>
+<p class="sign">— Le fondateur d'Olfamatch</p>
+<div class="about-cta"><a class="btn" href="../annuaire/">Parcourir l'annuaire</a><a class="link" href="../quiz/">Faire le quiz →</a></div></section>'''
+    page("pourquoi-olfamatch/index.html", "Pourquoi Olfamatch existe | Olfamatch",
+         "Olfamatch rassemble les alternatives aux parfums de luxe que plusieurs comparatifs indépendants confirment. Un projet indépendant, gratuit, lié à aucune marque.", apropos)
+    urls.append("pourquoi-olfamatch/")
+
     ml = f'''<section class="wrap sec first legal"><h1 class="h1">Mentions légales<span>.</span></h1>
 <p><strong>Éditeur</strong><br>{e(CFG.get("editeur","Olfamatch"))}<br>Contact : <a href="mailto:olfamatch.contact@gmail.com">olfamatch.contact@gmail.com</a></p>
-<p><strong>Hébergement</strong><br>Netlify, Inc., 512 2nd Street, Suite 200, San Francisco, CA 94107, États-Unis.</p>
+<p><strong>Hébergement</strong><br>Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis (service Cloudflare Pages).</p>
 <p><strong>Liens affiliés</strong><br>Les boutons d'achat renvoient vers des boutiques partenaires. Olfamatch touche une commission sur les achats effectués via ces liens, sans surcoût pour toi. En tant que Partenaire Amazon, Olfamatch réalise un bénéfice sur les achats remplissant les conditions requises.</p>
 <p><strong>Marques et visuels</strong><br>Les noms de parfums et de marques cités appartiennent à leurs propriétaires. Ils sont mentionnés uniquement pour identifier les produits comparés. Olfamatch n'est lié à aucune de ces marques. Les alternatives présentées sont des parfums distincts, proches dans leur style olfactif, et non des reproductions. Les photos de flacons et les vidéos sont des illustrations.</p>
 <p><strong>Indice de ressemblance et accords</strong><br>L'indice est calculé par Olfamatch à partir du nombre de sources publiques indépendantes qui rapprochent deux parfums et des ingrédients publiés. Ce n'est pas une mesure en laboratoire. Les familles olfactives sont un classement établi par Olfamatch. Les barres d'accords, quand elles sont affichées, reprennent les accords principaux publiés par la communauté Fragrantica.</p>

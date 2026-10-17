@@ -701,3 +701,7 @@ footer p{max-width:62em}
   .si{transform:none}
   .js [data-split]{visibility:visible}
 }
+.about .lead{font-size:clamp(19px,2.2vw,23px);color:var(--ivory);max-width:720px;margin:18px 0 22px}
+.about p{max-width:680px;line-height:1.7}
+.about .sign{font-family:var(--serif,serif);font-style:italic;color:var(--gold-soft);font-size:19px;margin-top:30px}
+.about-cta{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:34px}
