@@ -123,6 +123,9 @@ def maj_date():
     return f"{MOIS[int(m) - 1]} {y}"
 MAJ = maj_date()
 CONTACT = "olfamatch.contact@gmail.com"
+# « Crée ton parfum » : réglages de vente ; tant que publie vaut false, l'outil reste hors du menu et non référencé.
+BOUTIQUE = json.loads((ROOT / "data/creer/boutique.json").read_text(encoding="utf-8")) if (ROOT / "data/creer/boutique.json").exists() else {}
+CREER_PUBLIE = bool(BOUTIQUE.get("publie"))
 
 def rs(url, w):
     """Version redimensionnée en WebP (proxy d'images de Higgsfield)."""
@@ -168,7 +171,7 @@ def notify_form(source, parfum, label="Me prévenir"):
 <small>Un e-mail le jour où l'échantillon est disponible, c'est tout.</small>
 <p class="ok" hidden></p></form>'''
 
-def page(path, title, desc, body, nav="", amb=None, cls="", og=None):
+def page(path, title, desc, body, nav="", amb=None, cls="", og=None, robots=False):
     url = SITE + "/" + path.replace("index.html", "")
     rel = "/" if path == "404.html" else "../" * path.count("/")
     cur = lambda n: ' aria-current="page"' if nav == n else ""
@@ -178,19 +181,19 @@ def page(path, title, desc, body, nav="", amb=None, cls="", og=None):
     body = body.replace('<div class="wrap hero-copy"><h1>', '<div class="wrap hero-copy"><h1 data-split>')
     out = f'''<!doctype html><html lang="fr" style="--amb:{amb or "#5a2140"}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>{e(title)}</title><meta name="description" content="{e(desc)}">
+<title>{e(title)}</title><meta name="description" content="{e(desc)}">{'<meta name="robots" content="noindex">' if robots else ""}
 <link rel="canonical" href="{url}"><meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}">{ogimg}
 <meta property="og:type" content="website"><meta property="og:url" content="{url}"><meta name="theme-color" content="#160A13"><script>document.documentElement.classList.add("js")</script>
 <link rel="icon" href="{rel}favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://images.higgs.ai"><link rel="preload" href="{rel}assets/fonts/bodoni.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="{rel}style.css"></head><body class="{cls}" data-root="{rel}">
 <div class="amb" aria-hidden="true" style="--glow:{amb or "#5a2140"}"></div>
 <header class="top"><div class="wrap top-in"><a class="logo" href="{rel}">olfa<b>match</b></a>
-<nav class="nav"><a class="n-ann" href="{rel}annuaire/"{cur("annuaire")}>Annuaire</a><a class="n-quiz" href="{rel}quiz/"{cur("quiz")}>Quiz</a><a class="n-ech" href="{rel}echantillons/"{cur("ech")}>Échantillons</a>
+<nav class="nav"><a class="n-ann" href="{rel}annuaire/"{cur("annuaire")}>Annuaire</a><a class="n-quiz" href="{rel}quiz/"{cur("quiz")}>Quiz</a><a class="n-ech" href="{rel}echantillons/"{cur("ech")}>Échantillons</a>{f'<a class="n-creer" href="{rel}creer-mon-parfum/"{cur("creer")}>Crée ton parfum</a>' if CREER_PUBLIE else ""}
 <a class="n-fav" href="{rel}ma-liste/" aria-label="Ma liste"{cur("liste")}>{HEART_SVG}<span class="fav-n" hidden></span></a>
 <button class="s-open" type="button" aria-label="Rechercher un parfum">{SEARCH_SVG}</button></nav></div></header>
 <div class="overlay" hidden><div class="wrap"><button class="s-close" type="button">Fermer</button><p class="o-title">Quel parfum tu aimes ?</p>{search_box(rel, "q2")}</div></div>
 <main>{body}</main>
 <footer><div class="wrap"><div class="f-top"><a class="logo" href="{rel}">olfa<b>match</b></a>
-<p class="f-links"><a href="{rel}annuaire/">Annuaire</a><a href="{rel}quiz/">Quiz</a><a href="{rel}echantillons/">Échantillons</a><a href="{rel}ma-liste/">Ma liste</a><a href="{rel}top-30/">Top 30</a><a href="{rel}pourquoi-olfamatch/">Pourquoi Olfamatch</a><a href="{rel}mentions-legales/">Mentions légales</a><a href="https://www.tiktok.com/@olfamatch" rel="noopener">TikTok</a><a href="https://www.instagram.com/olfamatch" rel="noopener">Instagram</a></p></div>
+<p class="f-links"><a href="{rel}annuaire/">Annuaire</a><a href="{rel}quiz/">Quiz</a><a href="{rel}echantillons/">Échantillons</a>{f'<a href="{rel}creer-mon-parfum/">Crée ton parfum</a>' if CREER_PUBLIE else ""}<a href="{rel}ma-liste/">Ma liste</a><a href="{rel}top-30/">Top 30</a><a href="{rel}pourquoi-olfamatch/">Pourquoi Olfamatch</a><a href="{rel}mentions-legales/">Mentions légales</a><a href="https://www.tiktok.com/@olfamatch" rel="noopener">TikTok</a><a href="https://www.instagram.com/olfamatch" rel="noopener">Instagram</a></p></div>
 <p>Olfamatch répertorie des parfums plus abordables proches de grands parfums, à partir de sources publiques. Les boutons d'achat sont des liens affiliés : Olfamatch touche une petite commission sur les achats, sans surcoût pour toi. En tant que Partenaire Amazon, Olfamatch réalise un bénéfice sur les achats remplissant les conditions requises.</p>
 <p>Les noms de parfums et de marques appartiennent à leurs propriétaires et sont cités uniquement pour identifier les produits comparés. Olfamatch n'est affilié à aucune de ces marques. Photos de flacons : illustrations. Familles olfactives : classement Olfamatch, complété par les accords principaux publiés par la communauté Fragrantica quand ils sont affichés.</p></div></footer>
 <script src="{rel}assets/config.js"></script><script src="{rel}app.js" defer></script></body></html>'''
@@ -273,23 +276,45 @@ def accords_block(o, b):
 <div class="ac-chart">{legend}{rows}<p class="fine">Accords principaux d'après la communauté Fragrantica, en intensité relative.</p></div></section>'''
 
 def build_creer():
-    """« Crée ton parfum » : modules de calcul, données publiques et page privée de fabrication.
-    Les coûts et le stock (cout_g, stock_g) et les modes d'emploi (_aide) ne sont pas publiés."""
+    """« Crée ton parfum » : modules de calcul, données publiques, page publique, page merci
+    et page privée de fabrication. Les coûts et le stock (cout_g, stock_g) et les modes
+    d'emploi (_aide) ne sont pas publiés. Renvoie les adresses à mettre dans le plan du site."""
     src = ROOT / "src/creer"
-    if not src.exists(): return
+    if not src.exists(): return []
     out = DIST / "creer"
     out.mkdir(parents=True, exist_ok=True)
-    for f in src.glob("*.js"): shutil.copy(f, out / f.name)
+    for f in [*src.glob("*.js"), *src.glob("*.css")]: shutil.copy(f, out / f.name)
     def sans_prive(x):
         if isinstance(x, dict): return {k: sans_prive(v) for k, v in x.items() if not k.startswith("_") and k not in ("cout_g", "stock_g")}
         if isinstance(x, list): return [sans_prive(v) for v in x]
         return x
     lire = lambda n: json.loads((ROOT / f"data/creer/{n}.json").read_text(encoding="utf-8"))
     donnees = sans_prive({n: lire(n) for n in ("notes", "compatibilite", "recettes", "regles")})
+    donnees["boutique"] = sans_prive(BOUTIQUE)
     (out / "donnees.json").write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     # Page privée : pas de lien, pas dans le plan du site, noindex.
     (DIST / "fabrication").mkdir(exist_ok=True)
     shutil.copy(src / "fabrication.html", DIST / "fabrication/index.html")
+
+    # Page publique : tout se calcule dans le navigateur (interface.js).
+    prix100 = (BOUTIQUE.get("prix_eur") or {}).get("flacon_100")
+    prix = f" 100 ml à {prix100} €." if prix100 else ""
+    corps = f'''<section class="wrap sec first cp"><link rel="stylesheet" href="../creer/creer.css"><p class="tag">Crée ton parfum</p>
+<h1 class="h1">Ton parfum,<br><span>composé par toi.</span></h1>
+<p class="lead">Tu pars d'une recette testée et tu l'ajustes à ton goût. L'outil vérifie seul l'équilibre, les doses et les associations. Préparé à la main en France.{e(prix)}</p>
+<div id="cp-app" class="cp-app"><p class="sub">Chargement de l'atelier…</p></div>
+<noscript><p class="sub">Cet outil a besoin de JavaScript pour fonctionner.</p></noscript></section>
+<script type="module" src="../creer/interface.js"></script>'''
+    page("creer-mon-parfum/index.html", "Crée ton parfum | Olfamatch",
+         "Compose ton eau de parfum en ligne à partir de recettes testées : l'outil vérifie l'équilibre, les doses et les associations.",
+         corps, "creer", robots=not CREER_PUBLIE)
+    delai = BOUTIQUE.get("delai") or "quelques jours"
+    merci = f'''<section class="wrap sec first cp"><p class="tag">Merci</p><h1 class="h1">Ta commande<br><span>est bien reçue.</span></h1>
+<p class="lead">Ton parfum va être préparé à la main, puis il repose avant l'envoi pour que les notes se lient. Délai : {e(delai)}.</p>
+<p class="sub" id="cp-merci-code"></p><a class="btn" href="../">Composer un autre parfum</a></section>
+<script>try{{var c=localStorage.getItem("olfa-creer-code");if(c){{var b=document.createElement("b");b.textContent=c;var p=document.getElementById("cp-merci-code");p.append("Ton code de formule : ",b,". Garde-le pour recommander exactement le même parfum.")}}}}catch(x){{}}</script>'''
+    page("creer-mon-parfum/merci/index.html", "Merci | Olfamatch", "Ta commande Crée ton parfum est bien reçue.", merci, "creer", robots=True)
+    return ["creer-mon-parfum/"] if CREER_PUBLIE else []
 
 def build():
     if DIST.exists(): shutil.rmtree(DIST)
@@ -298,7 +323,7 @@ def build():
     if (ROOT / "src/assets").exists(): shutil.copytree(ROOT / "src/assets", DIST / "assets")
     (DIST / "assets").mkdir(exist_ok=True)
     (DIST / "assets/config.js").write_text("window.OLFA=" + json.dumps({"form": CFG.get("form"), "form_ech": CFG.get("form_ech")}) + ";")
-    build_creer()
+    urls_creer = build_creer()
     def sidx(o):
         d = best(o)
         return {"n": o["name"], "b": o["brand"], "s": o["slug"], "i": rs(o["image"], 96) if o["image"] else "",
@@ -403,7 +428,7 @@ def build():
          f"{len(data)} parfums de luxe et de niche avec leur alternative la plus proche, le prix et l'économie.", ann, "annuaire")
 
     # ---------- fiches ----------
-    urls = ["", "annuaire/", "quiz/", "echantillons/", "top-30/"]
+    urls = ["", "annuaire/", "quiz/", "echantillons/", "top-30/"] + urls_creer
     lvl = lambda l: "Grand classique" if l.startswith("Top") else ("Très demandé" if l.startswith("Demandé") else "Niche")
     def buy(d, big=False, cls=""):
         if d["link"]:

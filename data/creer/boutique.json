@@ -1,0 +1,17 @@
+{
+  "_aide": [
+    "Réglages de vente de « Crée ton parfum ».",
+    "publie : false tant que l'outil n'est pas lancé (page non référencée, absente du menu). Passer à true le jour du lancement.",
+    "liens_stripe : un lien de paiement Stripe par produit (à créer dans Stripe, Paiements > Liens de paiement). null = bouton « bientôt disponible ».",
+    "prix_eur : prix affichés, à garder identiques aux liens Stripe. PROVISOIRES (grille à confirmer).",
+    "delai : délai affiché avant le paiement.",
+    "kit_deduit : phrase affichée sur le kit d'échantillons.",
+    "worker : adresse du programme Cloudflare (descriptions par IA). null = descriptions préécrites seulement."
+  ],
+  "publie": false,
+  "liens_stripe": { "kit": null, "flacon_50": null, "flacon_100": null },
+  "prix_eur": { "kit": 10, "flacon_50": 32, "flacon_100": 48 },
+  "delai": "1 à 2 semaines",
+  "kit_deduit": "Le prix du kit est déduit de ton flacon : un code de réduction est glissé dans le colis.",
+  "worker": null
+}

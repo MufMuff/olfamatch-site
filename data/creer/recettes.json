@@ -26,7 +26,7 @@
       "nom": "Rose lumineuse", "famille": "floral", "ambiance": "florale",
       "moment": ["jour"], "saisons": ["printemps", "ete"], "intensite": "douce",
       "concentration": 18, "marge": 5,
-      "notes": { "bergamote": 15, "poivre_rose": 5, "rose": 28, "jasmin": 15, "musc_blanc": 20, "santal": 17 }
+      "notes": { "mandarine": 15, "poivre_rose": 5, "rose": 28, "jasmin": 15, "musc_blanc": 20, "santal": 17 }
     },
     "R04": {
       "nom": "Fleur d'oranger vanillée", "famille": "floral", "ambiance": "florale",
@@ -44,7 +44,7 @@
       "nom": "Santal floral", "famille": "boise", "ambiance": "boisee",
       "moment": ["jour", "soir"], "saisons": ["printemps", "ete", "automne", "hiver"], "intensite": "douce",
       "concentration": 18, "marge": 5,
-      "notes": { "bergamote": 20, "rose": 10, "jasmin": 12, "santal": 30, "cedre": 10, "musc_blanc": 18 }
+      "notes": { "mandarine": 20, "rose": 10, "jasmin": 12, "santal": 30, "cedre": 10, "musc_blanc": 18 }
     },
     "R07": {
       "nom": "Ambre patchouli", "famille": "ambre", "ambiance": "chaude",

@@ -46,6 +46,11 @@
   .alerte p, .alerte ul { margin: 0; }
   .alerte ul { padding-left: 18px; }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  h3 { font: 600 18px/1.3 Georgia, serif; margin: 28px 0 6px; }
+  .etiquette { border: 1.5px dashed var(--doux); border-radius: 8px; padding: 12px 14px; margin: 18px 0 8px; max-width: 380px; font-size: 14px; }
+  .etiquette b { font: 600 17px/1.2 Georgia, serif; }
+  .etiquette p { margin: 4px 0 0; }
+  .etiquette .petit { font-size: 12px; color: var(--doux); }
   @media (max-width: 600px) { .ligne-form { grid-template-columns: 1fr; } h1 { font-size: 24px; } }
   @media print {
     body { background: #fff; }
@@ -128,28 +133,36 @@ function afficherFiche() {
     $("#sortie").innerHTML = `<div class="alerte erreur"><p><b>${titre}</b></p>${liste(res.erreurs.map(e => e.message))}</div>${avert}`;
     return;
   }
-  const f = res.fiche, a = res.allergenes;
   const origine = res.recette ? `Recette ${esc(res.formule.recette)} · ${esc(res.recette)}` : "Formule libre (mode expert)";
-  const allergenes = !a.complet
-    ? `<div class="alerte erreur"><p><b>Étiquette pas encore possible</b> : il manque la liste d'allergènes du fournisseur pour ${esc(a.manquants.join(", "))}.</p></div>`
-    : a.a_declarer.length
-      ? `<p><b>Allergènes à imprimer sur l'étiquette</b> (${esc(String(a.seuil_pct).replace(".", ","))} % ou plus) : ${esc(a.a_declarer.join(", "))}.</p>`
-      : `<p><b>Allergènes</b> : aucun à déclarer.</p>`;
-  $("#sortie").innerHTML = `
-    <h2>${origine}</h2>
-    <p class="code">${esc(res.code)}</p>
+  const corps = res.kit
+    ? `<p><b>Kit d'échantillons</b> : préparer ${res.lot_ml} ml de chaque variante, puis remplir les flacons de ${res.flacon_ml} ml.</p>`
+      + res.variantes.map(v => `<h3>${esc(v.nom)}</h3>` + ficheHtml(v.code, v.fiche, v.etiquette)).join("")
+    : ficheHtml(res.code, res.fiche, res.etiquette);
+  $("#sortie").innerHTML = `<h2>${origine}</h2>${avert}${corps}
+    <div class="actions ecran"><button type="button" class="secondaire" id="imprimer">Imprimer la fiche</button></div>`;
+  $("#imprimer").addEventListener("click", () => window.print());
+}
+
+function ficheHtml(code, f, etq) {
+  return `<p class="code">${esc(code)}</p>
     <div class="resume">
-      <div><span>Flacon</span><b>${f.volume_ml} ml</b></div>
+      <div><span>Quantité</span><b>${f.volume_ml} ml</b></div>
       <div><span>Concentration</span><b>${pct(f.concentration)}</b></div>
       <div><span>Masse totale</span><b>${gr(f.masse_totale_g)} g</b></div>
       <div><span>Dont huiles pures</span><b>${gr(f.masse_huiles_g)} g</b></div>
     </div>
-    ${avert}
     <p class="rem">Ordre de pesée : fond, cœur, tête, puis l'alcool. Balance au 0,001 g.</p>
     ${tableau(f.lignes, f.masse_totale_g, true)}
-    ${allergenes}
-    <div class="actions ecran"><button type="button" class="secondaire" id="imprimer">Imprimer la fiche</button></div>`;
-  $("#imprimer").addEventListener("click", () => window.print());
+    ${etiquetteHtml(etq)}`;
+}
+
+function etiquetteHtml(e) {
+  const manque = e.pret ? "" : `<div class="alerte erreur"><p><b>Étiquette pas encore imprimable.</b> Il manque :</p>${liste(e.manque)}</div>`;
+  return `<div class="etiquette"><b>${esc(e.nom)}</b><p>${esc(e.mentions[0] || "")} · ${esc(e.contenance)}</p>
+    <p class="petit">Ingrédients : ${esc(e.ingredients)}</p>
+    ${e.mentions.slice(1).map(m => `<p class="petit">${esc(m)}</p>`).join("")}
+    <p class="petit">Formule : ${esc(e.code)}</p>
+    <p class="petit">${e.responsable ? esc(e.responsable) : "Personne responsable : à compléter"}</p></div>${manque}`;
 }
 
 $("#f-code").addEventListener("submit", e => { e.preventDefault(); afficherFiche(); });

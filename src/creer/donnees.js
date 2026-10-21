@@ -15,7 +15,9 @@ const num = v => typeof v === "number" && Number.isFinite(v);
 const texte = v => typeof v === "string" && v.trim() !== "";
 const sousListe = (v, permis) => Array.isArray(v) && v.length > 0 && v.every(x => permis.includes(x));
 
-export function controlerDonnees({ notes, compatibilite, recettes, regles }) {
+const url = v => typeof v === "string" && /^https:\/\/[^\s]+$/.test(v);
+
+export function controlerDonnees({ notes, compatibilite, recettes, regles, boutique }) {
   const pb = [];
   const R = regles || {};
   const N = (notes && notes.notes) || {};
@@ -65,8 +67,24 @@ export function controlerDonnees({ notes, compatibilite, recettes, regles }) {
   if (!(num(R.densite_g_ml) && R.densite_g_ml > 0)) pb.push("regles.json : densite_g_ml doit être un nombre positif.");
   if (!(Array.isArray(R.volumes_ml) && R.volumes_ml.length && R.volumes_ml.every(v => Number.isInteger(v) && v > 0)))
     pb.push("regles.json : volumes_ml doit lister les tailles de flacon en ml, par exemple [50, 100].");
-  if (!(R.etiquette && num(R.etiquette.seuil_allergenes_pct) && R.etiquette.seuil_allergenes_pct > 0))
-    pb.push("regles.json : etiquette.seuil_allergenes_pct doit être un nombre positif.");
+  const et = R.etiquette || {};
+  if (!(num(et.seuil_allergenes_pct) && et.seuil_allergenes_pct > 0)) pb.push("regles.json : etiquette.seuil_allergenes_pct doit être un nombre positif.");
+  if (!(texte(et.inci_alcool) && texte(et.inci_parfum) && Array.isArray(et.mentions) && et.mentions.length && et.mentions.every(texte)))
+    pb.push("regles.json : etiquette doit donner inci_alcool, inci_parfum et au moins une mention.");
+  if (et.responsable !== null && et.responsable !== undefined && !texte(et.responsable)) pb.push("regles.json : etiquette.responsable doit être null ou un texte.");
+  for (const f of familles) if (!texte(R.equilibre[f].touche) || !texte(R.equilibre[f].texte))
+    pb.push(`regles.json : la famille ${f} doit avoir une « touche » et un « texte ».`);
+  const roue = R.roue;
+  if (!(Array.isArray(roue) && roue.length === familles.length && familles.every(f => roue.includes(f))))
+    pb.push("regles.json : roue doit lister chaque famille une fois.");
+  const cu = R.curseurs || {};
+  if (!(cu.fraicheur && ETAGES.every(e => num(cu.fraicheur[e])))) pb.push("regles.json : curseurs.fraicheur doit donner un nombre pour tete, coeur et fond.");
+  if (!(cu.douceur && [...familles, "neutre"].every(f => num(cu.douceur[f])))) pb.push("regles.json : curseurs.douceur doit donner un nombre pour chaque famille et pour neutre.");
+  const kit = R.kit || {};
+  const reglage = v => v === undefined || (num(v) && v >= -1 && v <= 1);
+  if (!(num(kit.flacon_ml) && kit.flacon_ml > 0 && num(kit.lot_ml) && kit.lot_ml >= kit.flacon_ml)) pb.push("regles.json : kit.flacon_ml et kit.lot_ml incorrects.");
+  if (!(Array.isArray(kit.variantes) && kit.variantes.length && kit.variantes.every(v => texte(v.nom) && reglage(v.fraicheur) && reglage(v.douceur) && reglage(v.intensite))))
+    pb.push("regles.json : kit.variantes doit lister des variantes avec un nom et des réglages entre -1 et 1.");
 
   // ---------- notes.json ----------
   const codes = new Map();
@@ -135,6 +153,22 @@ export function controlerDonnees({ notes, compatibilite, recettes, regles }) {
     }
     const total = doses.reduce((s, [, v]) => s + (num(v) ? v : 0), 0);
     if (Math.abs(total - 100) > 1e-6) pb.push(`${ou} : le total des doses fait ${total} au lieu de 100.`);
+  }
+
+  // ---------- boutique.json (facultatif) ----------
+  if (boutique) {
+    const ou = "boutique.json";
+    if (typeof boutique.publie !== "boolean") pb.push(`${ou} : publie doit valoir true ou false.`);
+    for (const p of ["kit", "flacon_50", "flacon_100"]) {
+      const l = (boutique.liens_stripe || {})[p];
+      if (l !== null && !url(l)) pb.push(`${ou} : le lien Stripe « ${p} » doit être null ou une adresse https://.`);
+      const prix = (boutique.prix_eur || {})[p];
+      if (prix !== null && !(num(prix) && prix > 0)) pb.push(`${ou} : le prix « ${p} » doit être null ou un nombre.`);
+    }
+    if (!texte(boutique.delai)) pb.push(`${ou} : delai manquant.`);
+    if (boutique.worker !== null && !url(boutique.worker)) pb.push(`${ou} : worker doit être null ou une adresse https://.`);
+    if (boutique.publie === true && (!boutique.liens_stripe || Object.values(boutique.liens_stripe).every(l => l === null)))
+      pb.push(`${ou} : publie vaut true mais aucun lien Stripe n'est rempli.`);
   }
   return pb;
 }

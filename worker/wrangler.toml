@@ -1,0 +1,22 @@
+# Réglages du programme Cloudflare (Worker) d'Olfamatch. Mode d'emploi : LISEZMOI.md.
+name = "olfamatch-atelier"
+main = "index.js"
+compatibility_date = "2026-10-01"
+
+# Envoi d'e-mails (Cloudflare Email Routing). L'adresse doit être vérifiée dans Email Routing.
+[[send_email]]
+name = "EMAIL"
+destination_address = "ADRESSE-DE-L-ATELIER@exemple.fr"
+
+[vars]
+SITE_ORIGIN = "https://olfamatch.pages.dev"
+# Adresse qui reçoit les fiches de pesée (la même que destination_address ci-dessus).
+EMAIL_ATELIER = "ADRESSE-DE-L-ATELIER@exemple.fr"
+# Adresse d'envoi : elle doit appartenir au nom de domaine où Email Routing est activé.
+EMAIL_EXPEDITEUR = "atelier@VOTRE-DOMAINE.fr"
+# Facultatif : autre modèle d'IA pour les descriptions (par défaut claude-opus-5-5).
+# MODELE_IA = "claude-opus-5-5"
+
+# Secrets : JAMAIS dans ce fichier. À enregistrer une fois avec :
+#   npx wrangler secret put STRIPE_WEBHOOK_SECRET
+#   npx wrangler secret put ANTHROPIC_API_KEY

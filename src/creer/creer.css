@@ -1,0 +1,90 @@
+/* « Crée ton parfum » : complète style.css (mêmes couleurs, mêmes polices). */
+.cp{max-width:1180px}
+.cp-app{margin-top:40px;scroll-margin-top:90px}
+.cp-h2{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.4vw,40px);line-height:1.1;margin:0 0 18px}
+.cp h3{font-family:var(--serif);font-weight:400;font-size:22px;margin:28px 0 12px}
+.cp-portes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.cp-porte{display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;cursor:pointer;transition:border-color .2s,transform .2s}
+.cp-porte:hover{border-color:var(--gold);transform:translateY(-2px)}
+.cp-porte .tag{margin:0}
+.cp-porte b{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.1}
+.cp-porte span:last-child{color:var(--soft)}
+.cp-recommander{margin-top:34px;max-width:640px}
+.cp-recommander label{display:block;color:var(--soft);margin-bottom:8px}
+.cp-recommander div{display:flex;gap:10px;flex-wrap:wrap}
+.cp-input,.cp-select{font:inherit;font-size:15px;color:var(--ivory);background:var(--bg-2);border:1px solid var(--line-2);border-radius:12px;padding:10px 14px}
+.cp-input{flex:1;min-width:220px;font-family:ui-monospace,Consolas,monospace}
+.cp-select{width:100%;margin-top:6px}
+.cp-retour{color:var(--gold-soft);min-height:1.6em;margin:8px 0 0;font-size:15px}
+.cp-chips{display:flex;flex-wrap:wrap;gap:8px}
+.cp-chip.on{background:var(--gold);color:#1A0C16;border-color:var(--gold)}
+.cp-chip.off{opacity:.32;cursor:not-allowed;text-decoration:line-through}
+.cp-questions fieldset{border:0;padding:0;margin:0 0 26px}
+.cp-questions legend{font-family:var(--serif);font-size:24px;margin-bottom:12px}
+.cp-deux{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:620px}
+.cp-deux label{color:var(--soft);font-size:15px}
+.cp-actions{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.cp-actions .btn[disabled]{opacity:.4;cursor:not-allowed}
+.cp-lien{background:none;border:0;padding:0;color:var(--gold-soft);font-weight:600;font-size:15px;cursor:pointer;border-bottom:1px solid rgba(226,198,142,.35)}
+.cp-recettes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.cp-recette{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;display:flex;flex-direction:column}
+.cp-recette h3{margin:0 0 8px;font-size:28px}
+.cp-recette p{color:var(--soft);margin:0 0 10px}
+.cp-recette .btn{margin-top:auto}
+.cp-note{color:var(--muted);font-size:14px}
+.cp-atelier{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:48px;align-items:start}
+.cp-droite{position:sticky;top:90px}
+.cp-curseur{display:block;margin:0 0 20px}
+.cp-curseur span{display:flex;justify-content:space-between;color:var(--soft);font-size:15px;margin-bottom:6px}
+.cp-curseur em{font-style:normal}
+.cp-curseur input{width:100%;accent-color:var(--gold)}
+.cp-ajout{display:block;color:var(--soft);font-size:15px;margin-top:8px;max-width:360px}
+.cp-etage{margin-bottom:18px}
+.cp-etage>b{display:block;color:var(--muted);font-size:13px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.cp-jauge{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin:22px 0;font-size:15px;color:var(--soft)}
+.cp-jauge div{height:6px;border-radius:9px;background:var(--line)}
+.cp-jauge i{display:block;height:100%;border-radius:9px;background:var(--gold)}
+.cp-doses{margin-top:10px}
+.cp-alerte{border-radius:14px;padding:12px 16px;margin:16px 0;font-size:15px}
+.cp-alerte ul{margin:0;padding-left:18px}
+.cp-alerte.erreur{background:rgba(220,90,80,.14);color:#F4B7AE}
+.cp-alerte.attention{background:rgba(200,161,90,.14);color:var(--gold-soft)}
+.cp-alerte.info{background:var(--card);color:var(--soft)}
+.cp-vide{border:1px dashed var(--line-2);border-radius:22px;padding:40px;color:var(--muted);text-align:center}
+.cp-visu{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;transition:opacity .2s}
+.cp-visu.flou{opacity:.45}
+.cp-desc{font-family:var(--serif);font-size:21px;line-height:1.4;margin:0 0 8px}
+.cp-pyr{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center}
+.cp-pyr ul{list-style:none;margin:0;padding:0}
+.cp-pyr li{margin:0 0 10px;font-size:15px}
+.cp-pyr li b{display:block;font-weight:600}
+.cp-pyr li span{color:var(--soft)}
+.cp-roue{display:grid;grid-template-columns:200px 1fr;gap:18px;align-items:center}
+.cp-roue svg text{fill:var(--soft);font-size:10px;font-family:var(--sans)}
+.cp-roue svg text.fort{fill:#1A0C16;font-weight:600}
+.cp-roue p{color:var(--soft);font-size:15px;margin:0}
+.cp-frise{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cp-frise li{border-top:2px solid var(--gold);padding-top:8px;font-size:15px}
+.cp-frise b{display:block;color:var(--gold-soft)}
+.cp-frise span{color:var(--soft)}
+.cp-commande{margin-top:70px}
+.cp-produits{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.cp-produit{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;display:flex;flex-direction:column}
+.cp-produit h3{margin:0}
+.cp-produit p{color:var(--soft);margin:6px 0 16px}
+.cp-produit .cp-prix{font-family:var(--serif);font-size:34px;color:var(--ivory);margin:6px 0 0}
+.cp-produit .btn{margin-top:auto}
+.cp-off{background:var(--line-2);color:var(--muted);cursor:default}
+.cp-code{margin-top:26px;color:var(--soft);font-size:15px}
+.cp-code b{font-family:ui-monospace,Consolas,monospace;color:var(--ivory);word-break:break-all}
+@media (max-width:860px){
+  .cp-atelier{grid-template-columns:1fr;gap:28px}
+  .cp-droite{position:static}
+}
+@media (max-width:520px){
+  .cp-deux{grid-template-columns:1fr}
+  .cp-pyr,.cp-roue{grid-template-columns:1fr}
+  .cp-pyr svg{max-width:180px}
+  .cp-roue svg{max-width:220px;margin:0 auto}
+  .cp-porte{padding:22px}
+}

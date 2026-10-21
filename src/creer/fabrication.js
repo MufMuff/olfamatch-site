@@ -11,6 +11,7 @@
  * Comme le moteur de règles, il lit tout dans les fichiers data/creer/*.json.
  */
 import { creerMoteur } from "./moteur.js";
+import { creerConfigurateur } from "./configurateur.js";
 
 // Ordre de pesée : le fond d'abord, la tête (plus volatile) en dernier, puis l'alcool.
 const ORDRE_PESEE = ["fond", "coeur", "tete"];
@@ -27,6 +28,7 @@ export function creerFabrication(donnees) {
   const { notes, recettes, regles } = donnees;
   const N = notes.notes, REC = recettes.recettes, R = regles;
   const moteur = creerMoteur(donnees);
+  const configurateur = creerConfigurateur(donnees);
   const propre = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
   const idParCode = new Map(Object.entries(N).map(([id, n]) => [n.code, id]));
   const volumes = R.volumes_ml || [50, 100];
@@ -117,14 +119,40 @@ export function creerFabrication(donnees) {
     };
   }
 
-  // Code de formule : recette (ou EX en mode expert), une partie par note, concentration, volume.
+  /*
+   * Étiquette d'un flacon : nom, mentions, contenance, ingrédients (alcool, parfum,
+   * puis allergènes du plus au moins présent), code pour recommander, personne responsable.
+   * `manque` liste ce qui empêche encore d'imprimer.
+   */
+  function etiquette(formule, volume) {
+    const E = R.etiquette || {};
+    const al = allergenes(formule);
+    const famille = formule.famille && R.equilibre[formule.famille] ? formule.famille : moteur.familleDominante(formule.notes);
+    const nom = formule.mode === "guide" && propre(REC, formule.recette) ? REC[formule.recette].nom : `Création ${R.equilibre[famille].touche}`;
+    const manque = [];
+    if (!al.complet) manque.push(`allergènes du fournisseur pour ${al.manquants.join(", ")}`);
+    if (!E.responsable) manque.push("nom et adresse de la personne responsable (regles.json, etiquette.responsable)");
+    const ingredients = [E.inci_alcool || "ALCOHOL DENAT.", E.inci_parfum || "PARFUM (FRAGRANCE)", ...al.a_declarer.map(a => a.toUpperCase())];
+    return {
+      nom, contenance: `${volume} ml ℮`, mentions: E.mentions || [], ingredients: ingredients.join(", "),
+      code: encoder(formule, null), responsable: E.responsable || null, pret: manque.length === 0, manque,
+    };
+  }
+
+  /*
+   * Code de formule : recette (ou EX en mode expert), une partie par note, concentration,
+   * puis le produit : V50 / V100 (flacon) ou KIT (kit d'échantillons).
+   * Sans produit (volume null), le code sert à recommander la formule (étiquette d'un échantillon).
+   */
   function encoder(formule, volume) {
     const debut = formule.mode === "guide" ? formule.recette : "EX";
     const parNote = Object.entries(formule.notes).map(([id, v]) => N[id].code + nombreCode(v));
-    return [debut, ...parNote, `C${nombreCode(formule.concentration)}`, `V${nombreCode(volume)}`].join("-");
+    const produit = volume === "kit" ? ["KIT"] : volume == null ? [] : [`V${nombreCode(volume)}`];
+    return [debut, ...parNote, `C${nombreCode(formule.concentration)}`, ...produit].join("-");
   }
 
-  function decoder(texte) {
+  // { volumeFacultatif: true } : accepte un code sans produit (pour « recommander ma formule »).
+  function decoder(texte, { volumeFacultatif = false } = {}) {
     const echec = (...messages) => ({ ok: false, erreurs: messages.map(m => msg("code", m)) });
     // Les espaces et retours à la ligne d'un copier-coller sont ignorés.
     const brut = String(texte ?? "").trim().toUpperCase().replace(/\s+/g, "");
@@ -143,6 +171,7 @@ export function creerFabrication(donnees) {
     for (const p of parties) {
       if ((m = /^C(\d+(?:_\d+)?)$/.exec(p))) concentration = lireNombre(m[1]);
       else if ((m = /^V(\d+(?:_\d+)?)$/.exec(p))) volume = lireNombre(m[1]);
+      else if (p === "KIT") volume = "kit";
       else if ((m = /^([A-Z]{3})(\d+(?:_\d+)?)$/.exec(p))) {
         const id = idParCode.get(m[1]);
         if (!id) erreurs.push(`Note inconnue dans le code : ${m[1]}.`);
@@ -152,8 +181,8 @@ export function creerFabrication(donnees) {
     }
     if (!Object.keys(notesF).length && !erreurs.length) erreurs.push("Le code ne contient aucune note.");
     if (concentration === null) erreurs.push("Il manque la concentration (C18 par exemple).");
-    if (volume === null) erreurs.push(`Il manque le volume (${volumes.map(v => `V${v}`).join(" ou ")}).`);
-    else if (!volumes.includes(volume)) erreurs.push(`Le flacon de ${volume} ml n'est pas vendu : ${volumes.join(" ou ")} ml.`);
+    if (volume === null) { if (!volumeFacultatif) erreurs.push(`Il manque le volume (${volumes.map(v => `V${v}`).join(" ou ")}, ou KIT).`); }
+    else if (volume !== "kit" && !volumes.includes(volume)) erreurs.push(`Le flacon de ${volume} ml n'est pas vendu : ${volumes.join(" ou ")} ml.`);
     if (erreurs.length) return echec(...erreurs);
     return { ok: true, formule: { mode, recette, concentration, notes: notesF }, volume, erreurs: [] };
   }
@@ -165,17 +194,31 @@ export function creerFabrication(donnees) {
   function preparerFiche(code, options = {}) {
     const lu = decoder(code);
     if (!lu.ok) return { ok: false, erreurs: lu.erreurs, avertissements: [] };
+    if (lu.volume === null) return { ok: false, erreurs: [msg("code", "Il manque le produit à la fin du code (V50, V100 ou KIT).")], avertissements: [] };
     const v = moteur.verifier(lu.formule);
     const formule = { ...lu.formule, famille: v.famille };
     if (!v.ok) return { ok: false, formule, volume: lu.volume, erreurs: v.erreurs, avertissements: v.avertissements };
-    const fiche = grammes(formule, lu.volume, options);
-    if (fiche.lignes.some(l => l.a_peser_g < 0))
-      return { ok: false, formule, volume: lu.volume, erreurs: [msg("alcool", "Calcul impossible : les huiles dépassent la masse du flacon.")], avertissements: [] };
-    return {
+    const base = {
       ok: true, code: encoder(formule, lu.volume), formule, volume: lu.volume,
-      recette: formule.recette ? REC[formule.recette].nom : null,
-      fiche, allergenes: allergenes(formule), avertissements: v.avertissements, erreurs: [],
+      recette: formule.recette ? REC[formule.recette].nom : null, avertissements: v.avertissements, erreurs: [],
     };
+    const impossible = f => f.lignes.some(l => l.a_peser_g < 0);
+    const refus = { ok: false, formule, volume: lu.volume, erreurs: [msg("alcool", "Calcul impossible : les huiles dépassent la masse du flacon.")], avertissements: [] };
+
+    if (lu.volume !== "kit") {
+      const fiche = grammes(formule, lu.volume, options);
+      return impossible(fiche) ? refus : { ...base, kit: false, fiche, allergenes: allergenes(formule), etiquette: etiquette(formule, lu.volume) };
+    }
+    // Kit : 3 variantes, chacune préparée en petit lot (lot_ml) puis répartie en flacons de 2 ml.
+    const lot = (R.kit && R.kit.lot_ml) || 10;
+    const variantes = configurateur.variantesKit(formule).map(x => {
+      const f = { ...x.formule, famille: moteur.verifier(x.formule).famille };
+      return { nom: x.nom, code: encoder(f, null), formule: f, fiche: grammes(f, lot), allergenes: allergenes(f),
+        etiquette: etiquette(f, (R.kit && R.kit.flacon_ml) || 2) };
+    });
+    if (variantes.some(x => impossible(x.fiche) || !moteur.verifier(x.formule).ok)) return refus;
+    const standard = variantes.find(x => x.nom === "Standard") || variantes[0];
+    return { ...base, kit: true, lot_ml: lot, flacon_ml: (R.kit && R.kit.flacon_ml) || 2, variantes, fiche: standard.fiche, allergenes: standard.allergenes, etiquette: standard.etiquette };
   }
 
   // Préparer à l'avance un lot du mélange d'huiles d'une recette (pour qu'il repose).
@@ -191,5 +234,5 @@ export function creerFabrication(donnees) {
     return { ok: true, recette: idRecette, nom: r.nom, huile_g: x, lignes, total_g: enG(somme(lignes.map(l => enMg(l.a_peser_g)))), erreurs: [] };
   }
 
-  return { grammes, allergenes, encoder, decoder, preparerFiche, ficheMelange, volumes };
+  return { grammes, allergenes, etiquette, encoder, decoder, preparerFiche, ficheMelange, volumes };
 }

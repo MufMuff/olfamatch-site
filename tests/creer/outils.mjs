@@ -8,7 +8,7 @@ const lire = nom => JSON.parse(readFileSync(fileURLToPath(new URL(`${nom}.json`,
 
 // Une copie neuve des quatre fichiers à chaque appel : un test peut la modifier sans gêner les autres.
 export function donnees() {
-  return { notes: lire("notes"), compatibilite: lire("compatibilite"), recettes: lire("recettes"), regles: lire("regles") };
+  return { notes: lire("notes"), compatibilite: lire("compatibilite"), recettes: lire("recettes"), regles: lire("regles"), boutique: lire("boutique") };
 }
 
 export const moteur = (d = donnees()) => creerMoteur(d);
