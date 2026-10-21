@@ -1,0 +1,42 @@
+{
+  "_aide": [
+    "Seuils appliqués par le moteur de règles. Tous les % sont des % du mélange d'huiles, sauf la concentration (% d'huiles dans le parfum fini).",
+    "concentration : plage permise et valeur par défaut.",
+    "nombre_notes : nombre de notes permis dans une formule.",
+    "minimum_par_etage : notes minimum en tête, cœur et fond.",
+    "notes_de_tenue : la formule doit contenir au moins une de ces notes.",
+    "equilibre : pour chaque famille, son nom affiché et la plage permise pour la tête, le cœur et le fond.",
+    "fond_minimum : le fond ne descend jamais sous ce %.",
+    "puissance : aucune note ne dépasse part_max_par_note % du poids perçu (dose × puissance) ; au plus fortes_max notes de puissance fortes_a_partir_de ou plus.",
+    "associations_interdites : groupes de notes jamais ensemble.",
+    "matrice : score moyen minimum entre les notes, associations délicates permises par mode, réduction de la dose maximum de la note la plus forte d'une association délicate.",
+    "ifra : exiger_certificat = true refuse toute note sans certificat IFRA reçu. À passer à true avant le lancement.",
+    "guide : marge par défaut autour de chaque dose de recette (en points de %), nombre de notes ajoutables et leur dose maximum.",
+    "pas_pourcentage : finesse des doses (1 = doses en % entiers).",
+    "densite_g_ml : densité du parfum fini, pour le calcul en grammes (à mesurer une fois)."
+  ],
+  "concentration": { "min": 15, "max": 20, "defaut": 18 },
+  "nombre_notes": { "min": 3, "max": 7 },
+  "minimum_par_etage": { "tete": 1, "coeur": 1, "fond": 2 },
+  "notes_de_tenue": ["musc_blanc", "ambre"],
+  "equilibre": {
+    "frais":    { "nom": "frais",    "tete": [30, 40], "coeur": [25, 35], "fond": [30, 40] },
+    "floral":   { "nom": "floral",   "tete": [15, 25], "coeur": [40, 50], "fond": [30, 40] },
+    "boise":    { "nom": "boisé",    "tete": [15, 25], "coeur": [20, 30], "fond": [50, 60] },
+    "ambre":    { "nom": "ambré",    "tete": [10, 20], "coeur": [20, 30], "fond": [50, 65] },
+    "gourmand": { "nom": "gourmand", "tete": [10, 20], "coeur": [20, 30], "fond": [50, 65] },
+    "cuir":     { "nom": "cuir",     "tete": [10, 20], "coeur": [20, 30], "fond": [50, 65] }
+  },
+  "fond_minimum": 30,
+  "puissance": { "part_max_par_note": 45, "fortes_a_partir_de": 4, "fortes_max": 2 },
+  "associations_interdites": [["oud", "cuir", "patchouli"]],
+  "matrice": {
+    "moyenne_min": 2.0,
+    "risquees_max": { "guide": 0, "expert": 1 },
+    "reduction_note_forte": 0.5
+  },
+  "ifra": { "categorie": 4, "exiger_certificat": false },
+  "guide": { "marge_defaut": 5, "ajouts_max": 1, "ajout_dose_max": 10 },
+  "pas_pourcentage": 1,
+  "densite_g_ml": 0.82
+}
