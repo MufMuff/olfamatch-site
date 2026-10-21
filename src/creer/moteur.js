@@ -443,12 +443,14 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
         erreurs.push(msg("pas", `La dose ${de(nom(id))} doit être un multiple de ${nombre(PAS)} %.`, { note: id }));
     }
 
-    // Équilibre tête / cœur / fond : famille imposée, sinon la première famille présente qui convient.
+    // Équilibre tête / cœur / fond : famille imposée, sinon la première famille qui convient
+    // (les plus marquées d'abord). Utile pour relire un code de formule, qui ne contient pas la famille.
     const etages = totauxEtages(notesF);
     let famille = ctx.famille;
     if (!famille) {
       const classement = classementFamilles(notesF);
-      famille = classement.find(f => !erreursEtages(f, etages).length) || classement[0];
+      const toutes = [...classement, ...Object.keys(R.equilibre).filter(f => !classement.includes(f))];
+      famille = toutes.find(f => !erreursEtages(f, etages).length) || classement[0];
     }
     erreurs.push(...erreursEtages(famille, etages));
 

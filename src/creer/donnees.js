@@ -63,6 +63,10 @@ export function controlerDonnees({ notes, compatibilite, recettes, regles }) {
   if (!(num(g.marge_defaut) && Number.isInteger(g.ajouts_max) && num(g.ajout_dose_max))) pb.push("regles.json : bloc guide incomplet.");
   if (!(num(R.pas_pourcentage) && R.pas_pourcentage > 0)) pb.push("regles.json : pas_pourcentage doit être un nombre positif.");
   if (!(num(R.densite_g_ml) && R.densite_g_ml > 0)) pb.push("regles.json : densite_g_ml doit être un nombre positif.");
+  if (!(Array.isArray(R.volumes_ml) && R.volumes_ml.length && R.volumes_ml.every(v => Number.isInteger(v) && v > 0)))
+    pb.push("regles.json : volumes_ml doit lister les tailles de flacon en ml, par exemple [50, 100].");
+  if (!(R.etiquette && num(R.etiquette.seuil_allergenes_pct) && R.etiquette.seuil_allergenes_pct > 0))
+    pb.push("regles.json : etiquette.seuil_allergenes_pct doit être un nombre positif.");
 
   // ---------- notes.json ----------
   const codes = new Map();

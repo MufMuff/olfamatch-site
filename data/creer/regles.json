@@ -13,7 +13,9 @@
     "ifra : exiger_certificat = true refuse toute note sans certificat IFRA reçu. À passer à true avant le lancement.",
     "guide : marge par défaut autour de chaque dose de recette (en points de %), nombre de notes ajoutables et leur dose maximum.",
     "pas_pourcentage : finesse des doses (1 = doses en % entiers).",
-    "densite_g_ml : densité du parfum fini, pour le calcul en grammes (à mesurer une fois)."
+    "densite_g_ml : densité du parfum fini, pour le calcul en grammes (à mesurer une fois).",
+    "volumes_ml : tailles de flacon vendues.",
+    "etiquette : un allergène est imprimé sur l'étiquette dès qu'il atteint seuil_allergenes_pct % du parfum fini (0,001 % pour un produit sans rinçage)."
   ],
   "concentration": { "min": 15, "max": 20, "defaut": 18 },
   "nombre_notes": { "min": 3, "max": 7 },
@@ -38,5 +40,7 @@
   "ifra": { "categorie": 4, "exiger_certificat": false },
   "guide": { "marge_defaut": 5, "ajouts_max": 1, "ajout_dose_max": 10 },
   "pas_pourcentage": 1,
-  "densite_g_ml": 0.82
+  "densite_g_ml": 0.82,
+  "volumes_ml": [50, 100],
+  "etiquette": { "seuil_allergenes_pct": 0.001 }
 }

@@ -272,6 +272,25 @@ def accords_block(o, b):
 <h2 class="h2 small">{FAM_LABEL[fam]}<span>.</span></h2><p class="ac-mood">{MOOD[fam]}</p>{shared}</div>
 <div class="ac-chart">{legend}{rows}<p class="fine">Accords principaux d'après la communauté Fragrantica, en intensité relative.</p></div></section>'''
 
+def build_creer():
+    """« Crée ton parfum » : modules de calcul, données publiques et page privée de fabrication.
+    Les coûts et le stock (cout_g, stock_g) et les modes d'emploi (_aide) ne sont pas publiés."""
+    src = ROOT / "src/creer"
+    if not src.exists(): return
+    out = DIST / "creer"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in src.glob("*.js"): shutil.copy(f, out / f.name)
+    def sans_prive(x):
+        if isinstance(x, dict): return {k: sans_prive(v) for k, v in x.items() if not k.startswith("_") and k not in ("cout_g", "stock_g")}
+        if isinstance(x, list): return [sans_prive(v) for v in x]
+        return x
+    lire = lambda n: json.loads((ROOT / f"data/creer/{n}.json").read_text(encoding="utf-8"))
+    donnees = sans_prive({n: lire(n) for n in ("notes", "compatibilite", "recettes", "regles")})
+    (out / "donnees.json").write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    # Page privée : pas de lien, pas dans le plan du site, noindex.
+    (DIST / "fabrication").mkdir(exist_ok=True)
+    shutil.copy(src / "fabrication.html", DIST / "fabrication/index.html")
+
 def build():
     if DIST.exists(): shutil.rmtree(DIST)
     DIST.mkdir()
@@ -279,6 +298,7 @@ def build():
     if (ROOT / "src/assets").exists(): shutil.copytree(ROOT / "src/assets", DIST / "assets")
     (DIST / "assets").mkdir(exist_ok=True)
     (DIST / "assets/config.js").write_text("window.OLFA=" + json.dumps({"form": CFG.get("form"), "form_ech": CFG.get("form_ech")}) + ";")
+    build_creer()
     def sidx(o):
         d = best(o)
         return {"n": o["name"], "b": o["brand"], "s": o["slug"], "i": rs(o["image"], 96) if o["image"] else "",
