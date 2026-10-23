@@ -138,7 +138,10 @@ function afficherFiche() {
     ? `<p><b>Kit d'échantillons</b> : préparer ${res.lot_ml} ml de chaque variante, puis remplir les flacons de ${res.flacon_ml} ml.</p>`
       + res.variantes.map(v => `<h3>${esc(v.nom)}</h3>` + ficheHtml(v.code, v.fiche, v.etiquette)).join("")
     : ficheHtml(res.code, res.fiche, res.etiquette);
-  $("#sortie").innerHTML = `<h2>${origine}</h2>${avert}${corps}
+  const p = res.produit;
+  const prix = p && p.prix_eur != null ? ` · prix prévu ${String(p.prix_eur).replace(".", ",")} €` : "";
+  const produit = p ? `<p class="alerte attention"><b>Produit : ${esc(p.nom)}${prix}.</b> Compare avec le produit et le montant reçus dans Stripe avant de fabriquer.</p>` : "";
+  $("#sortie").innerHTML = `<h2>${origine}</h2>${produit}${avert}${corps}
     <div class="actions ecran"><button type="button" class="secondaire" id="imprimer">Imprimer la fiche</button></div>`;
   $("#imprimer").addEventListener("click", () => window.print());
 }

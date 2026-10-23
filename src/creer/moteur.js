@@ -276,14 +276,29 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
     return err.concat(controlesMinimum(ids, ctx));
   }
 
-  // La note la plus puissante d'un groupe (à égalité : la première citée).
-  const noteForte = ids => ids.reduce((m, id) => (N[id].puissance > N[m].puissance ? id : m));
+  /*
+   * Association délicate : la note dont la dose maximum est réduite.
+   * Critères de regles.json (matrice.reduire), dans l'ordre : d'abord la plus puissante,
+   * puis, à puissance égale, la plus dosée. À égalité partout : la première citée.
+   */
+  function aReduire(notesAssoc, doses = {}) {
+    const criteres = R.matrice.reduire || ["puissance", "dose"];
+    const valeur = (id, c) => (c === "puissance" ? N[id].puissance : c === "dose" ? doses[id] || 0 : 0);
+    return notesAssoc.reduce((m, id) => {
+      for (const c of criteres) {
+        const a = valeur(id, c), b = valeur(m, c);
+        if (a > b + EPS) return id;
+        if (a < b - EPS) return m;
+      }
+      return m;
+    });
+  }
 
-  function avertissements(ids) {
+  function avertissements(ids, doses) {
     const f = R.matrice.reduction_note_forte;
     const effet = f === 0.5 ? "réduite de moitié" : `limitée à ${Math.round(f * 100)} % de son maximum`;
     return associations(ids).filter(a => a.score === 1).map(a => {
-      const forte = noteForte(a.notes);
+      const forte = aReduire(a.notes, doses);
       return msg("association_delicate", `${maj(liste(a.notes.map(nom)))} : association délicate. La dose ${de(nom(forte))} est ${effet}.`, { notes: a.notes, note: forte });
     });
   }
@@ -291,8 +306,9 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
   /*
    * Dose minimum et maximum de chaque note, dans cet ordre :
    * plafonds de la note, IFRA, association délicate, puis marges de la recette (mode guidé).
+   * `forcer` (facultatif) choisit les notes à réduire d'une association délicate (voir ajuster).
    */
-  function bornes(ids, ctx) {
+  function bornes(ids, ctx, doses = {}, forcer = null) {
     const b = {};
     for (const id of ids) {
       const n = N[id];
@@ -301,9 +317,11 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
       if (ifra < b[id].hi) { b[id].hi = ifra; b[id].rHi = "ifra"; }
     }
     for (const a of associations(ids).filter(a => a.score === 1)) {
-      const forte = noteForte(a.notes);
-      const cap = N[forte].dose_max * R.matrice.reduction_note_forte;
-      if (cap < b[forte].hi) { b[forte].hi = cap; b[forte].rHi = "association"; }
+      const reduites = (forcer && forcer(a)) || [aReduire(a.notes, doses)];
+      for (const forte of reduites) {
+        const cap = N[forte].dose_max * R.matrice.reduction_note_forte;
+        if (cap < b[forte].hi) { b[forte].hi = cap; b[forte].rHi = "association"; }
+      }
     }
     if (ctx.mode === "guide" && ctx.recette) {
       const marge = ctx.recette.marge ?? R.guide.marge_defaut;
@@ -431,7 +449,7 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
     const total = somme(ids.map(id => notesF[id]));
     if (Math.abs(total - 100) > 1e-6) erreurs.push(msg("total", `Le total des notes doit faire 100 % (ici ${nombre(total)} %).`));
 
-    const b = bornes(ids, ctx);
+    const b = bornes(ids, ctx, notesF);
     erreurs.push(...erreursBornes(ids, b));
     for (const id of ids) {
       const v = notesF[id];
@@ -462,7 +480,7 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
         erreurs.push(msg("trop_presente", `Trop ${de(nom(id))} pour rester harmonieux.`, { note: id }));
     });
 
-    return { ok: erreurs.length === 0, erreurs, avertissements: avertissements(ids), famille, etages, harmonie: harmonie(ids) };
+    return { ok: erreurs.length === 0, erreurs, avertissements: avertissements(ids, notesF), famille, etages, harmonie: harmonie(ids) };
   }
 
   /*
@@ -481,7 +499,20 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
 
     const errStructure = controleStructure(ids, ctx);
     if (errStructure.length) return echec(errStructure);
-    const b = bornes(ids, ctx);
+
+    // Premier essai : notes réduites choisies d'après les doses du client.
+    const premier = essayer(null);
+    if (premier.ok) return premier;
+    // À puissance égale, la note réduite dépend des doses, qui bougent pendant l'ajustement :
+    // on essaie alors l'autre note, puis les deux, et on garde le premier résultat valable.
+    for (const forcer of variantesReduction(ids, entree)) {
+      const r = essayer(forcer);
+      if (r.ok) return r;
+    }
+    return premier;
+
+    function essayer(forcer) {
+    const b = bornes(ids, ctx, entree, forcer);
     const errBornes = erreursBornes(ids, b);
     if (errBornes.length) return echec(errBornes);
     const { famille, plages, err: errEquilibre } = ctx.famille
@@ -509,6 +540,22 @@ export function creerMoteur({ notes, compatibilite, recettes, regles }) {
     const v = verifier(f);
     const corrections = ctx.corrections.concat(correctionsFaites(entree, notesSortie, b, poids, famille));
     return resultat(v.ok, f, v.erreurs, v.avertissements, corrections);
+    } // fin de essayer()
+  }
+
+  // Autres choix de notes à réduire, pour les associations délicates entre notes de même puissance.
+  function variantesReduction(ids, doses) {
+    const res = [];
+    for (const a of associations(ids).filter(x => x.score === 1)) {
+      const top = Math.max(...a.notes.map(id => N[id].puissance));
+      const egales = a.notes.filter(id => N[id].puissance === top);
+      if (egales.length < 2) continue;
+      const cle = a.notes.join("|");
+      const pour = choix => x => (x.notes.join("|") === cle ? choix : [aReduire(x.notes, doses)]);
+      for (const id of egales) res.push(pour([id]));
+      res.push(pour(egales));
+    }
+    return res;
   }
 
   /*

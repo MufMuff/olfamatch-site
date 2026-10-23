@@ -32,6 +32,18 @@ export function creerFabrication(donnees) {
   const propre = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
   const idParCode = new Map(Object.entries(N).map(([id, n]) => [n.code, id]));
   const volumes = R.volumes_ml || [50, 100];
+  const B = donnees.boutique || {};
+
+  /*
+   * Produit vendu pour un volume de code : "kit", 50 ou 100 → clé de boutique.json,
+   * nom affiché et prix prévu (pour comparer avec le montant reçu dans Stripe).
+   */
+  function produit(volume) {
+    const cle = volume === "kit" ? "kit" : `flacon_${volume}`;
+    const nom = volume === "kit" ? "Kit d'échantillons" : `Flacon ${volume} ml`;
+    const prix = B.prix_eur && Number.isFinite(B.prix_eur[cle]) ? B.prix_eur[cle] : null;
+    return { cle, nom, prix_eur: prix };
+  }
   const rang = id => ORDRE_PESEE.indexOf(N[id].etage);
   const dansOrdre = ids => [...ids].sort((a, b) => rang(a) - rang(b)); // tri stable : l'ordre de la formule est gardé
   const remarqueDilution = n => (n.dilution_stock < 100
@@ -199,7 +211,7 @@ export function creerFabrication(donnees) {
     const formule = { ...lu.formule, famille: v.famille };
     if (!v.ok) return { ok: false, formule, volume: lu.volume, erreurs: v.erreurs, avertissements: v.avertissements };
     const base = {
-      ok: true, code: encoder(formule, lu.volume), formule, volume: lu.volume,
+      ok: true, code: encoder(formule, lu.volume), formule, volume: lu.volume, produit: produit(lu.volume),
       recette: formule.recette ? REC[formule.recette].nom : null, avertissements: v.avertissements, erreurs: [],
     };
     const impossible = f => f.lignes.some(l => l.a_peser_g < 0);
@@ -234,5 +246,5 @@ export function creerFabrication(donnees) {
     return { ok: true, recette: idRecette, nom: r.nom, huile_g: x, lignes, total_g: enG(somme(lignes.map(l => enMg(l.a_peser_g)))), erreurs: [] };
   }
 
-  return { grammes, allergenes, etiquette, encoder, decoder, preparerFiche, ficheMelange, volumes };
+  return { grammes, allergenes, etiquette, encoder, decoder, preparerFiche, ficheMelange, produit, volumes };
 }

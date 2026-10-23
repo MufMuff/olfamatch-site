@@ -15,11 +15,26 @@ class FauxEmail {
   constructor(de, a, brut) { Object.assign(this, { de, a, brut }); }
 }
 
-function monter({ env = {}, fetch, envoi } = {}) {
+// Identifiants des 3 liens de paiement Stripe, comme dans boutique.json une fois rempli.
+const LIENS = { kit: "plink_kit", flacon_50: "plink_50", flacon_100: "plink_100" };
+
+// Fausse mémoire Cloudflare (KV) : garde aussi la durée demandée pour chaque clé.
+function fausseMemoire() {
+  const valeurs = new Map(), durees = new Map();
+  return {
+    valeurs, durees,
+    async get(cle) { return valeurs.has(cle) ? valeurs.get(cle) : null; },
+    async put(cle, valeur, options = {}) { valeurs.set(cle, valeur); durees.set(cle, options.expirationTtl); },
+  };
+}
+
+function monter({ env = {}, fetch, envoi, liens = LIENS } = {}) {
   const envoyes = [], appels = [];
   const fauxFetch = fetch || (async (...args) => { appels.push(args); throw new Error("pas de réseau"); });
+  const d = donnees();
+  d.boutique.liens_stripe_ids = { ...liens };
   const app = creerApp({
-    donnees: donnees(),
+    donnees: d,
     env: {
       STRIPE_WEBHOOK_SECRET: SECRET, EMAIL_ATELIER: "atelier@exemple.fr", EMAIL_EXPEDITEUR: "robot@olfamatch.fr",
       SITE_ORIGIN: SITE, EMAIL: { send: envoi || (async m => { envoyes.push(m); }) }, ...env,
@@ -42,8 +57,8 @@ function requeteStripe(evenement, { t = Math.floor(MAINTENANT / 1000), secret = 
 const session = (extra = {}) => ({
   type: "checkout.session.completed",
   data: { object: {
-    id: "cs_test_42", payment_status: "paid", amount_total: 4900, currency: "eur", client_reference_id: CODE,
-    payment_link: "plink_123",
+    id: "cs_test_42", payment_status: "paid", amount_total: 4800, currency: "eur", client_reference_id: CODE,
+    payment_link: "plink_100",
     customer_details: { name: "Camille Martin", email: "camille@exemple.fr", address: { line1: "3 rue des Lilas", postal_code: "69001", city: "Lyon", country: "FR" } },
     ...extra,
   } },
@@ -76,9 +91,11 @@ test("Stripe : signature valide, commande payée = un seul e-mail à l'atelier a
   assert.match(e.sujetBrut, /=\?UTF-8\?B\?/);
   assert.match(e.sujet, /Commande R01 · 100 ml · Camille Martin/);
   for (const attendu of ["82,000", "Alcool de parfumeur", "camille@exemple.fr", CODE, "Agrumes et fleur d'oranger",
-    "Musc blanc", "MÉLANGE R01 DÉJÀ REPOSÉ", "49,00 EUR", "3 rue des Lilas, 69001 Lyon, FR", `${SITE}/fabrication/?code=`])
+    "Musc blanc", "MÉLANGE R01 DÉJÀ REPOSÉ", "Montant reçu : 48,00 EUR", "Produit payé : Flacon 100 ml (prix prévu 48 €)",
+    "3 rue des Lilas, 69001 Lyon, FR", `${SITE}/fabrication/?code=`])
     assert.ok(e.corps.includes(attendu), `manque « ${attendu} » dans :\n${e.corps}`);
   assert.ok(!e.corps.includes("NE PAS FABRIQUER"));
+  assert.ok(!e.corps.includes("0 €") && !e.corps.includes("différent du prix"));
   // lignes du corps de 76 caractères au plus (règle des e-mails)
   for (const ligne of m.brut.split("\r\n\r\n")[1].split("\r\n")) assert.ok(ligne.length <= 76);
 });
@@ -156,12 +173,84 @@ const kitPret = (() => { try { return creerFabrication(donnees()).preparerFiche(
 
 test("Stripe : kit d'échantillons = les 3 variantes dans l'e-mail", { skip: !kitPret && "kit pas encore prêt" }, async () => {
   const { app, envoyes } = monter();
-  await app.traiter(requeteStripe(session({ client_reference_id: codeKit })));
+  await app.traiter(requeteStripe(session({ client_reference_id: codeKit, payment_link: "plink_kit", amount_total: 1000 })));
   assert.equal(envoyes.length, 1);
   const e = lireEmail(envoyes[0].brut);
   assert.match(e.sujet, /kit d'échantillons/);
   for (const nom of ["Plus fraîche", "Standard", "Plus intense"]) assert.match(e.corps, new RegExp(`VARIANTE « ${nom} » — code R01-`));
   assert.ok(!e.corps.includes("NE PAS FABRIQUER"));
+});
+
+test("Stripe : produit payé différent du code = « NE PAS FABRIQUER » (kit payé, code de flacon, et l'inverse)", async () => {
+  const { app, envoyes } = monter();
+  await app.traiter(requeteStripe(session({ payment_link: "plink_kit", amount_total: 1000 })));
+  await app.traiter(requeteStripe(session({ id: "cs_test_43", payment_link: "plink_50", client_reference_id: CODE.replace("-V100", "-KIT") })));
+  await app.traiter(requeteStripe(session({ id: "cs_test_44", client_reference_id: CODE.replace("-V100", "") })));
+  assert.equal(envoyes.length, 3);
+  const [kitPaye, flaconPaye, sansProduit] = envoyes.map(m => lireEmail(m.brut));
+  assert.match(kitPaye.sujet, /^NE PAS FABRIQUER/);
+  assert.match(kitPaye.corps, /a payé « Kit d'échantillons », le code demande « Flacon 100 ml »/);
+  assert.match(flaconPaye.corps, /a payé « Flacon 50 ml », le code demande « Kit d'échantillons »/);
+  assert.match(sansProduit.corps, /NE PAS FABRIQUER[\s\S]*Il manque le (volume|produit)/);
+  for (const e of [kitPaye, flaconPaye]) assert.ok(!e.corps.includes("FICHE DE PESÉE"));
+});
+
+test("Stripe : paiement venant d'un autre lien = ignoré (200, pas d'e-mail)", async () => {
+  const { app, envoyes } = monter();
+  for (const lien of ["plink_autre_produit", null, undefined]) {
+    const rep = await app.traiter(requeteStripe(session({ payment_link: lien })));
+    assert.equal(rep.status, 200);
+    assert.equal((await rep.json()).traite, false);
+  }
+  assert.equal(envoyes.length, 0);
+});
+
+test("Stripe : identifiants des liens pas encore remplis = 500 (Stripe réessaie), aucun e-mail", async () => {
+  const { app, envoyes } = monter({ liens: { kit: null, flacon_50: null, flacon_100: null } });
+  const rep = await app.traiter(requeteStripe(session()));
+  assert.equal(rep.status, 500);
+  assert.match(await rep.text(), /liens_stripe_ids/);
+  assert.equal(envoyes.length, 0);
+});
+
+test("Stripe : le même paiement reçu deux fois = une seule fiche (mémoire avec expiration)", async () => {
+  const MEMOIRE = fausseMemoire();
+  const { app, envoyes } = monter({ env: { MEMOIRE } });
+  assert.equal((await app.traiter(requeteStripe(session()))).status, 200);
+  const deuxieme = await app.traiter(requeteStripe(session()));
+  assert.equal(deuxieme.status, 200);
+  assert.equal((await deuxieme.json()).raison, "déjà traitée");
+  assert.equal(envoyes.length, 1);
+  assert.equal(MEMOIRE.valeurs.get("session:cs_test_42"), "1");
+  assert.ok(MEMOIRE.durees.get("session:cs_test_42") >= 60 * 60 * 24 * 30, "la clé expire, mais pas trop vite");
+  // une autre commande passe normalement
+  await app.traiter(requeteStripe(session({ id: "cs_test_99" })));
+  assert.equal(envoyes.length, 2);
+});
+
+test("Stripe : si l'e-mail ne part pas, la commande n'est pas notée comme traitée (Stripe pourra réessayer)", async () => {
+  const MEMOIRE = fausseMemoire();
+  let essais = 0;
+  const { app } = monter({ env: { MEMOIRE }, envoi: async () => { essais++; if (essais === 1) throw new Error("panne"); } });
+  assert.equal((await app.traiter(requeteStripe(session()))).status, 500);
+  assert.equal(MEMOIRE.valeurs.has("session:cs_test_42"), false);
+  assert.equal((await app.traiter(requeteStripe(session()))).status, 200);
+  assert.equal(essais, 2);
+});
+
+test("Stripe : commande à 0 € (code promo à 100 %) signalée en gros dans l'e-mail", async () => {
+  const { app, envoyes } = monter();
+  await app.traiter(requeteStripe(session({ amount_total: 0, payment_status: "no_payment_required" })));
+  assert.equal(envoyes.length, 1);
+  const e = lireEmail(envoyes[0].brut);
+  assert.match(e.sujet, /^COMMANDE À 0 €/);
+  assert.match(e.corps, /^!!! COMMANDE À 0 € : aucun argent reçu/);
+  assert.match(e.corps, /Montant reçu : 0,00 EUR/);
+  // un code promo partiel : pas d'alerte 0 €, mais le montant est signalé différent du prix
+  await app.traiter(requeteStripe(session({ id: "cs_test_45", amount_total: 3800 })));
+  const partiel = lireEmail(envoyes[1].brut);
+  assert.ok(!partiel.corps.includes("COMMANDE À 0 €"));
+  assert.match(partiel.corps, /38,00 EUR — différent du prix prévu \(code promo \?\)/);
 });
 
 test("e-mail : un long sujet accentué est découpé proprement et se relit à l'identique", () => {
@@ -194,17 +283,89 @@ test("description : texte de l'IA renvoyé, avec l'en-tête CORS du site", async
   assert.equal(options.headers["x-api-key"], "sk-test");
   assert.equal(options.headers["anthropic-version"], "2023-06-01");
   const corps = JSON.parse(options.body);
-  assert.equal(corps.model, "claude-opus-5-5");
+  // modèle peu coûteux par défaut, réponse courte, réflexion coupée
+  assert.equal(corps.model, "claude-haiku-5-5");
+  assert.equal(corps.max_tokens, 300);
+  assert.deepEqual(corps.thinking, { type: "disabled" });
   assert.equal(corps.output_config.effort, "low");
+  assert.equal(corps.fallbacks, undefined);
+  assert.equal(options.headers["anthropic-beta"], undefined);
   assert.match(corps.messages[0].content, /Bergamote/);
   assert.match(corps.messages[0].content, /famille frais/);
   assert.ok(!/\d/.test(corps.messages[0].content), "aucune dose envoyée à l'IA");
 });
 
-test("description : modèle réglable par MODELE_IA", async () => {
+test("description : la page envoie un code sans produit (ni V100 ni KIT) et reçoit bien le texte", async () => {
+  const { app } = monter({ env: { ANTHROPIC_API_KEY: "sk-test" }, fetch: reponseIA(TEXTE_OK) });
+  const sansProduit = CODE.replace("-V100", ""); // ce que fait interface.js : atelier.encoder(formule, null)
+  const rep = await app.traiter(requeteDescription({ code: sansProduit }));
+  assert.equal(rep.status, 200);
+  assert.deepEqual(await rep.json(), { texte: TEXTE_OK, source: "ia" });
+});
+
+test("description : modèle réglable par MODELE_IA (avec repli automatique s'il l'accepte)", async () => {
   const { app, appels } = monter({ env: { ANTHROPIC_API_KEY: "sk-test", MODELE_IA: "claude-sonnet-5-5" }, fetch: reponseIA(TEXTE_OK) });
   await app.traiter(requeteDescription({ code: CODE }));
-  assert.equal(JSON.parse(appels[0][1].body).model, "claude-sonnet-5-5");
+  const corps = JSON.parse(appels[0][1].body);
+  assert.equal(corps.model, "claude-sonnet-5-5");
+  assert.equal(corps.max_tokens, 300);
+  assert.equal(corps.thinking, undefined);
+  assert.equal(corps.fallbacks, "default");
+  assert.equal(appels[0][1].headers["anthropic-beta"], "server-side-fallback-2026-07-01");
+});
+
+test("description : une formule déjà décrite n'appelle plus l'IA (texte gardé 30 jours)", async () => {
+  const MEMOIRE = fausseMemoire();
+  const { app, appels } = monter({ env: { ANTHROPIC_API_KEY: "sk-test", MEMOIRE }, fetch: reponseIA(TEXTE_OK) });
+  for (const code of [CODE, CODE.replace("-V100", ""), CODE.replace("-V100", "-KIT")]) {
+    assert.deepEqual(await (await app.traiter(requeteDescription({ code }))).json(), { texte: TEXTE_OK, source: "ia" });
+  }
+  assert.equal(appels.length, 1, "un seul appel à l'IA pour la même formule");
+  const cle = [...MEMOIRE.valeurs.keys()].find(k => k.startsWith("description:"));
+  assert.equal(cle, `description:${CODE.replace("-V100", "")}`);
+  assert.equal(MEMOIRE.durees.get(cle), 60 * 60 * 24 * 30);
+});
+
+test("description : trop de demandes d'une même personne = 429, l'IA n'est pas appelée", async () => {
+  const cles = [];
+  const LIMITE_IA = { limit: async ({ key }) => { cles.push(key); return { success: cles.length <= 2 }; } };
+  const { app, appels } = monter({ env: { ANTHROPIC_API_KEY: "sk-test", LIMITE_IA }, fetch: reponseIA(TEXTE_OK) });
+  const avecIp = code => new Request("https://atelier.exemple.workers.dev/description", {
+    method: "POST", headers: { Origin: SITE, "Content-Type": "application/json", "CF-Connecting-IP": "203.0.113.7" }, body: JSON.stringify({ code }),
+  });
+  const codes = ["R01-BER22-MAN18-FLO25-MUS20-CED15-C18", "R01-BER22-MAN18-FLO25-MUS20-CED15-C19", "R01-BER22-MAN18-FLO25-MUS20-CED15-C20"];
+  const statuts = [];
+  for (const code of codes) statuts.push((await app.traiter(avecIp(code))).status);
+  assert.deepEqual(statuts, [200, 200, 429]);
+  assert.equal(appels.length, 2);
+  assert.ok(cles.every(k => k === "ia:203.0.113.7"), "limite comptée par adresse IP");
+});
+
+test("description : plafond d'appels par jour atteint = texte préécrit, l'IA n'est plus appelée", async () => {
+  const MEMOIRE = fausseMemoire();
+  const { app, appels } = monter({ env: { ANTHROPIC_API_KEY: "sk-test", MEMOIRE, IA_PLAFOND_JOUR: "2" }, fetch: reponseIA(TEXTE_OK) });
+  const reponses = [];
+  for (const c of ["C18", "C19", "C20"]) reponses.push(await (await app.traiter(requeteDescription({ code: `R01-BER22-MAN18-FLO25-MUS20-CED15-${c}` }))).json());
+  assert.equal(appels.length, 2);
+  assert.deepEqual(reponses[2], { texte: null, source: "plafond" });
+  assert.equal(MEMOIRE.valeurs.get("ia-jour:2026-10-21"), "2");
+});
+
+test("description : texte coupé (plus de jetons) = texte préécrit", async () => {
+  const { app } = monter({ env: { ANTHROPIC_API_KEY: "sk-test" }, fetch: reponseIA(TEXTE_OK, { stop_reason: "max_tokens" }) });
+  assert.deepEqual(await (await app.traiter(requeteDescription({ code: CODE }))).json(), { texte: null, source: "aucune" });
+});
+
+test("description : plusieurs adresses du site acceptées (pages.dev, nom de domaine avec et sans www)", async () => {
+  const SITE_ORIGINS = "https://olfamatch.pages.dev, https://olfamatch.fr,https://www.olfamatch.fr/";
+  const { app } = monter({ env: { ANTHROPIC_API_KEY: "sk-test", SITE_ORIGINS }, fetch: reponseIA(TEXTE_OK) });
+  for (const origine of ["https://olfamatch.pages.dev", "https://olfamatch.fr", "https://www.olfamatch.fr"]) {
+    const rep = await app.traiter(requeteDescription({ code: CODE }, origine));
+    assert.equal(rep.status, 200, origine);
+    assert.equal(rep.headers.get("Access-Control-Allow-Origin"), origine);
+    assert.equal((await app.traiter(requeteDescription(null, origine, "OPTIONS"))).status, 204, origine);
+  }
+  assert.equal((await app.traiter(requeteDescription({ code: CODE }, "https://olfamatch.fr.pirate.exemple"))).status, 403);
 });
 
 test("description : sans clé API, la page garde son texte préécrit", async () => {

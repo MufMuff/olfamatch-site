@@ -65,7 +65,15 @@ const selectNotes = (nom, valeur, vide) => `<select class="cp-select" data-actio
 function messages(res) {
   if (!res) return "";
   const bloc = (cls, items) => items.length ? `<div class="cp-alerte ${cls}"><ul>${items.map(m => `<li>${esc(m.message)}</li>`).join("")}</ul></div>` : "";
-  return bloc("erreur", res.erreurs) + bloc("attention", res.avertissements) + bloc("info", res.corrections.filter(c => c.code !== "concentration"));
+  return bloc("erreur", res.erreurs) + aides(res) + bloc("attention", res.avertissements) + bloc("info", res.corrections.filter(c => c.code !== "concentration"));
+}
+
+// Mode expert : les notes qui règlent un manque, à ajouter en un clic.
+function aides(res) {
+  if (S.mode !== "expert" || S.fixe) return "";
+  return conf.suggestions({ mode: "expert", concentration: S.expert.concentration, notes: S.expert.notes }, res).map(s =>
+    `<div class="cp-aide"><p>${esc(s.titre)}</p><div class="cp-chips">${s.notes.map(n =>
+      `<button type="button" class="chip cp-chip" data-action="note" data-id="${n.id}">+ ${esc(n.nom)}</button>`).join("")}</div></div>`).join("");
 }
 
 function pyramideHtml(formule) {
@@ -178,7 +186,7 @@ function controlesGuide() {
   const r = REC[S.recette];
   const curseur = (cle, gauche, droite) => `<label class="cp-curseur"><span><em>${gauche}</em><em>${droite}</em></span>
     <input type="range" min="-1" max="1" step="0.1" value="${S.curseurs[cle]}" data-action="curseur" data-cle="${cle}"></label>`;
-  const possibles = moteur.notesCompatibles({ mode: "guide", recette: S.recette, notes: r.notes }).filter(n => n.possible);
+  const possibles = conf.notesAjoutables(S.recette, S.reponses); // jamais la note détestée
   return `<p class="tag">Recette ${esc(S.recette)}</p><h2 class="cp-h2">${esc(r.nom)}</h2>
     ${curseur("fraicheur", "Plus frais", "Plus chaud")}
     ${curseur("douceur", "Plus sec", "Plus doux")}

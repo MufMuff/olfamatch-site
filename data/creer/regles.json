@@ -13,6 +13,7 @@
     "puissance : aucune note ne dépasse part_max_par_note % du poids perçu (dose × puissance) ; au plus fortes_max notes de puissance fortes_a_partir_de ou plus.",
     "associations_interdites : groupes de notes jamais ensemble.",
     "matrice : score moyen minimum entre les notes, associations délicates permises par mode, réduction de la dose maximum de la note la plus forte d'une association délicate.",
+    "matrice.reduire : comment choisir la note réduite dans une association délicate, critère après critère : \"puissance\" (la plus puissante), puis \"dose\" (à puissance égale, la plus dosée). À égalité sur tout : la première citée dans compatibilite.json.",
     "ifra : exiger_certificat = true refuse toute note sans certificat IFRA reçu. À passer à true avant le lancement.",
     "guide : marge par défaut autour de chaque dose de recette (en points de %), nombre de notes ajoutables et leur dose maximum.",
     "pas_pourcentage : finesse des doses (1 = doses en % entiers).",
@@ -57,7 +58,8 @@
   "matrice": {
     "moyenne_min": 2.0,
     "risquees_max": { "guide": 0, "expert": 1 },
-    "reduction_note_forte": 0.5
+    "reduction_note_forte": 0.5,
+    "reduire": ["puissance", "dose"]
   },
   "ifra": { "categorie": 4, "exiger_certificat": false },
   "guide": { "marge_defaut": 5, "ajouts_max": 1, "ajout_dose_max": 10 },

@@ -16,7 +16,13 @@ import { creerFabrication } from "../src/creer/fabrication.js";
 import { creerMoteur } from "../src/creer/moteur.js";
 
 const API_ANTHROPIC = "https://api.anthropic.com/v1/messages";
-const MODELE_PAR_DEFAUT = "claude-opus-5-5";
+// Modèle peu coûteux par défaut pour un texte de 2 ou 3 phrases ; réglable avec MODELE_IA.
+const MODELE_PAR_DEFAUT = "claude-haiku-5-5";
+const MAX_JETONS_IA = 300; // environ 200 mots : assez pour 60 mots, et la facture reste bornée
+// Modèles qui acceptent le repli automatique côté serveur en cas de refus (paramètre fallbacks).
+const MODELES_AVEC_REPLI = ["claude-opus-5-5", "claude-opus-5", "claude-sonnet-5-5", "claude-fable-5-1"];
+const DUREE_CACHE_DESCRIPTION_S = 60 * 60 * 24 * 30; // une description est gardée 30 jours par formule
+const PLAFOND_IA_JOUR_PAR_DEFAUT = 200; // appels à l'IA par jour, tous visiteurs confondus
 const TAILLE_MAX_STRIPE = 1024 * 1024; // 1 Mo
 const TAILLE_MAX_DESCRIPTION = 2048; // 2 Ko
 const TOLERANCE_PAR_DEFAUT_S = 300; // 5 minutes
@@ -110,6 +116,20 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
   const atelier = creerFabrication(donnees);
   const moteur = creerMoteur(donnees);
   const N = donnees.notes.notes;
+  // Adresses du site autorisées pour /description : SITE_ORIGINS (séparées par des virgules) et SITE_ORIGIN.
+  const ORIGINES = [...new Set([...String(env.SITE_ORIGINS || "").split(","), env.SITE_ORIGIN || ""]
+    .map(s => s.trim().replace(/\/+$/, "")).filter(Boolean))];
+  const sitePrincipal = env.SITE_ORIGIN || ORIGINES[0] || null;
+
+  // Mémoire Cloudflare (KV) facultative : doublons Stripe, descriptions déjà écrites, compteur du jour.
+  async function lireMemoire(cle) {
+    if (!env.MEMOIRE) return null;
+    try { return await env.MEMOIRE.get(cle); } catch (e) { console.log(`Mémoire illisible : ${e && e.message}`); return null; }
+  }
+  async function ecrireMemoire(cle, valeur, dureeS) {
+    if (!env.MEMOIRE) return;
+    try { await env.MEMOIRE.put(cle, valeur, { expirationTtl: dureeS }); } catch (e) { console.log(`Mémoire non écrite : ${e && e.message}`); }
+  }
 
   // ----- fiche de pesée en texte simple -----
   function tableau(lignes, total) {
@@ -124,28 +144,37 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
     return rangs.join("\n");
   }
 
-  function corpsCommande(session, code) {
+  // paye = produit du lien de paiement utilisé ({ cle, nom, prix_eur }), voir produitDuLien().
+  function corpsCommande(session, code, paye) {
     const client = session.customer_details || {};
     const adresse = client.address
       ? [client.address.line1, client.address.line2, `${client.address.postal_code || ""} ${client.address.city || ""}`.trim(), client.address.country]
         .filter(Boolean).join(", ")
       : "non renseignée";
-    const montant = Number.isFinite(session.amount_total)
+    const montantConnu = Number.isFinite(session.amount_total);
+    const montant = montantConnu
       ? `${(session.amount_total / 100).toFixed(2).replace(".", ",")} ${String(session.currency || "").toUpperCase()}` : "inconnu";
+    // Commande à 0 € : code promo à 100 % (ou erreur de réglage dans Stripe). On le dit en gros.
+    const gratuite = session.amount_total === 0 || session.payment_status === "no_payment_required";
+    const prixDifferent = montantConnu && !gratuite && paye.prix_eur != null && session.amount_total !== Math.round(paye.prix_eur * 100);
     const entete = [
       `Commande Stripe : ${session.id || "?"}`,
-      `Montant : ${montant}`,
+      `Produit payé : ${paye.nom}${paye.prix_eur != null ? ` (prix prévu ${nombre(paye.prix_eur)} €)` : ""}`,
+      `Montant reçu : ${montant}${prixDifferent ? " — différent du prix prévu (code promo ?)" : ""}`,
       `Client : ${client.name || "?"} <${client.email || "?"}>`,
       `Adresse : ${adresse}`,
       session.payment_link ? `Lien de paiement : ${session.payment_link}` : null,
       `Code de formule : ${code || "aucun"}`,
     ].filter(Boolean).join("\n");
+    const bandeauGratuit = gratuite
+      ? ["!!! COMMANDE À 0 € : aucun argent reçu (code promo à 100 % ?). Vérifier dans Stripe avant de fabriquer. !!!", ""] : [];
 
     const probleme = (raison, erreurs = []) => ({
-      sujet: `NE PAS FABRIQUER · vérifier la commande ${session.id || ""}`.trim(),
+      sujet: `NE PAS FABRIQUER · ${gratuite ? "0 € · " : ""}vérifier la commande ${session.id || ""}`.trim(),
       corps: [
         "!!! NE PAS FABRIQUER — vérifier cette commande avant toute pesée !!!",
         "",
+        ...bandeauGratuit,
         raison,
         ...erreurs.map(e => `  - ${e}`),
         "",
@@ -159,11 +188,15 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
     const res = atelier.preparerFiche(code);
     if (!res.ok)
       return probleme(res.formule ? "La formule ne respecte pas les règles actuelles :" : "Le code de formule est illisible :", res.erreurs.map(e => e.message));
+    // Le client doit avoir payé le produit que demande son code (kit, 50 ml ou 100 ml).
+    if (res.produit.cle !== paye.cle)
+      return probleme(`Le produit payé ne correspond pas au code : le client a payé « ${paye.nom} », le code demande « ${res.produit.nom} ».`);
 
     const f = res.fiche;
     const origine = res.recette ? `Recette ${res.formule.recette} · ${res.recette}` : "Formule libre (mode expert)";
     const kit = Boolean(res.kit && Array.isArray(res.variantes));
     const blocs = [
+      ...bandeauGratuit,
       kit ? "Nouvelle commande « Crée ton parfum » : KIT D'ÉCHANTILLONS (3 variantes) à fabriquer."
         : "Nouvelle commande « Crée ton parfum » à fabriquer.",
       "",
@@ -194,12 +227,18 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
     blocs.push("", "ÉTIQUETTE",
       !a.complet ? `Pas encore possible : il manque la liste d'allergènes du fournisseur pour ${a.manquants.join(", ")}.`
         : a.a_declarer.length ? `Allergènes à imprimer : ${a.a_declarer.join(", ")}.` : "Aucun allergène à déclarer.");
-    if (env.SITE_ORIGIN) blocs.push("", `Page de fabrication : ${env.SITE_ORIGIN}/fabrication/?code=${encodeURIComponent(res.code)}`);
+    if (sitePrincipal) blocs.push("", `Page de fabrication : ${sitePrincipal}/fabrication/?code=${encodeURIComponent(res.code)}`);
     return {
-      sujet: `Commande ${res.formule.recette || "libre"} · ${kit ? "kit d'échantillons" : `${f.volume_ml} ml`} · ${client.name || client.email || session.id || ""}`.trim(),
+      sujet: `${gratuite ? "COMMANDE À 0 € · " : ""}Commande ${res.formule.recette || "libre"} · ${kit ? "kit d'échantillons" : `${f.volume_ml} ml`} · ${client.name || client.email || session.id || ""}`.trim(),
       corps: blocs.join("\n"),
     };
   }
+
+  // Liens de paiement connus (boutique.json, liens_stripe_ids) : identifiant plink_… → produit.
+  const LIENS = new Map(Object.entries((donnees.boutique && donnees.boutique.liens_stripe_ids) || {})
+    .filter(([, id]) => typeof id === "string" && id)
+    .map(([cle, id]) => [id, atelier.produit(cle === "kit" ? "kit" : Number(cle.replace("flacon_", "")))]));
+  const DUREE_DOUBLON_S = 60 * 60 * 24 * 60; // une session Stripe déjà traitée est ignorée pendant 60 jours
 
   async function stripe(requete) {
     if (!env.STRIPE_WEBHOOK_SECRET) return texte("Configuration incomplète : secret Stripe manquant.", 500);
@@ -219,7 +258,19 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
     // Autres événements, ou paiement encore en attente (virement…) : rien à faire, Stripe renverra le bon événement.
     if (!paye || !session) return json({ recu: true, traite: false });
 
-    const { sujet, corps } = corpsCommande(session, session.client_reference_id);
+    // Sans les identifiants des 3 liens, impossible de vérifier le produit payé : on refuse (500),
+    // Stripe réessaie et signale l'échec dans son tableau de bord. La commande n'est pas perdue.
+    if (!LIENS.size) return texte("Configuration incomplète : identifiants des liens Stripe manquants (boutique.json, liens_stripe_ids).", 500);
+    const produitPaye = LIENS.get(session.payment_link);
+    // Paiement venant d'un autre lien ou d'une autre vente : ce n'est pas une commande « Crée ton parfum ».
+    if (!produitPaye) return json({ recu: true, traite: false, raison: "autre lien de paiement" });
+
+    // Stripe peut envoyer deux fois le même événement : une session déjà traitée est ignorée.
+    const cleDoublon = session.id ? `session:${session.id}` : null;
+    if (cleDoublon && (await lireMemoire(cleDoublon)))
+      return json({ recu: true, traite: false, raison: "déjà traitée" });
+
+    const { sujet, corps } = corpsCommande(session, session.client_reference_id, produitPaye);
     try {
       const raw = messageBrut({ de: env.EMAIL_EXPEDITEUR, a: env.EMAIL_ATELIER, sujet, corps, date: new Date(maintenant()) });
       await env.EMAIL.send(new EmailMessage(env.EMAIL_EXPEDITEUR, env.EMAIL_ATELIER, raw));
@@ -228,6 +279,8 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
       console.log(`Envoi de l'e-mail impossible pour ${session.id} : ${e && e.message}`);
       return texte("Envoi de l'e-mail impossible, Stripe réessaiera.", 500);
     }
+    // Noté seulement une fois l'e-mail parti : un échec d'envoi laisse Stripe réessayer.
+    if (cleDoublon) await ecrireMemoire(cleDoublon, "1", DUREE_DOUBLON_S);
     console.log(`Fiche envoyée pour ${session.id}`);
     return json({ recu: true, traite: true });
   }
@@ -272,7 +325,7 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
 
   async function description(requete) {
     const origine = requete.headers.get("origin");
-    const autorisee = Boolean(env.SITE_ORIGIN) && origine === env.SITE_ORIGIN;
+    const autorisee = Boolean(origine) && ORIGINES.includes(origine);
     if (requete.method === "OPTIONS") return autorisee ? new Response(null, { status: 204, headers: enTetesCors(origine) }) : texte("Origine refusée.", 403);
     if (!autorisee) return texte("Origine refusée.", 403);
     const cors = enTetesCors(origine);
@@ -285,11 +338,47 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
     try { code = JSON.parse(brut).code; } catch { return json({ erreur: "Demande illisible." }, 400, cors); }
     if (typeof code !== "string" || !code || code.length > 200) return json({ erreur: "Code de formule manquant ou trop long." }, 400, cors);
 
-    const lu = atelier.decoder(code);
+    // La page envoie le code sans produit (pas de -V100 ni -KIT) : on l'accepte.
+    const lu = atelier.decoder(code, { volumeFacultatif: true });
     if (!lu.ok) return json({ erreur: lu.erreurs[0].message }, 400, cors);
     const verif = moteur.verifier(lu.formule);
     if (!verif.ok) return json({ erreur: "Cette formule ne respecte pas les règles de l'outil." }, 400, cors);
+
+    // 1. Déjà décrite ? On renvoie le même texte, sans appeler l'IA.
+    const cleCache = `description:${atelier.encoder(lu.formule, null)}`;
+    const deja = await lireMemoire(cleCache);
+    if (deja) return json({ texte: deja, source: "ia" }, 200, cors);
     if (!env.ANTHROPIC_API_KEY) return aucune();
+
+    // 2. Limite par personne (adresse IP), réglée dans wrangler.toml (LIMITE_IA).
+    if (env.LIMITE_IA) {
+      const ip = requete.headers.get("cf-connecting-ip") || "inconnue";
+      try {
+        const { success } = await env.LIMITE_IA.limit({ key: `ia:${ip}` });
+        if (!success) return json({ texte: null, source: "limite" }, 429, cors);
+      } catch (e) { console.log(`Limite IA indisponible : ${e && e.message}`); }
+    }
+
+    // 3. Plafond d'appels par jour, tous visiteurs confondus (IA_PLAFOND_JOUR), pour borner la facture.
+    if (env.MEMOIRE) {
+      const cleJour = `ia-jour:${new Date(maintenant()).toISOString().slice(0, 10)}`;
+      const faits = Number(await lireMemoire(cleJour)) || 0;
+      if (faits >= (Number(env.IA_PLAFOND_JOUR) || PLAFOND_IA_JOUR_PAR_DEFAUT)) return json({ texte: null, source: "plafond" }, 200, cors);
+      await ecrireMemoire(cleJour, String(faits + 1), 60 * 60 * 48);
+    }
+
+    const modele = env.MODELE_IA || MODELE_PAR_DEFAUT;
+    const avecRepli = MODELES_AVEC_REPLI.includes(modele);
+    const corpsRequete = {
+      model: modele,
+      max_tokens: MAX_JETONS_IA,
+      output_config: { effort: "low" },
+      system: SYSTEME,
+      messages: [{ role: "user", content: consigne(lu.formule, verif.famille) }],
+    };
+    // Haiku : réflexion coupée (accepté à l'effort low), pour que les jetons servent au texte.
+    if (modele.startsWith("claude-haiku-5")) corpsRequete.thinking = { type: "disabled" };
+    if (avecRepli) corpsRequete.fallbacks = "default";
 
     try {
       const reponse = await fetchFn(API_ANTHROPIC, {
@@ -298,23 +387,19 @@ export function creerApp({ donnees, env = {}, fetch: fetchFn = globalThis.fetch,
           "Content-Type": "application/json",
           "x-api-key": env.ANTHROPIC_API_KEY,
           "anthropic-version": "2023-06-01",
-          "anthropic-beta": "server-side-fallback-2026-07-01",
+          ...(avecRepli ? { "anthropic-beta": "server-side-fallback-2026-07-01" } : {}),
         },
-        body: JSON.stringify({
-          model: env.MODELE_IA || MODELE_PAR_DEFAUT,
-          max_tokens: 2000,
-          output_config: { effort: "low" },
-          fallbacks: "default",
-          system: SYSTEME,
-          messages: [{ role: "user", content: consigne(lu.formule, verif.famille) }],
-        }),
+        body: JSON.stringify(corpsRequete),
         signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined,
       });
       if (!reponse.ok) { console.log(`Description IA : réponse ${reponse.status}`); return aucune(); }
       const message = await reponse.json();
-      if (message.stop_reason === "refusal" || !Array.isArray(message.content)) return aucune();
+      // Refus, ou texte coupé faute de jetons : la page garde sa phrase préécrite.
+      if (["refusal", "max_tokens"].includes(message.stop_reason) || !Array.isArray(message.content)) return aucune();
       const t = message.content.filter(b => b.type === "text").map(b => b.text).join(" ").replace(/\s+/g, " ").trim();
-      return texteAcceptable(t) ? json({ texte: t, source: "ia" }, 200, cors) : aucune();
+      if (!texteAcceptable(t)) return aucune();
+      await ecrireMemoire(cleCache, t, DUREE_CACHE_DESCRIPTION_S);
+      return json({ texte: t, source: "ia" }, 200, cors);
     } catch (e) {
       console.log(`Description IA impossible : ${e && e.name}`);
       return aucune();

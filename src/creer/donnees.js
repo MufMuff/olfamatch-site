@@ -57,6 +57,8 @@ export function controlerDonnees({ notes, compatibilite, recettes, regles, bouti
     pb.push("regles.json : matrice.risquees_max doit donner un nombre pour guide et pour expert.");
   if (!(num(m.reduction_note_forte) && m.reduction_note_forte > 0 && m.reduction_note_forte <= 1))
     pb.push("regles.json : matrice.reduction_note_forte doit être entre 0 et 1.");
+  if (!(Array.isArray(m.reduire) && m.reduire.length && m.reduire.every(c => ["puissance", "dose"].includes(c))))
+    pb.push("regles.json : matrice.reduire doit lister \"puissance\" et/ou \"dose\".");
   const p = R.puissance || {};
   if (!(num(p.part_max_par_note) && Number.isInteger(p.fortes_a_partir_de) && Number.isInteger(p.fortes_max)))
     pb.push("regles.json : bloc puissance incomplet.");
@@ -162,6 +164,9 @@ export function controlerDonnees({ notes, compatibilite, recettes, regles, bouti
     for (const p of ["kit", "flacon_50", "flacon_100"]) {
       const l = (boutique.liens_stripe || {})[p];
       if (l !== null && !url(l)) pb.push(`${ou} : le lien Stripe « ${p} » doit être null ou une adresse https://.`);
+      const ident = (boutique.liens_stripe_ids || {})[p];
+      if (ident !== null && ident !== undefined && !(typeof ident === "string" && /^plink_[A-Za-z0-9]+$/.test(ident)))
+        pb.push(`${ou} : l'identifiant Stripe « ${p} » doit être null ou commencer par plink_.`);
       const prix = (boutique.prix_eur || {})[p];
       if (prix !== null && !(num(prix) && prix > 0)) pb.push(`${ou} : le prix « ${p} » doit être null ou un nombre.`);
     }

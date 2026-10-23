@@ -46,7 +46,7 @@ export function creerConfigurateur(donnees) {
       if (reponses.saison && r.saisons.includes(reponses.saison)) { score += 2; raisons.push("saison"); }
       if (reponses.intensite && r.intensite === reponses.intensite) { score += 3; raisons.push("intensite"); }
       let ajout = null;
-      if (reponses.adoree && propre(N, reponses.adoree)) {
+      if (reponses.adoree && propre(N, reponses.adoree) && reponses.adoree !== reponses.detestee) {
         if (propre(r.notes, reponses.adoree)) { score += 5; raisons.push("note adorée"); }
         else {
           const possible = moteur.notesCompatibles({ mode: "guide", recette: id, notes: r.notes })
@@ -99,6 +99,40 @@ export function creerConfigurateur(donnees) {
       const ok = essai.ok;
       return { nom: v.nom, formule: ok ? essai.formule : { ...formule }, ok };
     });
+  }
+
+  // Mode guidé : notes qu'on peut ajouter à la recette (compatibles), sauf celle que le client déteste.
+  function notesAjoutables(idRecette, reponses = {}) {
+    if (!propre(REC, idRecette)) return [];
+    return moteur.notesCompatibles({ mode: "guide", recette: idRecette, notes: REC[idRecette].notes })
+      .filter(n => n.possible && n.id !== reponses.detestee);
+  }
+
+  /*
+   * Mode expert : pour chaque manque (note de tête, de cœur, de fond, note qui tient, nombre de notes),
+   * les notes qui le règlent en un clic, les mieux accordées d'abord.
+   */
+  const NOM_ETAGE = { tete: "tête", coeur: "cœur", fond: "fond" };
+  function suggestions(formule, res, parManque = 4) {
+    if (!res || res.ok) return [];
+    const possibles = moteur.notesCompatibles({ ...formule }).filter(n => n.possible);
+    const vues = new Set(), out = [];
+    for (const e of res.erreurs) {
+      let filtre = null, titre = null;
+      if ((e.code === "etage_incomplet" || e.code === "equilibre") && e.etage) {
+        filtre = n => N[n.id].etage === e.etage; titre = `Ajoute une note de ${NOM_ETAGE[e.etage]} :`;
+      } else if (e.code === "tenue") {
+        filtre = n => (R.notes_de_tenue || []).includes(n.id); titre = "Ajoute une note qui fait tenir le parfum :";
+      } else if (e.code === "trop_peu_de_notes") {
+        filtre = () => true; titre = "Ajoute une note :";
+      }
+      if (!filtre || vues.has(titre)) continue;
+      vues.add(titre);
+      const notes = possibles.filter(filtre).sort((a, b) => (b.harmonie ?? 0) - (a.harmonie ?? 0)).slice(0, parManque);
+      if (notes.length) out.push({ manque: e.code, etage: e.etage || null, titre, notes: notes.map(n => ({ id: n.id, nom: n.nom })) });
+    }
+    // « Ajoute une note » n'apporte rien si un étage précis manque déjà.
+    return out.length > 1 ? out.filter(s => s.manque !== "trop_peu_de_notes") : out;
   }
 
   // Notes par étage, de la plus dosée à la moins dosée.
@@ -168,7 +202,7 @@ export function creerConfigurateur(donnees) {
     return phrases.join(" ");
   }
 
-  return { choisirRecettes, transformer, formuleGuidee, variantesKit, pyramide, roue, frise, decrire, moteur };
+  return { choisirRecettes, transformer, formuleGuidee, notesAjoutables, suggestions, variantesKit, pyramide, roue, frise, decrire, moteur };
 }
 
 /*

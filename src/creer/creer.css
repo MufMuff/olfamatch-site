@@ -50,6 +50,8 @@
 .cp-alerte.erreur{background:rgba(220,90,80,.14);color:#F4B7AE}
 .cp-alerte.attention{background:rgba(200,161,90,.14);color:var(--gold-soft)}
 .cp-alerte.info{background:var(--card);color:var(--soft)}
+.cp-aide{margin:-6px 0 16px}
+.cp-aide p{margin:0 0 8px;color:var(--soft);font-size:15px}
 .cp-vide{border:1px dashed var(--line-2);border-radius:22px;padding:40px;color:var(--muted);text-align:center}
 .cp-visu{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;transition:opacity .2s}
 .cp-visu.flou{opacity:.45}

@@ -10,8 +10,9 @@ import notes from "../data/creer/notes.json";
 import compatibilite from "../data/creer/compatibilite.json";
 import recettes from "../data/creer/recettes.json";
 import regles from "../data/creer/regles.json";
+import boutique from "../data/creer/boutique.json";
 
-const donnees = { notes, compatibilite, recettes, regles };
+const donnees = { notes, compatibilite, recettes, regles, boutique };
 
 export default {
   fetch(request, env) {
