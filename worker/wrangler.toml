@@ -1,21 +1,38 @@
-# Réglages du programme Cloudflare (Worker) d'Olfamatch. Mode d'emploi : LISEZMOI.md.
+# Réglages du programme Cloudflare (Worker) d'Olfamatch « Crée ton parfum ». Mode d'emploi : LISEZMOI.md.
 name = "olfamatch-atelier"
 main = "index.js"
 compatibility_date = "2026-10-01"
+
+# Base de données (D1) : formules, commandes, notifications Stripe, lots, stocks.
+# Créer une fois avec « npx wrangler d1 create olfamatch », coller l'identifiant affiché,
+# puis créer les tables avec « npx wrangler d1 execute olfamatch --remote --file=schema.sql ».
+[[d1_databases]]
+binding = "DB"
+database_name = "olfamatch"
+database_id = "IDENTIFIANT-D1-A-REMPLACER"
 
 # Envoi d'e-mails (Cloudflare Email Routing). L'adresse doit être vérifiée dans Email Routing.
 [[send_email]]
 name = "EMAIL"
 destination_address = "ADRESSE-DE-L-ATELIER@exemple.fr"
 
-# Mémoire (KV) : commandes Stripe déjà traitées, descriptions déjà écrites, compteur d'appels à l'IA.
+# Mémoire (KV) : descriptions écrites par l'IA (30 jours) et compteur d'appels du jour.
 # Créer une fois avec « npx wrangler kv namespace create MEMOIRE », puis coller l'identifiant affiché.
 [[kv_namespaces]]
 binding = "MEMOIRE"
 id = "IDENTIFIANT-KV-A-REMPLACER"
 
-# Limite d'appels à la description par IA : 5 par minute et par adresse IP (Wrangler 4.36 ou plus).
-# namespace_id : un nombre au choix, unique dans ton compte Cloudflare.
+# Limites de demandes par adresse IP (Wrangler 4.36 ou plus). namespace_id : un nombre au choix, unique dans ton compte.
+# Toutes les adresses /api/ : 30 demandes par minute.
+[[ratelimits]]
+name = "LIMITE_API"
+namespace_id = "1002"
+
+  [ratelimits.simple]
+  limit = 30
+  period = 60
+
+# Appels à l'IA : 5 par minute.
 [[ratelimits]]
 name = "LIMITE_IA"
 namespace_id = "1001"
@@ -25,20 +42,23 @@ namespace_id = "1001"
   period = 60
 
 [vars]
-# Adresse principale du site (lien vers la page de fabrication dans les e-mails).
+# Adresse principale du site (pages de retour après paiement, lien vers la fiche dans les e-mails).
 SITE_ORIGIN = "https://olfamatch.pages.dev"
-# Toutes les adresses du site autorisées à demander une description, séparées par des virgules.
+# Toutes les adresses du site autorisées à appeler le programme, séparées par des virgules.
 # Le jour où le nom de domaine arrive : "https://olfamatch.pages.dev,https://olfamatch.fr,https://www.olfamatch.fr"
 SITE_ORIGINS = "https://olfamatch.pages.dev"
-# Adresse qui reçoit les fiches de pesée (la même que destination_address ci-dessus).
+# Adresse qui reçoit les commandes et les alertes (la même que destination_address ci-dessus).
 EMAIL_ATELIER = "ADRESSE-DE-L-ATELIER@exemple.fr"
 # Adresse d'envoi : elle doit appartenir au nom de domaine où Email Routing est activé.
 EMAIL_EXPEDITEUR = "atelier@VOTRE-DOMAINE.fr"
+# Porte « Pars d'un parfum que tu aimes » : "true" seulement si config/features.json dit aussi true.
+INSPIRATION_NOMMEE = "false"
 # Nombre maximum d'appels à l'IA par jour, tous visiteurs confondus.
 IA_PLAFOND_JOUR = "200"
-# Facultatif : autre modèle d'IA pour les descriptions (par défaut claude-haiku-5-5, le moins cher).
+# Facultatif : autre modèle d'IA (par défaut claude-haiku-5-5, le moins cher).
 # MODELE_IA = "claude-sonnet-5-5"
 
 # Secrets : JAMAIS dans ce fichier. À enregistrer une fois avec :
+#   npx wrangler secret put STRIPE_SECRET_KEY
 #   npx wrangler secret put STRIPE_WEBHOOK_SECRET
 #   npx wrangler secret put ANTHROPIC_API_KEY
