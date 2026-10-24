@@ -6,12 +6,18 @@
   "prix_eur : prix en euros par format. Le programme Cloudflare les relit lui-même pour créer le paiement : le navigateur n'envoie jamais de montant. PROVISOIRES (plafond voulu : 50 €).",
   "delai : délai affiché avant le paiement (macération comprise).",
   "kit_deduit : phrase affichée sur le kit d'échantillons.",
-  "worker : adresse du programme Cloudflare. null = pas de paiement ni de description par IA."
+  "worker : adresse du programme Cloudflare. null = pas de paiement ni de description par IA.",
+  "quantite_max : nombre de flacons au plus par commande (le kit : 1).",
+  "pays_livraison : pays proposés à l'adresse de livraison (codes à 2 lettres). Pas d'envoi par avion, donc pas d'outre-mer au lancement.",
+  "transporteur : nom du transporteur qui accepte les parfums en « quantités limitées » (UN 1266, losange LQ). La Poste et Colissimo les interdisent. null = pas encore choisi : la vente ne peut pas être ouverte."
  ],
  "publie": false,
  "vente_active": false,
  "prix_eur": { "kit": 10, "flacon_50": 32, "flacon_100": 48 },
  "delai": "environ 3 semaines, macération comprise",
  "kit_deduit": "Le prix du kit est déduit de ton flacon : un code de réduction de 10 € est glissé dans le colis.",
- "worker": null
+ "worker": null,
+ "quantite_max": 3,
+ "pays_livraison": ["FR"],
+ "transporteur": null
 }

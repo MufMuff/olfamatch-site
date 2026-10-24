@@ -107,6 +107,8 @@ test("erreurs de saisie courantes : chacune est signalée en clair", () => {
     [d2 => { d2.notes.notes.tonka.lot_actif = "TON-9999"; }, /lot_actif « TON-9999 » absent/],
     [d2 => { d2.boutique.vente_active = true; }, /mode démonstration est actif/],
     [d2 => { d2.boutique.vente_active = true; }, /sans cadre de sécurité signé/],
+    [d2 => { d2.boutique.vente_active = true; }, /sans transporteur choisi/],
+    [d2 => { d2.boutique.transporteur = "Colissimo"; }, /La Poste et Colissimo refusent/],
     [d2 => { d2.cadre_securite.notes = { BER: { pmax: 30 } }; }, /version du rapport manque/],
     [d2 => { d2.regles.harmonie.commande.deconseille.P2 = "oui"; }, /jamais être commandable dans les portes P1 à P4/],
     [d2 => { d2.features.vagues_actives = [4]; }, /vagues_actives/],

@@ -82,6 +82,7 @@ export function donneesEnVente({ vagues = [1, 2, 3] } = {}) {
   d.features.vagues_actives = vagues;
   d.features.mode_demo = false;
   d.boutique.vente_active = true;
+  d.boutique.transporteur = "Transporteur test (quantités limitées)";
   for (const l of d.matieres_lots.lots) { l.demo = false; l.lot = l.lot.replace("DEMO-", "") + "-2026-01"; l.fournisseur = "Test"; }
   for (const n of Object.values(d.notes.notes)) n.lot_actif = `${n.code}-2026-01`;
   d.cadre_securite = {

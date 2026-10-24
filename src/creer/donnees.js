@@ -309,6 +309,11 @@ export function controlerDonnees(d) {
     for (const p of ["kit", "flacon_50", "flacon_100"]) if (!(num(B.prix_eur?.[p]) && B.prix_eur[p] > 0)) pb.push(`boutique.json : prix « ${p} » manquant.`);
     if (!texte(B.delai)) pb.push("boutique.json : delai manquant.");
     if (B.worker !== null && !url(B.worker)) pb.push("boutique.json : worker doit être null ou une adresse https://.");
+    if (!(Number.isInteger(B.quantite_max) && B.quantite_max >= 1)) pb.push("boutique.json : quantite_max doit être un nombre entier.");
+    if (!(Array.isArray(B.pays_livraison) && B.pays_livraison.length && B.pays_livraison.every(x => /^[A-Z]{2}$/.test(x)))) pb.push("boutique.json : pays_livraison doit lister des codes de pays à 2 lettres (FR).");
+    if (B.transporteur !== null && !texte(B.transporteur)) pb.push("boutique.json : transporteur doit être null ou un nom.");
+    if (texte(B.transporteur) && /poste|colissimo/i.test(B.transporteur)) pb.push("boutique.json : La Poste et Colissimo refusent les parfums ; choisis un transporteur qui accepte les « quantités limitées ».");
+    if (B.vente_active === true && !texte(B.transporteur)) pb.push("boutique.json : vente_active vaut true sans transporteur choisi.");
     if (B.vente_active === true && FE.mode_demo === true) pb.push("boutique.json : vente_active vaut true alors que le mode démonstration est actif (lots fictifs).");
     if (B.vente_active === true && !(C.version && Object.keys(C.notes || {}).length)) pb.push("boutique.json : vente_active vaut true sans cadre de sécurité signé.");
   }

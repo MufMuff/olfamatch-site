@@ -179,8 +179,9 @@ test("vagues : seules les notes des vagues actives sont visibles", () => {
 
 test("vente bloquée tant que vente_active, mode démonstration ou cadre vide le demandent", () => {
   const d = donnees();
-  assert.equal(moteur(d).etatVente().raisons.length, 3);
+  assert.equal(moteur(d).etatVente().raisons.length, 4);
   d.boutique.vente_active = true;
+  d.boutique.transporteur = "Transporteur test (quantités limitées)";
   d.features.mode_demo = false;
   d.cadre_securite = { version: "C1", date: "2027-01-01", signataire: "x", concentration: { min: 15, max: 20 }, nombre_notes: { min: 3, max: 12 }, notes: { BER: { pmax: 30 } }, allergenes_total_max_pct: null };
   assert.deepEqual(creerMoteur(d).etatVente(), { ok: true, raisons: [] });

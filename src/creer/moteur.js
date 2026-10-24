@@ -613,6 +613,7 @@ export function creerMoteur(d) {
     if (d.boutique?.vente_active !== true) raisons.push("La vente n'est pas ouverte (boutique.json : vente_active vaut false).");
     if (FEAT.mode_demo === true) raisons.push("Mode démonstration actif : les lots sont fictifs (config/features.json : mode_demo).");
     if (!CADRE) raisons.push("Pas encore de cadre de sécurité signé (cadre_securite.json est vide).");
+    if (!d.boutique?.transporteur) raisons.push("Pas encore de transporteur pour les parfums (boutique.json : transporteur).");
     return { ok: raisons.length === 0, raisons };
   }
 
