@@ -1,0 +1,76 @@
+{
+  "_aide": [
+    "Seuils appliqués par le moteur de règles. Tous les % sont des % du mélange d'huiles, sauf la concentration (% d'huiles dans le parfum fini).",
+    "concentration : plage permise et valeur par défaut.",
+    "nombre_notes : nombre de notes permis dans une formule.",
+    "minimum_par_etage : notes minimum en tête, cœur et fond.",
+    "notes_de_tenue : la formule doit contenir au moins une de ces notes.",
+    "equilibre : pour chaque famille, son nom affiché (nom, touche), sa phrase de description (texte) et la plage permise pour la tête, le cœur et le fond.",
+    "roue : ordre des familles sur la roue affichée au client (voisines = proches).",
+    "curseurs : effet des curseurs du mode guidé. fraicheur : coefficient par étage (le curseur va de -1, plus frais, à +1, plus chaud). douceur : coefficient par famille de note (de -1, plus sec, à +1, plus doux).",
+    "kit : taille des flacons d'échantillon, quantité préparée par variante (lot_ml), et réglage de chaque variante (curseurs ajoutés à la formule du client ; intensite de -1 à +1 déplace la concentration dans sa plage).",
+    "fond_minimum : le fond ne descend jamais sous ce %.",
+    "puissance : aucune note ne dépasse part_max_par_note % du poids perçu (dose × puissance) ; au plus fortes_max notes de puissance fortes_a_partir_de ou plus.",
+    "associations_interdites : groupes de notes jamais ensemble.",
+    "matrice : score moyen minimum entre les notes, associations délicates permises par mode, réduction de la dose maximum de la note la plus forte d'une association délicate.",
+    "matrice.reduire : comment choisir la note réduite dans une association délicate, critère après critère : \"puissance\" (la plus puissante), puis \"dose\" (à puissance égale, la plus dosée). À égalité sur tout : la première citée dans compatibilite.json.",
+    "ifra : exiger_certificat = true refuse toute note sans certificat IFRA reçu. À passer à true avant le lancement.",
+    "guide : marge par défaut autour de chaque dose de recette (en points de %), nombre de notes ajoutables et leur dose maximum.",
+    "pas_pourcentage : finesse des doses (1 = doses en % entiers).",
+    "densite_g_ml : densité du parfum fini, pour le calcul en grammes (à mesurer une fois).",
+    "volumes_ml : tailles de flacon vendues.",
+    "etiquette : un allergène est imprimé sur l'étiquette dès qu'il atteint seuil_allergenes_pct % du parfum fini (0,001 % pour un produit sans rinçage). inci_alcool / inci_parfum : noms officiels sur la liste d'ingrédients. mentions : lignes fixes. responsable : nom et adresse de la personne responsable (obligatoire, null = à compléter). À FAIRE VALIDER par l'évaluateur de sécurité."
+  ],
+  "concentration": { "min": 15, "max": 20, "defaut": 18 },
+  "nombre_notes": { "min": 3, "max": 7 },
+  "minimum_par_etage": { "tete": 1, "coeur": 1, "fond": 2 },
+  "notes_de_tenue": ["musc_blanc", "ambre"],
+  "equilibre": {
+    "frais":    { "nom": "frais",    "touche": "fraîche",   "tete": [30, 40], "coeur": [25, 35], "fond": [30, 40],
+                  "texte": "Lumineux et facile à porter, il accompagne les journées chaudes." },
+    "floral":   { "nom": "floral",   "touche": "florale",   "tete": [15, 25], "coeur": [40, 50], "fond": [30, 40],
+                  "texte": "Doux et élégant, il fait tout de suite soigné." },
+    "boise":    { "nom": "boisé",    "touche": "boisée",    "tete": [15, 25], "coeur": [20, 30], "fond": [50, 60],
+                  "texte": "Calme et chic, il convient à presque toutes les occasions." },
+    "ambre":    { "nom": "ambré",    "touche": "ambrée",    "tete": [10, 20], "coeur": [20, 30], "fond": [50, 65],
+                  "texte": "Chaud et enveloppant, il est parfait pour le soir." },
+    "gourmand": { "nom": "gourmand", "touche": "gourmande", "tete": [10, 20], "coeur": [20, 30], "fond": [50, 65],
+                  "texte": "Sucré et réconfortant, il laisse un sillage qu'on remarque." },
+    "cuir":     { "nom": "cuir",     "touche": "cuirée",    "tete": [10, 20], "coeur": [20, 30], "fond": [50, 65],
+                  "texte": "Fumé et affirmé, il a du caractère." }
+  },
+  "roue": ["frais", "floral", "gourmand", "ambre", "cuir", "boise"],
+  "curseurs": {
+    "fraicheur": { "tete": -0.5, "coeur": 0, "fond": 0.5 },
+    "douceur": { "gourmand": 0.6, "neutre": 0.3, "floral": 0.2, "ambre": 0.1, "frais": -0.2, "boise": -0.4, "cuir": -0.4 }
+  },
+  "kit": {
+    "flacon_ml": 2, "lot_ml": 10,
+    "variantes": [
+      { "nom": "Plus fraîche", "fraicheur": -0.7, "douceur": 0, "intensite": -0.5 },
+      { "nom": "Standard", "fraicheur": 0, "douceur": 0, "intensite": 0 },
+      { "nom": "Plus intense", "fraicheur": 0.4, "douceur": 0, "intensite": 0.8 }
+    ]
+  },
+  "fond_minimum": 30,
+  "puissance": { "part_max_par_note": 45, "fortes_a_partir_de": 4, "fortes_max": 2 },
+  "associations_interdites": [["oud", "cuir", "patchouli"]],
+  "matrice": {
+    "moyenne_min": 2.0,
+    "risquees_max": { "guide": 0, "expert": 1 },
+    "reduction_note_forte": 0.5,
+    "reduire": ["puissance", "dose"]
+  },
+  "ifra": { "categorie": 4, "exiger_certificat": false },
+  "guide": { "marge_defaut": 5, "ajouts_max": 1, "ajout_dose_max": 10 },
+  "pas_pourcentage": 1,
+  "densite_g_ml": 0.82,
+  "volumes_ml": [50, 100],
+  "etiquette": {
+    "seuil_allergenes_pct": 0.001,
+    "inci_alcool": "ALCOHOL DENAT.",
+    "inci_parfum": "PARFUM (FRAGRANCE)",
+    "mentions": ["Eau de parfum", "Usage externe.", "Inflammable : tenir à l'écart de la chaleur et des flammes."],
+    "responsable": null
+  }
+}

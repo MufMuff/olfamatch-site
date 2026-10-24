@@ -1,0 +1,13 @@
+{
+ "_aide": [
+  "Interrupteurs de « Crée ton parfum ».",
+  "inspiration_nommee : true affiche la porte « Pars d'un parfum que tu aimes » (P1) et ses boutons dans l'annuaire. Le programme Cloudflare a son propre interrupteur (variable INSPIRATION_NOMMEE) : les deux doivent être à true.",
+  "vagues_actives : vagues de notes visibles (1, 2, 3). Chaque nouvelle vague exige une mise à jour du rapport de sécurité AVANT d'être activée.",
+  "ia_active : false = textes préécrits seulement, l'IA n'est jamais appelée.",
+  "mode_demo : true = toutes les notes sont visibles avec des lots fictifs marqués DEMO (pour développer et tester). Tant qu'il vaut true, la vente est bloquée."
+ ],
+ "inspiration_nommee": false,
+ "vagues_actives": [1],
+ "ia_active": true,
+ "mode_demo": true
+}

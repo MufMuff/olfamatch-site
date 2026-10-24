@@ -1,72 +1,119 @@
-// Les fichiers de données sont-ils bien remplis et cohérents ?
+// Fichiers de données V2 : forme, cohérence, et chiffres du cahier des charges.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { controlerDonnees } from "../../src/creer/donnees.js";
-import { donnees, moteur } from "./outils.mjs";
+import { donnees } from "./outils.mjs";
 
-test("les quatre fichiers de données sont valides", () => {
-  assert.deepEqual(controlerDonnees(donnees()), []);
-});
+const d = donnees();
+const N = Object.values(d.notes.notes);
 
-test("la palette de départ compte 18 notes actives", () => {
-  const notes = Object.values(donnees().notes.notes).filter(n => n.actif);
-  assert.equal(notes.length, 18);
-});
-
-test("il y a 8 à 12 recettes de départ, au moins 2 par grande famille", () => {
-  const recettes = Object.values(donnees().recettes.recettes);
-  assert.ok(recettes.length >= 8 && recettes.length <= 12, `${recettes.length} recettes`);
-  for (const famille of ["frais", "floral", "boise", "ambre"])
-    assert.ok(recettes.filter(r => r.famille === famille).length >= 2, `famille ${famille}`);
-});
-
-test("chaque recette passe toutes les règles telle quelle, sans correction", () => {
-  const d = donnees(), m = moteur(d);
-  for (const [id, r] of Object.entries(d.recettes.recettes)) {
-    const res = m.ajuster({ mode: "guide", recette: id, notes: r.notes });
-    assert.ok(res.ok, `${id} refusée : ${res.erreurs.map(e => e.message).join(" / ")}`);
-    assert.deepEqual(res.formule.notes, r.notes, `${id} modifiée`);
-    assert.deepEqual(res.corrections, [], `${id} corrigée`);
-    assert.deepEqual(res.avertissements, [], `${id} contient une association délicate`);
-  }
-});
-
-test("chaque recette reste valable sur toute la plage de concentration", () => {
-  const d = donnees(), m = moteur(d);
-  const { min, max } = d.regles.concentration;
-  for (const [id, r] of Object.entries(d.recettes.recettes))
-    for (let c = min; c <= max; c += 0.5) {
-      const res = m.ajuster({ mode: "guide", recette: id, concentration: c, notes: r.notes });
-      assert.ok(res.ok, `${id} à ${c} % : ${res.erreurs.map(e => e.message).join(" / ")}`);
-    }
-});
-
-test("le contrôle repère les erreurs de frappe courantes", () => {
-  const d = donnees();
-  d.notes.notes.rose.code = "BER"; // code déjà pris
-  d.notes.notes.iris.etage = "milieu";
-  d.notes.notes.oud.dose_min = 9; // au-dessus de son maximum
-  d.compatibilite.accords.push(["rose", "lilas"]); // note inconnue
-  d.compatibilite.risquees.push(["rose", "jasmin"]); // déjà dans les accords
-  d.recettes.recettes.R01.notes.bergamote = 30; // total à 108
-  const pb = controlerDonnees(d).join("\n");
-  for (const attendu of ["code BER est déjà pris", "iris : etage", "oud : doses incohérentes",
-    "note inconnue « lilas »", "association déjà notée", "R01 : le total des doses fait 108"])
-    assert.ok(pb.includes(attendu), `non repéré : ${attendu}\n${pb}`);
-});
-
-test("ajouter une note = ajouter des lignes de données, sans toucher au code", () => {
-  const d = donnees();
-  d.notes.notes.cardamome = {
-    nom: "Cardamome", code: "CAR", etage: "tete", famille: "frais",
-    puissance: 3, tenue_h: 2, dose_min: 2, dose_max: 10,
-    ifra_max: 5, ifra_certificat: null, allergenes: null,
-    dilution_stock: 100, cout_g: null, stock_g: null, actif: true,
-    texte: "Épice fraîche et citronnée.",
-  };
-  d.compatibilite.accords.push(["cardamome", "bergamote"], ["cardamome", "cedre"]);
+test("les fichiers de données ne contiennent aucune erreur", () => {
   assert.deepEqual(controlerDonnees(d), []);
-  const res = moteur(d).ajuster({ mode: "expert", notes: { bergamote: 20, cardamome: 8, rose: 20, iris: 8, cedre: 24, musc_blanc: 20 } });
-  assert.ok(res.ok, res.erreurs.map(e => e.message).join(" / "));
-  assert.ok(res.formule.notes.cardamome > 0);
+});
+
+test("58 notes : 20 en vague 1, 21 en vague 2, 17 en vague 3", () => {
+  assert.equal(N.length, 58);
+  const parVague = v => N.filter(n => n.vague === v).length;
+  assert.deepEqual([parVague(1), parVague(2), parVague(3)], [20, 21, 17]);
+  // IRI passe en vague 2, FLO en vague 3
+  assert.equal(d.notes.notes.iris.vague, 2);
+  assert.equal(d.notes.notes.fleur_oranger.vague, 3);
+});
+
+test("notes prédiluées à 10 % : PAT, OUD, CUI (V1) + CAN, GIR, MEN, GAL, SAF, MAR, CON", () => {
+  const predil = N.filter(n => n.dilution_stock === 10).map(n => n.code).sort();
+  assert.deepEqual(predil, ["CAN", "CON", "CUI", "GAL", "GIR", "MAR", "MEN", "OUD", "PAT", "SAF"]);
+});
+
+test("schéma V1 gardé et champs V2 ajoutés sur chaque note", () => {
+  const v1 = ["nom", "code", "etage", "puissance", "tenue_h", "dose_min", "dose_max", "dilution_stock", "cout_g", "stock_g", "actif", "texte", "famille"];
+  const v2 = ["type", "vague", "sous_famille", "facettes", "tenacite", "lot_actif", "prix_classe", "dispo_chine"];
+  for (const n of N) for (const k of [...v1, ...v2]) assert.ok(k in n, `${n.code} : ${k}`);
+  assert.equal(d.notes.notes.musc_blanc.famille, "neutre");
+});
+
+test("matrice des sous-familles : 15 × 15, symétrique, entre -2 et +2", () => {
+  const M = d.matrice_sf.matrice, sf = Object.keys(M);
+  assert.equal(sf.length, 15);
+  for (const a of sf) for (const b of sf) assert.equal(M[a][b], M[b][a], `${a}/${b}`);
+  // une matrice non symétrique est signalée
+  const d2 = donnees();
+  d2.matrice_sf.matrice.hesp.gour = 1;
+  assert.match(controlerDonnees(d2).join("\n"), /pas symétrique/);
+});
+
+test("22 facettes, 100 exceptions E001 à E100 (+ associations délicates de la V1), 12 structures, 36 recettes", () => {
+  assert.equal(Object.keys(d.facettes.facettes).length, 22);
+  const ids = d.exceptions.exceptions.map(e => e.id);
+  for (let i = 1; i <= 100; i++) assert.ok(ids.includes(`E${String(i).padStart(3, "0")}`), `E${i}`);
+  assert.ok(d.exceptions.exceptions.filter(e => Number(e.id.slice(1)) > 100).every(e => /V1/.test(e.raison)));
+  assert.equal(d.exceptions.exceptions.filter(e => Number(e.id.slice(1)) <= 60).every(e => e.valeur > 0), true);
+  assert.equal(d.exceptions.exceptions.filter(e => Number(e.id.slice(1)) > 60 && Number(e.id.slice(1)) <= 100).every(e => e.valeur < 0), true);
+  assert.equal(Object.keys(d.structures.structures).length, 12);
+  assert.equal(Object.keys(d.recettes.recettes).length, 36);
+});
+
+test("vague 1 = 13 recettes sur 11 structures (la structure poudré/iris attend la vague 2)", () => {
+  const v1 = Object.entries(d.recettes.recettes).filter(([, r]) => r.vague === 1);
+  assert.deepEqual(v1.map(([k]) => k), ["R01", "R02", "R04", "R07", "R10", "R13", "R16", "R19", "R22", "R25", "R26", "R31", "R34"]);
+  const structures = new Set(v1.map(([, r]) => r.structure));
+  assert.equal(structures.size, 11);
+  assert.ok(!structures.has("S10"));
+  // toutes à valider tant qu'Ethan ne les a pas essayées
+  assert.ok(Object.values(d.recettes.recettes).every(r => r.statut === "a_valider"));
+});
+
+test("81 allergènes de l'annexe III, seuil 0,001 % ; limites IFRA du cahier présentes", () => {
+  assert.equal(d.allergenes.allergenes.length, 81);
+  assert.equal(d.allergenes.seuil_sans_rincage_pct, 0.001);
+  const L = d.ifra_cat4.substances;
+  assert.equal(d.ifra_cat4.amendement, 51);
+  const attendu = { citral: 0.6, coumarine: 1.5, eugenol: 2.5, isoeugenol: 0.11, cinnamal: 0.25, hydroxycitronellal: 2.1, geraniol: 4.7,
+    methyl_2_octynoate: 0.047, mousse_de_chene: 0.1, benzyl_salicylate: 7.3, huile_bergamote_exprimee: 0.4, methyl_ionone: 30 };
+  for (const [s, v] of Object.entries(attendu)) assert.equal(L[s].limite_pct, v, s);
+});
+
+test("interrupteurs : outil caché, vente bloquée, mode démonstration, vague 1 seule", () => {
+  assert.equal(d.boutique.publie, false);
+  assert.equal(d.boutique.vente_active, false);
+  assert.equal(d.features.mode_demo, true);
+  assert.deepEqual(d.features.vagues_actives, [1]);
+  assert.equal(d.cadre_securite.version, null);
+});
+
+test("lots de démonstration : un par note, marqués DEMO, 4 documents", () => {
+  const lots = d.matieres_lots.lots;
+  assert.equal(lots.length, 58);
+  for (const l of lots) {
+    assert.ok(l.demo === true && l.lot.startsWith("DEMO"), l.lot);
+    assert.ok(Object.values(l.docs).every(Boolean));
+  }
+  assert.ok(N.every(n => n.lot_actif === null), "aucun vrai lot pour l'instant");
+});
+
+test("erreurs de saisie courantes : chacune est signalée en clair", () => {
+  const cas = [
+    [d2 => { d2.notes.notes.bergamote.sous_famille = "agrume"; }, /sous-famille inconnue/],
+    [d2 => { d2.notes.notes.bergamote.famille = "boise"; }, /famille « boise » différente/],
+    [d2 => { d2.notes.notes.rose.code = "BER"; }, /déjà pris/],
+    [d2 => { d2.notes.notes.rose.facettes.florale = 1; }, /facette inconnue/],
+    [d2 => { d2.recettes.recettes.R01.notes.BER = 26; }, /total des doses/],
+    [d2 => { d2.recettes.recettes.R01.notes.BER = 24.3; d2.recettes.recettes.R01.notes.CIT = 15.7; }, /multiple de 0.5/],
+    [d2 => { d2.recettes.recettes.R01.vague = 2; }, /vague 2 indiquée/],
+    [d2 => { delete d2.recettes.recettes.R34.notes.MUS; d2.recettes.recettes.R34.notes.CAC = 55; }, /S12 demande MUS \(au moins 30 %\)/],
+    [d2 => { d2.exceptions.exceptions.push({ id: "E200", a: "ROS", b: "OUD", valeur: 1, raison: "doublon" }); }, /déjà notée par E001/],
+    [d2 => { d2.matieres_lots.lots[0].allergenes_pct.lilial = 1; }, /allergène « lilial » absent/],
+    [d2 => { d2.matieres_lots.lots[0].substances_ifra_pct.safrole = 1; }, /substance « safrole » absente/],
+    [d2 => { d2.notes.notes.tonka.lot_actif = "TON-9999"; }, /lot_actif « TON-9999 » absent/],
+    [d2 => { d2.boutique.vente_active = true; }, /mode démonstration est actif/],
+    [d2 => { d2.boutique.vente_active = true; }, /sans cadre de sécurité signé/],
+    [d2 => { d2.cadre_securite.notes = { BER: { pmax: 30 } }; }, /version du rapport manque/],
+    [d2 => { d2.regles.harmonie.commande.deconseille.P2 = "oui"; }, /jamais être commandable dans les portes P1 à P4/],
+    [d2 => { d2.features.vagues_actives = [4]; }, /vagues_actives/],
+  ];
+  for (const [modifier, attendu] of cas) {
+    const d2 = donnees();
+    modifier(d2);
+    assert.match(controlerDonnees(d2).join("\n"), attendu);
+  }
 });

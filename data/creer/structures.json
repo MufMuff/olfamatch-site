@@ -1,0 +1,398 @@
+{
+ "_aide": [
+  "Les 12 structures (squelettes de parfum).",
+  "pyramide : part de tête, de cœur et de fond, en % du concentré. tolerance : écart permis autour de chaque part, en points.",
+  "obligatoires : groupes de notes ; il faut au moins une note de chaque groupe (min_pct : dose minimum de la note).",
+  "optionnelles : notes qui vont bien avec la structure. vague : première vague où la structure est possible.",
+  "famille : famille maison affichée (frais, floral, gourmand, boise, ambre), sert au filtre du catalogue."
+ ],
+ "structures": {
+  "S1": {
+   "nom": "Hespéridé / cologne",
+   "famille": "frais",
+   "pyramide": {
+    "tete": 45,
+    "coeur": 30,
+    "fond": 25
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "BER",
+      "CIT"
+     ]
+    },
+    {
+     "notes": [
+      "MUS"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "MAN",
+    "PAM",
+    "NER",
+    "PET",
+    "LAV",
+    "JAS",
+    "CED",
+    "YUZ"
+   ],
+   "vague": 1
+  },
+  "S2": {
+   "nom": "Fougère",
+   "famille": "frais",
+   "pyramide": {
+    "tete": 30,
+    "coeur": 35,
+    "fond": 35
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "LAV"
+     ]
+    },
+    {
+     "notes": [
+      "TON"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "BER",
+    "GER",
+    "SAU",
+    "MOU",
+    "PAT",
+    "VET",
+    "CED",
+    "CAR"
+   ],
+   "vague": 1
+  },
+  "S3": {
+   "nom": "Chypre",
+   "famille": "floral",
+   "pyramide": {
+    "tete": 25,
+    "coeur": 35,
+    "fond": 40
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "BER"
+     ]
+    },
+    {
+     "notes": [
+      "PAT"
+     ]
+    },
+    {
+     "notes": [
+      "ROS",
+      "JAS"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "MOU",
+    "LAB",
+    "VET",
+    "FRB",
+    "PEC",
+    "AMB"
+   ],
+   "vague": 1,
+   "remarque": "néo-chypre dès la vague 1, chypre classique (mousse de chêne, labdanum) en vague 2"
+  },
+  "S4": {
+   "nom": "Ambré / oriental",
+   "famille": "ambre",
+   "pyramide": {
+    "tete": 15,
+    "coeur": 30,
+    "fond": 55
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "AMB"
+     ]
+    },
+    {
+     "notes": [
+      "VAN",
+      "BEN"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "TON",
+    "LAB",
+    "ENC",
+    "SAN",
+    "MAN",
+    "CAN",
+    "GIR"
+   ],
+   "vague": 1
+  },
+  "S5": {
+   "nom": "Floral solaire",
+   "famille": "floral",
+   "pyramide": {
+    "tete": 20,
+    "coeur": 50,
+    "fond": 30
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "JAS",
+      "TUB",
+      "YLA"
+     ]
+    },
+    {
+     "notes": [
+      "SAN"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "MAN",
+    "NER",
+    "FLO",
+    "VAN",
+    "MUS"
+   ],
+   "vague": 1
+  },
+  "S6": {
+   "nom": "Gourmand",
+   "famille": "gourmand",
+   "pyramide": {
+    "tete": 15,
+    "coeur": 25,
+    "fond": 60
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "VAN"
+     ]
+    },
+    {
+     "notes": [
+      "TON",
+      "PRA",
+      "CAF"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "PAT",
+    "FRB",
+    "MUS",
+    "AMB",
+    "CAR"
+   ],
+   "vague": 1
+  },
+  "S7": {
+   "nom": "Boisé aromatique",
+   "famille": "boise",
+   "pyramide": {
+    "tete": 30,
+    "coeur": 25,
+    "fond": 45
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "CED",
+      "VET"
+     ]
+    },
+    {
+     "notes": [
+      "LAV",
+      "SAU",
+      "ROM"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "BER",
+    "PAM",
+    "POI",
+    "GIN",
+    "GAI",
+    "CAC"
+   ],
+   "vague": 1
+  },
+  "S8": {
+   "nom": "Cuir",
+   "famille": "boise",
+   "pyramide": {
+    "tete": 15,
+    "coeur": 30,
+    "fond": 55
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "CUI"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "SAF",
+    "ROS",
+    "IRI",
+    "VIO",
+    "OUD",
+    "LAB",
+    "BER",
+    "VET"
+   ],
+   "vague": 1
+  },
+  "S9": {
+   "nom": "Aquatique",
+   "famille": "frais",
+   "pyramide": {
+    "tete": 35,
+    "coeur": 30,
+    "fond": 35
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "MAR",
+      "CON"
+     ]
+    },
+    {
+     "notes": [
+      "MUS"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "BER",
+    "CIT",
+    "PAM",
+    "CAC",
+    "CED",
+    "THE",
+    "MUG"
+   ],
+   "vague": 1
+  },
+  "S10": {
+   "nom": "Poudré / iris",
+   "famille": "floral",
+   "pyramide": {
+    "tete": 15,
+    "coeur": 45,
+    "fond": 40
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "IRI",
+      "VIO"
+     ]
+    },
+    {
+     "notes": [
+      "MUS"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "ROS",
+    "SAN",
+    "VAN",
+    "TON",
+    "FRB"
+   ],
+   "vague": 2
+  },
+  "S11": {
+   "nom": "Rose-oud",
+   "famille": "ambre",
+   "pyramide": {
+    "tete": 15,
+    "coeur": 40,
+    "fond": 45
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "ROS"
+     ]
+    },
+    {
+     "notes": [
+      "OUD"
+     ]
+    }
+   ],
+   "optionnelles": [
+    "SAF",
+    "PAT",
+    "AMB",
+    "POI",
+    "ENC",
+    "LAB"
+   ],
+   "vague": 1
+  },
+  "S12": {
+   "nom": "Musc propre",
+   "famille": "frais",
+   "pyramide": {
+    "tete": 25,
+    "coeur": 25,
+    "fond": 50
+   },
+   "tolerance": 10,
+   "obligatoires": [
+    {
+     "notes": [
+      "MUS"
+     ],
+     "min_pct": 30
+    }
+   ],
+   "optionnelles": [
+    "BER",
+    "MAN",
+    "JAS",
+    "CAC",
+    "AMX",
+    "IRI",
+    "FLO"
+   ],
+   "vague": 1
+  }
+ }
+}

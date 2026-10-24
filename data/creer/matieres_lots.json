@@ -1,0 +1,1306 @@
+{
+ "_aide": [
+  "Lots fournisseurs : la composition RÉELLE de chaque huile achetée, lue sur ses 4 documents. C'est elle qui décide de la sécurité, pas notes.json.",
+  "lot : numéro du lot (ex. TON-2026-01), repris dans notes.json (lot_actif). code_note : note concernée.",
+  "fournisseur, densite_g_ml (certificat d'analyse), ifra_amendement (51), ifra_cat4_max_pct_produit : maximum de cette huile dans le parfum fini, en %, lu sur son certificat IFRA (catégorie 4).",
+  "substances_ifra_pct : % de chaque substance limitée de ifra_cat4.json dans l'huile. allergenes_pct : % de chaque allergène de allergenes.json dans l'huile. Une fourchette s'écrit [mini, maxi] : le moteur prend toujours le maxi.",
+  "fcf : true si la bergamote est sans furocoumarines (obligatoire, sinon 0,4 % du parfum au maximum). atranol_chloroatranol_ppm : pour la mousse de chêne, lu sur le certificat (moins de 100).",
+  "docs : true quand le document est reçu et rangé : fds (fiche de données de sécurité, 16 rubriques), ifra (certificat IFRA), coa (certificat d'analyse), allergenes (liste des allergènes). Il faut les 4, sinon la note est invisible.",
+  "date_docs : date des documents. Garder les anciens lots ici au moins 10 ans (archive).",
+  "LOTS DEMO : fictifs (valeurs inventées), utilisables seulement quand mode_demo vaut true dans config/features.json. Ne JAMAIS fabriquer avec. Ils seront remplacés par tes vrais lots."
+ ],
+ "lots": [
+  {
+   "lot": "DEMO-BER",
+   "code_note": "BER",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.87,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 8.8,
+   "substances_ifra_pct": {
+    "citral": 0.5
+   },
+   "allergenes_pct": {
+    "citrus_aurantium_bergamia_peel_oil": 100,
+    "limonene": [
+     35,
+     45
+    ],
+    "linalool": 15,
+    "linalyl_acetate": 30,
+    "citral": 0.5,
+    "pinene": 7,
+    "terpinolene": 0.5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01",
+   "fcf": true
+  },
+  {
+   "lot": "DEMO-CIT",
+   "code_note": "CIT",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.85,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {
+    "citral": 3
+   },
+   "allergenes_pct": {
+    "citrus_limon_peel_oil": 100,
+    "limonene": 65,
+    "citral": 3,
+    "pinene": 13,
+    "linalool": 0.3,
+    "geraniol": 0.2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-MAN",
+   "code_note": "MAN",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.85,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {
+    "citral": 0.1
+   },
+   "allergenes_pct": {
+    "limonene": 70,
+    "linalool": 1,
+    "citral": 0.1,
+    "pinene": 3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-PAM",
+   "code_note": "PAM",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.85,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "limonene": 90,
+    "pinene": 1,
+    "linalool": 0.2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-LAV",
+   "code_note": "LAV",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.89,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 7.5,
+   "substances_ifra_pct": {
+    "coumarine": 0.3,
+    "geraniol": 0.5
+   },
+   "allergenes_pct": {
+    "lavandula_oil_extract": 100,
+    "linalool": 35,
+    "linalyl_acetate": 40,
+    "coumarin": 0.3,
+    "geraniol": 0.5,
+    "camphor": 0.5,
+    "limonene": 0.5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-MAR",
+   "code_note": "MAR",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.1,
+   "substances_ifra_pct": {
+    "hydroxycitronellal": 3
+   },
+   "allergenes_pct": {
+    "hydroxycitronellal": 3,
+    "linalool": 3,
+    "limonene": 2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-POI",
+   "code_note": "POI",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.86,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "limonene": 30,
+    "pinene": 15,
+    "beta_caryophyllene": 2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-ROS",
+   "code_note": "ROS",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 8.8,
+   "substances_ifra_pct": {
+    "geraniol": 15,
+    "eugenol": 1.5,
+    "citral": 0.5
+   },
+   "allergenes_pct": {
+    "geraniol": 15,
+    "citronellol": 30,
+    "eugenol": 1.5,
+    "citral": 0.5,
+    "farnesol": 0.5,
+    "rose_ketones": 0.1,
+    "linalool": 2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-JAS",
+   "code_note": "JAS",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.98,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 8.8,
+   "substances_ifra_pct": {
+    "benzyl_salicylate": 2
+   },
+   "allergenes_pct": {
+    "benzyl_benzoate": 15,
+    "linalool": 10,
+    "benzyl_alcohol": 3,
+    "benzyl_salicylate": 2,
+    "hexyl_cinnamal": 5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CED",
+   "code_note": "CED",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 7.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "cedrus_atlantica_oil_extract": 100
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-SAN",
+   "code_note": "SAN",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.97,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 7.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-VET",
+   "code_note": "VET",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.0,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-PAT",
+   "code_note": "PAT",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.96,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "pogostemon_cablin_oil": 100
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CAC",
+   "code_note": "CAC",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "tetramethyl_acetyloctahydronaphthalenes": 30
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-OUD",
+   "code_note": "OUD",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.97,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-AMB",
+   "code_note": "AMB",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.02,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 8.8,
+   "substances_ifra_pct": {
+    "coumarine": 3
+   },
+   "allergenes_pct": {
+    "coumarin": 3,
+    "benzyl_benzoate": 10,
+    "vanillin": 5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CUI",
+   "code_note": "CUI",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.98,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 7.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-MUS",
+   "code_note": "MUS",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.0,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 11.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "hexamethylindanopyran": 20
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-VAN",
+   "code_note": "VAN",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.05,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 8.8,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "vanillin": 10,
+    "benzyl_benzoate": 20
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-TON",
+   "code_note": "TON",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.05,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {
+    "coumarine": 40
+   },
+   "allergenes_pct": {
+    "coumarin": 40
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-NER",
+   "code_note": "NER",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.87,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {
+    "citral": 0.2,
+    "geraniol": 2
+   },
+   "allergenes_pct": {
+    "citrus_aurantium_flower_oil": 100,
+    "linalool": 40,
+    "limonene": 15,
+    "farnesol": 1,
+    "geraniol": 2,
+    "citral": 0.2,
+    "pinene": 10
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-PET",
+   "code_note": "PET",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.88,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {
+    "geraniol": 3
+   },
+   "allergenes_pct": {
+    "linalool": 25,
+    "linalyl_acetate": 50,
+    "geraniol": 3,
+    "limonene": 3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-ROM",
+   "code_note": "ROM",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.9,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "limonene": 20,
+    "camphor": 15,
+    "pinene": 25,
+    "linalool": 1
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-SAU",
+   "code_note": "SAU",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.9,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "linalool": 15,
+    "linalyl_acetate": 60,
+    "sclareol": 1
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-THE",
+   "code_note": "THE",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "linalool": 10
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-FIG",
+   "code_note": "FIG",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.97,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-GIN",
+   "code_note": "GIN",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.88,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.0,
+   "substances_ifra_pct": {
+    "citral": 8
+   },
+   "allergenes_pct": {
+    "citral": 8,
+    "limonene": 5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CAR",
+   "code_note": "CAR",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.91,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.0,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "linalool": 5,
+    "limonene": 5,
+    "linalyl_acetate": 5,
+    "terpineol": 3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-POM",
+   "code_note": "POM",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-FRB",
+   "code_note": "FRB",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.98,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.1,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-YLA",
+   "code_note": "YLA",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.1,
+   "substances_ifra_pct": {
+    "benzyl_salicylate": 5,
+    "isoeugenol": 0.5
+   },
+   "allergenes_pct": {
+    "cananga_odorata_oil_extract": 100,
+    "benzyl_salicylate": 5,
+    "isoeugenol": 0.5,
+    "farnesol": 2,
+    "linalool": 15,
+    "benzyl_benzoate": 8,
+    "geraniol": 1
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-IRI",
+   "code_note": "IRI",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.94,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {
+    "methyl_ionone": 20
+   },
+   "allergenes_pct": {
+    "alpha_isomethyl_ionone": 20
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-VIO",
+   "code_note": "VIO",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {
+    "methyl_ionone": 10,
+    "methyl_2_octynoate": 0.2
+   },
+   "allergenes_pct": {
+    "alpha_isomethyl_ionone": 10,
+    "methyl_2_octynoate": 0.2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-GER",
+   "code_note": "GER",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.89,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.1,
+   "substances_ifra_pct": {
+    "geraniol": 20,
+    "citral": 2
+   },
+   "allergenes_pct": {
+    "pelargonium_graveolens_oil": 100,
+    "geraniol": 20,
+    "citronellol": 30,
+    "citral": 2,
+    "linalool": 5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-SAF",
+   "code_note": "SAF",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.98,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 1.6,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-ENC",
+   "code_note": "ENC",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.87,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.8,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "limonene": 10,
+    "pinene": 30
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-BEN",
+   "code_note": "BEN",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.08,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "benzyl_benzoate": 30,
+    "benzyl_alcohol": 5,
+    "benzyl_cinnamate": 2,
+    "vanillin": 2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-LAB",
+   "code_note": "LAB",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.0,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.8,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-MOU",
+   "code_note": "MOU",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.0,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.0,
+   "substances_ifra_pct": {
+    "mousse_de_chene": 3
+   },
+   "allergenes_pct": {
+    "evernia_prunastri_extract": 3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01",
+   "atranol_chloroatranol_ppm": 50
+  },
+  {
+   "lot": "DEMO-AMX",
+   "code_note": "AMX",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.96,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-PRA",
+   "code_note": "PRA",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.05,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "vanillin": 5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-ORA",
+   "code_note": "ORA",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.84,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "citrus_aurantium_peel_oil": 100,
+    "limonene": 90
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-YUZ",
+   "code_note": "YUZ",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.85,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {
+    "citral": 1
+   },
+   "allergenes_pct": {
+    "limonene": 70,
+    "citral": 1,
+    "linalool": 2
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-MEN",
+   "code_note": "MEN",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.9,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 1.1,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "mentha_piperita_oil": 100,
+    "menthol": 40,
+    "limonene": 5,
+    "carvone": 1
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-BAS",
+   "code_note": "BAS",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 0.5,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "linalool": 40,
+    "eugenol": 1
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-GAL",
+   "code_note": "GAL",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.88,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 1.3,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {
+    "pinene": 40
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CON",
+   "code_note": "CON",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.96,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 1.6,
+   "substances_ifra_pct": {
+    "methyl_2_octynoate": 0.3
+   },
+   "allergenes_pct": {
+    "methyl_2_octynoate": 0.3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-PEC",
+   "code_note": "PEC",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.97,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.1,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CAS",
+   "code_note": "CAS",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.96,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 2.0,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-TUB",
+   "code_note": "TUB",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.0,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 6.3,
+   "substances_ifra_pct": {
+    "benzyl_salicylate": 10
+   },
+   "allergenes_pct": {
+    "benzyl_salicylate": 10,
+    "benzyl_benzoate": 10,
+    "methyl_salicylate": 3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-FLO",
+   "code_note": "FLO",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.98,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {
+    "geraniol": 2
+   },
+   "allergenes_pct": {
+    "linalool": 30,
+    "farnesol": 2,
+    "geraniol": 2,
+    "limonene": 10
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-MUG",
+   "code_note": "MUG",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.94,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.8,
+   "substances_ifra_pct": {
+    "hydroxycitronellal": 20
+   },
+   "allergenes_pct": {
+    "hydroxycitronellal": 20,
+    "citronellol": 10,
+    "linalool": 5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-PIV",
+   "code_note": "PIV",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.95,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 5.0,
+   "substances_ifra_pct": {
+    "geraniol": 5
+   },
+   "allergenes_pct": {
+    "geraniol": 5,
+    "citronellol": 10
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CAN",
+   "code_note": "CAN",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.03,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 0.8,
+   "substances_ifra_pct": {
+    "cinnamal": 20,
+    "eugenol": 3
+   },
+   "allergenes_pct": {
+    "cinnamomum_zeylanicum_bark_oil": 30,
+    "cinnamal": 20,
+    "eugenol": 3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-GIR",
+   "code_note": "GIR",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.05,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 1.1,
+   "substances_ifra_pct": {
+    "eugenol": 80,
+    "isoeugenol": 0.5
+   },
+   "allergenes_pct": {
+    "eugenia_caryophyllus_oil": 100,
+    "eugenol": 80,
+    "isoeugenol": 0.5,
+    "beta_caryophyllene": 10,
+    "eugenyl_acetate": 5
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-TAB",
+   "code_note": "TAB",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.02,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.8,
+   "substances_ifra_pct": {
+    "coumarine": 5
+   },
+   "allergenes_pct": {
+    "coumarin": 5,
+    "vanillin": 3
+   },
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-GAI",
+   "code_note": "GAI",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 0.98,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.1,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  },
+  {
+   "lot": "DEMO-CAF",
+   "code_note": "CAF",
+   "demo": true,
+   "fournisseur": "DEMO – fournisseur fictif",
+   "densite_g_ml": 1.02,
+   "ifra_amendement": 51,
+   "ifra_cat4_max_pct_produit": 3.8,
+   "substances_ifra_pct": {},
+   "allergenes_pct": {},
+   "docs": {
+    "fds": true,
+    "ifra": true,
+    "coa": true,
+    "allergenes": true
+   },
+   "date_docs": "2026-10-01"
+  }
+ ]
+}

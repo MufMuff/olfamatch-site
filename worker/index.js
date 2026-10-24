@@ -6,11 +6,11 @@
  */
 import { EmailMessage } from "cloudflare:email";
 import { creerApp } from "./app.js";
-import notes from "../data/creer/notes.json";
-import compatibilite from "../data/creer/compatibilite.json";
-import recettes from "../data/creer/recettes.json";
-import regles from "../data/creer/regles.json";
-import boutique from "../data/creer/boutique.json";
+import notes from "../data/creer/v1/notes.json";
+import compatibilite from "../data/creer/v1/compatibilite.json";
+import recettes from "../data/creer/v1/recettes.json";
+import regles from "../data/creer/v1/regles.json";
+import boutique from "../data/creer/v1/boutique.json";
 
 const donnees = { notes, compatibilite, recettes, regles, boutique };
 

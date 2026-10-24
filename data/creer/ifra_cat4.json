@@ -1,0 +1,26 @@
+{
+ "_aide": [
+  "Limites IFRA en catégorie 4 (parfum fin), en % du PARFUM FINI, pour chaque substance limitée. Le moteur additionne la part de chaque substance apportée par toutes les notes (d'après la composition de chaque lot dans matieres_lots.json) et bloque au-delà de la limite.",
+  "amendement : numéro de l'amendement IFRA appliqué (51). Le 52e est attendu en janvier 2027 : il suffira de mettre à jour ce fichier, sans toucher au code. Chaque formule enregistre ce numéro.",
+  "substances : identifiant → nom, numéros CAS, limite_pct (en % du parfum fini), remarque. Les identifiants sont repris dans matieres_lots.json (substances_ifra_pct).",
+  "huile_bergamote_exprimee : appliquée seulement à une bergamote dont le lot n'est pas FCF (sans furocoumarines).",
+  "Les autres huiles « cert. » n'ont pas de ligne ici : leur maximum vient du certificat IFRA du lot (ifra_cat4_max_pct_produit).",
+  "Source : normes IFRA, 51e amendement (catégorie 4). Valeurs à recontrôler à chaque nouvel amendement."
+ ],
+ "amendement": 51,
+ "categorie": 4,
+ "substances": {
+  "citral": { "nom": "Citral", "cas": ["5392-40-5"], "limite_pct": 0.6 },
+  "coumarine": { "nom": "Coumarine", "cas": ["91-64-5"], "limite_pct": 1.5 },
+  "eugenol": { "nom": "Eugénol", "cas": ["97-53-0"], "limite_pct": 2.5 },
+  "isoeugenol": { "nom": "Isoeugénol", "cas": ["97-54-1"], "limite_pct": 0.11 },
+  "cinnamal": { "nom": "Cinnamal (aldéhyde cinnamique)", "cas": ["104-55-2"], "limite_pct": 0.25 },
+  "hydroxycitronellal": { "nom": "Hydroxycitronellal", "cas": ["107-75-5"], "limite_pct": 2.1 },
+  "geraniol": { "nom": "Géraniol", "cas": ["106-24-1"], "limite_pct": 4.7 },
+  "methyl_2_octynoate": { "nom": "Méthyl 2-octynoate", "cas": ["111-12-6"], "limite_pct": 0.047 },
+  "mousse_de_chene": { "nom": "Extrait de mousse de chêne", "cas": ["90028-68-5", "9000-50-4"], "limite_pct": 0.1, "remarque": "atranol et chloroatranol < 100 ppm dans l'extrait (certificat du lot)" },
+  "benzyl_salicylate": { "nom": "Salicylate de benzyle", "cas": ["118-58-1"], "limite_pct": 7.3 },
+  "huile_bergamote_exprimee": { "nom": "Huile de bergamote exprimée (non FCF)", "cas": ["8007-75-8"], "limite_pct": 0.4, "remarque": "bergaptène 15 ppm ; ne s'applique pas à un lot FCF" },
+  "methyl_ionone": { "nom": "Méthyl ionone, tous isomères cumulés (dont alpha-isomethyl ionone)", "cas": ["127-51-5", "1335-46-2"], "limite_pct": 30, "remarque": "IFRA_STD_063" }
+ }
+}

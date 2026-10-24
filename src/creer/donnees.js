@@ -1,95 +1,108 @@
 /*
- * Contrôle des fichiers de données de « Crée ton parfum » (data/creer/*.json).
+ * Contrôle des fichiers de données de « Crée ton parfum » V2 (data/creer/*.json).
  * Renvoie la liste des problèmes trouvés, en phrases simples. Liste vide = tout va bien.
  * Lancé par les tests : une erreur de frappe dans un fichier fait échouer les tests
  * au lieu d'arriver sur le site.
  */
-import { ETAGES } from "./moteur.js";
-
-const AMBIANCES = ["fraiche", "florale", "boisee", "chaude", "gourmande"];
-const MOMENTS = ["jour", "soir"];
-const SAISONS = ["printemps", "ete", "automne", "hiver"];
-const INTENSITES = ["douce", "intense"];
+import { ETAGES, borneHaute } from "./moteur.js";
 
 const num = v => typeof v === "number" && Number.isFinite(v);
+const entier = (v, a, b) => Number.isInteger(v) && v >= a && v <= b;
 const texte = v => typeof v === "string" && v.trim() !== "";
-const sousListe = (v, permis) => Array.isArray(v) && v.length > 0 && v.every(x => permis.includes(x));
-
+const objet = v => v !== null && typeof v === "object" && !Array.isArray(v);
+const pct = v => (Array.isArray(v) ? v.length === 2 && v.every(x => num(x) && x >= 0 && x <= 100) && v[0] <= v[1] : num(v) && v >= 0 && v <= 100);
 const url = v => typeof v === "string" && /^https:\/\/[^\s]+$/.test(v);
+const date = v => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v);
+const FAMILLES = ["frais", "floral", "gourmand", "boise", "ambre"];
+const DOCS = ["fds", "ifra", "coa", "allergenes"];
 
-export function controlerDonnees({ notes, compatibilite, recettes, regles, boutique }) {
+export const FICHIERS = ["notes", "facettes", "matrice_sf", "exceptions", "structures", "recettes", "ifra_cat4",
+  "allergenes", "matieres_lots", "cadre_securite", "regles", "boutique"];
+
+export function controlerDonnees(d) {
   const pb = [];
-  const R = regles || {};
-  const N = (notes && notes.notes) || {};
-  const REC = (recettes && recettes.recettes) || {};
-  const familles = Object.keys(R.equilibre || {});
+  const R = d.regles || {};
+  const N = d.notes?.notes || {};
+  const SF = d.matrice_sf?.sous_familles || {};
+  const M = d.matrice_sf?.matrice || {};
+  const FAC = d.facettes?.facettes || {};
+  const SUBST = d.ifra_cat4?.substances || {};
+  const ALL = new Map((d.allergenes?.allergenes || []).map(a => [a.id, a]));
+  const LOTS = new Map();
+  const codes = new Map();
+  const PAS = R.pas_pourcentage;
 
   // ---------- regles.json ----------
   const c = R.concentration || {};
-  if (!(num(c.min) && num(c.max) && num(c.defaut) && 0 < c.min && c.min <= c.defaut && c.defaut <= c.max && c.max <= 100))
-    pb.push("regles.json : concentration incohérente (il faut 0 < min ≤ defaut ≤ max ≤ 100).");
+  if (!(num(c.min) && num(c.max) && num(c.defaut) && 0 < c.min && c.min <= c.defaut && c.defaut <= c.max && c.max <= 100 && num(c.pas) && c.pas > 0))
+    pb.push("regles.json : concentration incohérente (il faut 0 < min ≤ defaut ≤ max ≤ 100, et un pas).");
   const nb = R.nombre_notes || {};
-  if (!(Number.isInteger(nb.min) && Number.isInteger(nb.max) && 1 <= nb.min && nb.min <= nb.max))
-    pb.push("regles.json : nombre_notes incohérent (il faut 1 ≤ min ≤ max).");
-  for (const e of ETAGES)
-    if (!Number.isInteger((R.minimum_par_etage || {})[e])) pb.push(`regles.json : minimum_par_etage.${e} manque.`);
-  if (!familles.length) pb.push("regles.json : aucune famille dans equilibre.");
-  for (const f of familles) {
-    const eq = R.equilibre[f];
-    if (!texte(eq.nom)) pb.push(`regles.json : la famille ${f} n'a pas de nom affiché.`);
-    let lo = 0, hi = 0;
-    for (const e of ETAGES) {
-      const p = eq[e];
-      if (!(Array.isArray(p) && p.length === 2 && num(p[0]) && num(p[1]) && 0 <= p[0] && p[0] <= p[1] && p[1] <= 100)) {
-        pb.push(`regles.json : plage ${f} / ${e} incorrecte (il faut [minimum, maximum]).`);
-        continue;
-      }
-      lo += p[0]; hi += p[1];
-    }
-    if (lo > 100 || hi < 100) pb.push(`regles.json : les plages de la famille ${f} ne permettent pas de faire 100 %.`);
-  }
-  for (const id of R.notes_de_tenue || []) if (!N[id]) pb.push(`regles.json : note de tenue inconnue « ${id} ».`);
-  for (const g of R.associations_interdites || [])
-    for (const id of g) if (!N[id]) pb.push(`regles.json : association interdite avec une note inconnue « ${id} ».`);
-  const m = R.matrice || {};
-  if (!num(m.moyenne_min)) pb.push("regles.json : matrice.moyenne_min manque.");
-  if (!(m.risquees_max && Number.isInteger(m.risquees_max.guide) && Number.isInteger(m.risquees_max.expert)))
-    pb.push("regles.json : matrice.risquees_max doit donner un nombre pour guide et pour expert.");
-  if (!(num(m.reduction_note_forte) && m.reduction_note_forte > 0 && m.reduction_note_forte <= 1))
-    pb.push("regles.json : matrice.reduction_note_forte doit être entre 0 et 1.");
-  if (!(Array.isArray(m.reduire) && m.reduire.length && m.reduire.every(c => ["puissance", "dose"].includes(c))))
-    pb.push("regles.json : matrice.reduire doit lister \"puissance\" et/ou \"dose\".");
-  const p = R.puissance || {};
-  if (!(num(p.part_max_par_note) && Number.isInteger(p.fortes_a_partir_de) && Number.isInteger(p.fortes_max)))
-    pb.push("regles.json : bloc puissance incomplet.");
-  if (!(R.ifra && typeof R.ifra.exiger_certificat === "boolean")) pb.push("regles.json : ifra.exiger_certificat doit valoir true ou false.");
-  const g = R.guide || {};
-  if (!(num(g.marge_defaut) && Number.isInteger(g.ajouts_max) && num(g.ajout_dose_max))) pb.push("regles.json : bloc guide incomplet.");
-  if (!(num(R.pas_pourcentage) && R.pas_pourcentage > 0)) pb.push("regles.json : pas_pourcentage doit être un nombre positif.");
-  if (!(num(R.densite_g_ml) && R.densite_g_ml > 0)) pb.push("regles.json : densite_g_ml doit être un nombre positif.");
-  if (!(Array.isArray(R.volumes_ml) && R.volumes_ml.length && R.volumes_ml.every(v => Number.isInteger(v) && v > 0)))
-    pb.push("regles.json : volumes_ml doit lister les tailles de flacon en ml, par exemple [50, 100].");
-  const et = R.etiquette || {};
-  if (!(num(et.seuil_allergenes_pct) && et.seuil_allergenes_pct > 0)) pb.push("regles.json : etiquette.seuil_allergenes_pct doit être un nombre positif.");
-  if (!(texte(et.inci_alcool) && texte(et.inci_parfum) && Array.isArray(et.mentions) && et.mentions.length && et.mentions.every(texte)))
-    pb.push("regles.json : etiquette doit donner inci_alcool, inci_parfum et au moins une mention.");
-  if (et.responsable !== null && et.responsable !== undefined && !texte(et.responsable)) pb.push("regles.json : etiquette.responsable doit être null ou un texte.");
-  for (const f of familles) if (!texte(R.equilibre[f].touche) || !texte(R.equilibre[f].texte))
-    pb.push(`regles.json : la famille ${f} doit avoir une « touche » et un « texte ».`);
-  const roue = R.roue;
-  if (!(Array.isArray(roue) && roue.length === familles.length && familles.every(f => roue.includes(f))))
-    pb.push("regles.json : roue doit lister chaque famille une fois.");
-  const cu = R.curseurs || {};
-  if (!(cu.fraicheur && ETAGES.every(e => num(cu.fraicheur[e])))) pb.push("regles.json : curseurs.fraicheur doit donner un nombre pour tete, coeur et fond.");
-  if (!(cu.douceur && [...familles, "neutre"].every(f => num(cu.douceur[f])))) pb.push("regles.json : curseurs.douceur doit donner un nombre pour chaque famille et pour neutre.");
+  if (!(Number.isInteger(nb.min) && Number.isInteger(nb.max) && 1 <= nb.min && nb.min <= nb.max)) pb.push("regles.json : nombre_notes incohérent.");
+  if (!(num(PAS) && PAS > 0)) pb.push("regles.json : pas_pourcentage doit être un nombre positif.");
+  const H = R.harmonie || {};
+  if (!(num(H.base) && objet(H.poids) && ["sous_familles", "facettes", "pyramide"].every(k => num(H.poids[k]))))
+    pb.push("regles.json : harmonie.base et harmonie.poids (sous_familles, facettes, pyramide) doivent être des nombres.");
+  if (!(num(H.pyramide?.ecart_nul) && H.pyramide.ecart_nul > 0 && num(H.pyramide?.part_etage_secondaire) && H.pyramide.part_etage_secondaire >= 0 && H.pyramide.part_etage_secondaire <= 1))
+    pb.push("regles.json : harmonie.pyramide incomplet.");
+  const P = H.penalites || {};
+  if (!(num(P.au_dessus_dose_max) && num(P.note_tres_puissante?.points) && num(P.note_tres_puissante?.seuil_pct) && num(P.note_tres_puissante?.puissance)
+      && num(P.trop_de_notes?.max) && num(P.trop_de_notes?.points) && num(P.trop_peu_de_notes?.min) && num(P.trop_peu_de_notes?.points)))
+    pb.push("regles.json : harmonie.penalites incomplet.");
+  if (!(num(H.seuils?.bon) && num(H.seuils?.risque) && H.seuils.risque <= H.seuils.bon)) pb.push("regles.json : harmonie.seuils incohérents (risque ≤ bon).");
+  if (!(num(H.regle_dure?.valeur) && num(H.regle_dure?.part_min_pct))) pb.push("regles.json : harmonie.regle_dure incomplet.");
+  const cmd = H.commande || {};
+  const okCmd = v => ["oui", "non", "avec_confirmation"].includes(v);
+  if (!(okCmd(cmd.bon) && okCmd(cmd.risque) && objet(cmd.deconseille) && ["P1", "P2", "P3", "P4", "P5"].every(p => okCmd(cmd.deconseille[p]))))
+    pb.push("regles.json : harmonie.commande doit dire oui, non ou avec_confirmation (et pour « deconseille », par porte P1 à P5).");
+  if (cmd.deconseille && ["P1", "P2", "P3", "P4"].some(p => cmd.deconseille[p] === "oui"))
+    pb.push("regles.json : une formule « Déconseillé » ne doit jamais être commandable dans les portes P1 à P4.");
+  const S = R.securite || {};
+  if (!(num(S.atranol_max_ppm) && S.atranol_max_ppm > 0)) pb.push("regles.json : securite.atranol_max_ppm manque.");
+  for (const s of S.substances_atranol || []) if (!SUBST[s]) pb.push(`regles.json : securite.substances_atranol cite une substance absente de ifra_cat4.json (${s}).`);
+  if (!SUBST[S.bergamote_substance]) pb.push("regles.json : securite.bergamote_substance doit exister dans ifra_cat4.json.");
+  const F = R.fabrication || {};
+  if (!(num(F.densite_alcool_g_ml) && num(F.densite_concentre_g_ml) && num(F.marge_liquide_pct) && num(F.tolerance_pesee_pct) && num(F.tolerance_pesee_g)
+      && Array.isArray(F.ordre_pesee) && F.ordre_pesee.length === 3 && ETAGES.every(e => F.ordre_pesee.includes(e))))
+    pb.push("regles.json : bloc fabrication incomplet.");
   const kit = R.kit || {};
   const reglage = v => v === undefined || (num(v) && v >= -1 && v <= 1);
   if (!(num(kit.flacon_ml) && kit.flacon_ml > 0 && num(kit.lot_ml) && kit.lot_ml >= kit.flacon_ml)) pb.push("regles.json : kit.flacon_ml et kit.lot_ml incorrects.");
   if (!(Array.isArray(kit.variantes) && kit.variantes.length && kit.variantes.every(v => texte(v.nom) && reglage(v.fraicheur) && reglage(v.douceur) && reglage(v.intensite))))
     pb.push("regles.json : kit.variantes doit lister des variantes avec un nom et des réglages entre -1 et 1.");
+  const cu = R.curseurs || {};
+  if (!(objet(cu.fraicheur) && ETAGES.every(e => num(cu.fraicheur[e])))) pb.push("regles.json : curseurs.fraicheur doit donner un nombre pour tete, coeur et fond.");
+  if (!(objet(cu.douceur) && [...FAMILLES, "neutre"].every(f => num(cu.douceur[f])))) pb.push("regles.json : curseurs.douceur doit donner un nombre pour chaque famille et pour neutre.");
+  const et = R.etiquette || {};
+  if (!(texte(et.inci_alcool) && texte(et.inci_parfum) && texte(et.fonction) && texte(et.precautions))) pb.push("regles.json : etiquette doit donner inci_alcool, inci_parfum, fonction et precautions.");
+  if (et.responsable !== null && !texte(et.responsable)) pb.push("regles.json : etiquette.responsable doit être null ou un texte.");
+  if (!(Array.isArray(R.volumes_ml) && R.volumes_ml.length && R.volumes_ml.every(v => Number.isInteger(v) && v > 0))) pb.push("regles.json : volumes_ml incorrect.");
+
+  // ---------- matrice_sf.json ----------
+  const sfs = Object.keys(SF);
+  if (sfs.length !== 15) pb.push(`matrice_sf.json : 15 sous-familles attendues (ici ${sfs.length}).`);
+  for (const [k, v] of Object.entries(SF)) {
+    if (!texte(v.nom)) pb.push(`matrice_sf.json : la sous-famille ${k} n'a pas de nom.`);
+    if (!FAMILLES.includes(v.famille)) pb.push(`matrice_sf.json : famille inconnue pour ${k} (« ${v.famille} »).`);
+  }
+  for (const a of sfs) for (const b of sfs) {
+    const v = M[a]?.[b];
+    if (!(num(v) && v >= -2 && v <= 2)) { pb.push(`matrice_sf.json : valeur ${a}/${b} manquante ou hors de -2…+2.`); continue; }
+    if (M[b]?.[a] !== v) pb.push(`matrice_sf.json : la matrice n'est pas symétrique (${a}/${b} = ${v}, ${b}/${a} = ${M[b]?.[a]}).`);
+  }
+
+  // ---------- facettes.json ----------
+  if (Object.keys(FAC).length !== 22) pb.push(`facettes.json : 22 facettes attendues (ici ${Object.keys(FAC).length}).`);
+  const vuesAff = new Set();
+  (d.facettes?.affinites || []).forEach(([a, b, v], i) => {
+    const ou = `facettes.json, affinité ${i + 1}`;
+    if (!FAC[a] || !FAC[b]) pb.push(`${ou} : facette inconnue (${a}, ${b}).`);
+    if (!(num(v) && v >= -1 && v <= 1)) pb.push(`${ou} : valeur entre -1 et 1 attendue.`);
+    const k = [a, b].sort().join("|");
+    if (vuesAff.has(k)) pb.push(`${ou} : paire déjà notée.`);
+    vuesAff.add(k);
+  });
 
   // ---------- notes.json ----------
-  const codes = new Map();
   for (const [id, n] of Object.entries(N)) {
     const ou = `notes.json, ${id}`;
     if (!/^[a-z0-9_]+$/.test(id)) pb.push(`${ou} : identifiant à écrire en minuscules, sans accent ni espace.`);
@@ -97,83 +110,169 @@ export function controlerDonnees({ notes, compatibilite, recettes, regles, bouti
     if (typeof n.code !== "string" || !/^[A-Z]{3}$/.test(n.code)) pb.push(`${ou} : code de 3 lettres majuscules attendu.`);
     else if (codes.has(n.code)) pb.push(`${ou} : le code ${n.code} est déjà pris par ${codes.get(n.code)}.`);
     else codes.set(n.code, id);
+    if (!["accord", "matiere"].includes(n.type)) pb.push(`${ou} : type doit valoir accord ou matiere.`);
+    if (!entier(n.vague, 1, 3)) pb.push(`${ou} : vague 1, 2 ou 3 attendue.`);
+    if (!SF[n.sous_famille]) pb.push(`${ou} : sous-famille inconnue « ${n.sous_famille} ».`);
+    else if (n.famille !== SF[n.sous_famille].famille && n.famille !== "neutre")
+      pb.push(`${ou} : famille « ${n.famille} » différente de celle de sa sous-famille (${SF[n.sous_famille].famille}) ; seule exception permise : neutre.`);
+    if (!objet(n.facettes) || !Object.keys(n.facettes).length) pb.push(`${ou} : au moins une facette attendue.`);
+    else for (const [f, v] of Object.entries(n.facettes)) {
+      if (!FAC[f]) pb.push(`${ou} : facette inconnue « ${f} ».`);
+      if (!(num(v) && v > 0 && v <= 1)) pb.push(`${ou} : intensité de la facette ${f} entre 0 et 1 attendue.`);
+    }
     if (!ETAGES.includes(n.etage)) pb.push(`${ou} : etage doit valoir ${ETAGES.join(", ")}.`);
-    if (n.famille !== "neutre" && !familles.includes(n.famille)) pb.push(`${ou} : famille inconnue « ${n.famille} ».`);
-    if (!(Number.isInteger(n.puissance) && n.puissance >= 1 && n.puissance <= 5)) pb.push(`${ou} : puissance entière de 1 à 5 attendue.`);
+    if (n.etage_secondaire !== null && (!ETAGES.includes(n.etage_secondaire) || n.etage_secondaire === n.etage))
+      pb.push(`${ou} : etage_secondaire doit être null ou un autre étage.`);
+    if (!entier(n.puissance, 1, 5)) pb.push(`${ou} : puissance entière de 1 à 5 attendue.`);
+    if (!entier(n.tenacite, 1, 5)) pb.push(`${ou} : tenacite entière de 1 à 5 attendue.`);
     if (!(num(n.tenue_h) && n.tenue_h > 0)) pb.push(`${ou} : tenue_h doit être un nombre d'heures.`);
     if (!(num(n.dose_min) && num(n.dose_max) && 0 < n.dose_min && n.dose_min <= n.dose_max && n.dose_max <= 100))
       pb.push(`${ou} : doses incohérentes (il faut 0 < dose_min ≤ dose_max ≤ 100).`);
-    if (!(num(n.ifra_max) && n.ifra_max > 0)) pb.push(`${ou} : ifra_max doit être un nombre positif.`);
-    if (n.ifra_certificat !== null && !texte(n.ifra_certificat)) pb.push(`${ou} : ifra_certificat doit être null ou une référence.`);
-    if (n.allergenes !== null && !(typeof n.allergenes === "object" && !Array.isArray(n.allergenes) &&
-        Object.values(n.allergenes).every(v => num(v) && v >= 0 && v <= 100)))
-      pb.push(`${ou} : allergenes doit être null ou une liste {"Nom": % dans l'huile}.`);
     if (!(num(n.dilution_stock) && n.dilution_stock > 0 && n.dilution_stock <= 100)) pb.push(`${ou} : dilution_stock entre 1 et 100 attendue.`);
+    if (!["A", "B", "C"].includes(n.prix_classe)) pb.push(`${ou} : prix_classe A, B ou C attendue.`);
+    if (!["tres_courante", "moins_courante"].includes(n.dispo_chine)) pb.push(`${ou} : dispo_chine tres_courante ou moins_courante attendue.`);
     if (n.cout_g !== null && !(num(n.cout_g) && n.cout_g >= 0)) pb.push(`${ou} : cout_g doit être null ou un nombre.`);
     if (n.stock_g !== null && !(num(n.stock_g) && n.stock_g >= 0)) pb.push(`${ou} : stock_g doit être null ou un nombre.`);
     if (typeof n.actif !== "boolean") pb.push(`${ou} : actif doit valoir true ou false.`);
-    if (typeof n.texte !== "string") pb.push(`${ou} : texte manquant.`);
+    if (!texte(n.texte)) pb.push(`${ou} : texte manquant.`);
+  }
+  const connue = code => codes.has(code);
+
+  // ---------- exceptions.json ----------
+  const ids = new Set(), vues = new Map();
+  for (const e of d.exceptions?.exceptions || []) {
+    const ou = `exceptions.json, ${e.id}`;
+    if (!/^E\d{3}$/.test(e.id) || ids.has(e.id)) pb.push(`${ou} : identifiant E000 unique attendu.`);
+    ids.add(e.id);
+    if (!connue(e.a) || !connue(e.b) || e.a === e.b) pb.push(`${ou} : deux codes de notes différents attendus (${e.a}, ${e.b}).`);
+    if (!(num(e.valeur) && e.valeur >= -2 && e.valeur <= 2)) pb.push(`${ou} : valeur entre -2 et +2 attendue.`);
+    if (!texte(e.raison)) pb.push(`${ou} : raison manquante.`);
+    const k = [e.a, e.b].sort().join("|");
+    if (vues.has(k)) pb.push(`${ou} : paire déjà notée par ${vues.get(k)}.`);
+    vues.set(k, e.id);
+  }
+  for (const g of d.exceptions?.groupes || []) {
+    if (!(Array.isArray(g.notes) && g.notes.length >= 3 && g.notes.every(connue))) pb.push(`exceptions.json, groupe ${g.id} : au moins 3 codes de notes connus attendus.`);
+    if (!(num(g.points) && g.points >= 0)) pb.push(`exceptions.json, groupe ${g.id} : points positifs attendus.`);
   }
 
-  // ---------- compatibilite.json ----------
-  const C = compatibilite || {};
-  if (!num(C.score_par_defaut)) pb.push("compatibilite.json : score_par_defaut manque.");
-  const vues = new Map();
-  for (const nomListe of ["accords", "risquees", "interdites"]) {
-    if (!Array.isArray(C[nomListe])) { pb.push(`compatibilite.json : la liste ${nomListe} manque.`); continue; }
-    C[nomListe].forEach((grp, i) => {
-      const ou = `compatibilite.json, ${nomListe} ligne ${i + 1}`;
-      if (!Array.isArray(grp) || grp.length < 2) { pb.push(`${ou} : au moins 2 notes attendues.`); return; }
-      if (nomListe === "accords" && grp.length > 2) pb.push(`${ou} : un accord classique se note par paire.`);
-      for (const id of grp) if (!N[id]) pb.push(`${ou} : note inconnue « ${id} ».`);
-      if (new Set(grp).size !== grp.length) pb.push(`${ou} : note en double.`);
-      const k = [...grp].sort().join("|");
-      if (vues.has(k)) pb.push(`${ou} : association déjà notée (${vues.get(k)}).`);
-      else vues.set(k, `${nomListe} ligne ${i + 1}`);
-    });
+  // ---------- structures.json ----------
+  const STRUCT = d.structures?.structures || {};
+  for (const [s, st] of Object.entries(STRUCT)) {
+    const ou = `structures.json, ${s}`;
+    const p = st.pyramide || {};
+    if (!(ETAGES.every(e => num(p[e]) && p[e] >= 0) && Math.abs(ETAGES.reduce((x, e) => x + p[e], 0) - 100) < 1e-9))
+      pb.push(`${ou} : la pyramide (tete, coeur, fond) doit faire 100.`);
+    if (!(num(st.tolerance) && st.tolerance >= 0)) pb.push(`${ou} : tolerance manquante.`);
+    if (!FAMILLES.includes(st.famille)) pb.push(`${ou} : famille inconnue.`);
+    if (!entier(st.vague, 1, 3)) pb.push(`${ou} : vague 1, 2 ou 3 attendue.`);
+    if (!(Array.isArray(st.obligatoires) && st.obligatoires.length && st.obligatoires.every(g => Array.isArray(g.notes) && g.notes.length && g.notes.every(connue))))
+      pb.push(`${ou} : obligatoires doit lister des groupes de codes de notes connus.`);
+    if (!(Array.isArray(st.optionnelles) && st.optionnelles.every(connue))) pb.push(`${ou} : optionnelles contient un code inconnu.`);
   }
 
   // ---------- recettes.json ----------
-  if (!Object.keys(REC).length) pb.push("recettes.json : aucune recette.");
-  for (const [rid, r] of Object.entries(REC)) {
+  for (const [rid, r] of Object.entries(d.recettes?.recettes || {})) {
     const ou = `recettes.json, ${rid}`;
     if (!/^R\d{2}$/.test(rid)) pb.push(`${ou} : identifiant attendu de la forme R01.`);
     if (!texte(r.nom)) pb.push(`${ou} : nom manquant.`);
-    if (!familles.includes(r.famille)) pb.push(`${ou} : famille inconnue « ${r.famille} ».`);
-    if (!AMBIANCES.includes(r.ambiance)) pb.push(`${ou} : ambiance parmi ${AMBIANCES.join(", ")}.`);
-    if (!sousListe(r.moment, MOMENTS)) pb.push(`${ou} : moment parmi ${MOMENTS.join(", ")}.`);
-    if (!sousListe(r.saisons, SAISONS)) pb.push(`${ou} : saisons parmi ${SAISONS.join(", ")}.`);
-    if (!INTENSITES.includes(r.intensite)) pb.push(`${ou} : intensite parmi ${INTENSITES.join(", ")}.`);
-    if (!(num(r.concentration) && r.concentration >= c.min && r.concentration <= c.max)) pb.push(`${ou} : concentration hors de la plage de regles.json.`);
-    if (r.marge !== undefined && !(num(r.marge) && r.marge >= 0)) pb.push(`${ou} : marge doit être un nombre positif.`);
-    const doses = r.notes && typeof r.notes === "object" ? Object.entries(r.notes) : [];
+    if (!STRUCT[r.structure]) pb.push(`${ou} : structure inconnue « ${r.structure} ».`);
+    if (!["a_valider", "validee"].includes(r.statut)) pb.push(`${ou} : statut a_valider ou validee attendu.`);
+    const doses = objet(r.notes) ? Object.entries(r.notes) : [];
     if (!doses.length) { pb.push(`${ou} : notes manquantes.`); continue; }
-    for (const [id, v] of doses) {
-      if (!N[id]) pb.push(`${ou} : note inconnue « ${id} ».`);
-      else if (N[id].actif === false) pb.push(`${ou} : la note ${id} est désactivée.`);
-      if (!(num(v) && v > 0)) pb.push(`${ou} : dose de ${id} incorrecte.`);
+    let vmax = 0, total = 0;
+    for (const [code, v] of doses) {
+      if (!connue(code)) { pb.push(`${ou} : note inconnue « ${code} ».`); continue; }
+      vmax = Math.max(vmax, N[codes.get(code)].vague);
+      if (!(num(v) && v > 0 && Math.abs(v / PAS - Math.round(v / PAS)) < 1e-9)) pb.push(`${ou} : dose de ${code} incorrecte (multiple de ${PAS} attendu).`);
+      total += num(v) ? v : 0;
     }
-    const total = doses.reduce((s, [, v]) => s + (num(v) ? v : 0), 0);
     if (Math.abs(total - 100) > 1e-6) pb.push(`${ou} : le total des doses fait ${total} au lieu de 100.`);
+    if (vmax && r.vague !== vmax) pb.push(`${ou} : vague ${r.vague} indiquée, mais sa note la plus tardive est de la vague ${vmax}.`);
+    const st = STRUCT[r.structure];
+    if (st) for (const g of st.obligatoires || []) {
+      const ok = g.notes.some(code => (r.notes[code] || 0) >= (g.min_pct || 0) && r.notes[code] > 0);
+      if (!ok) pb.push(`${ou} : la structure ${r.structure} demande ${g.notes.join(" ou ")}${g.min_pct ? ` (au moins ${g.min_pct} %)` : ""}.`);
+    }
   }
 
-  // ---------- boutique.json (facultatif) ----------
-  if (boutique) {
-    const ou = "boutique.json";
-    if (typeof boutique.publie !== "boolean") pb.push(`${ou} : publie doit valoir true ou false.`);
-    for (const p of ["kit", "flacon_50", "flacon_100"]) {
-      const l = (boutique.liens_stripe || {})[p];
-      if (l !== null && !url(l)) pb.push(`${ou} : le lien Stripe « ${p} » doit être null ou une adresse https://.`);
-      const ident = (boutique.liens_stripe_ids || {})[p];
-      if (ident !== null && ident !== undefined && !(typeof ident === "string" && /^plink_[A-Za-z0-9]+$/.test(ident)))
-        pb.push(`${ou} : l'identifiant Stripe « ${p} » doit être null ou commencer par plink_.`);
-      const prix = (boutique.prix_eur || {})[p];
-      if (prix !== null && !(num(prix) && prix > 0)) pb.push(`${ou} : le prix « ${p} » doit être null ou un nombre.`);
+  // ---------- ifra_cat4.json ----------
+  if (!Number.isInteger(d.ifra_cat4?.amendement)) pb.push("ifra_cat4.json : numéro d'amendement entier attendu.");
+  for (const [s, v] of Object.entries(SUBST))
+    if (!(texte(v.nom) && num(v.limite_pct) && v.limite_pct > 0)) pb.push(`ifra_cat4.json, ${s} : nom et limite_pct positive attendus.`);
+
+  // ---------- allergenes.json ----------
+  if (!(num(d.allergenes?.seuil_sans_rincage_pct) && d.allergenes.seuil_sans_rincage_pct > 0)) pb.push("allergenes.json : seuil_sans_rincage_pct manquant.");
+  const vusA = new Set();
+  for (const a of d.allergenes?.allergenes || []) {
+    if (!/^[a-z0-9_]+$/.test(a.id) || vusA.has(a.id)) pb.push(`allergenes.json : identifiant « ${a.id} » incorrect ou en double.`);
+    vusA.add(a.id);
+    if (!texte(a.inci)) pb.push(`allergenes.json, ${a.id} : nom INCI manquant.`);
+    if (a.max_pct_produit !== undefined && !(num(a.max_pct_produit) && a.max_pct_produit >= 0)) pb.push(`allergenes.json, ${a.id} : max_pct_produit doit être un nombre.`);
+  }
+
+  // ---------- matieres_lots.json ----------
+  for (const l of d.matieres_lots?.lots || []) {
+    const ou = `matieres_lots.json, ${l.lot}`;
+    if (!texte(l.lot) || LOTS.has(l.lot)) pb.push(`${ou} : numéro de lot manquant ou en double.`);
+    LOTS.set(l.lot, l);
+    if (!connue(l.code_note)) pb.push(`${ou} : code_note inconnu.`);
+    if (l.demo === true && !String(l.lot).startsWith("DEMO")) pb.push(`${ou} : un lot de démonstration doit commencer par DEMO.`);
+    if (l.demo !== true && String(l.lot).startsWith("DEMO")) pb.push(`${ou} : un vrai lot ne doit pas commencer par DEMO.`);
+    if (!(num(l.densite_g_ml) && l.densite_g_ml > 0.5 && l.densite_g_ml < 2)) pb.push(`${ou} : densité entre 0,5 et 2 attendue.`);
+    if (!Number.isInteger(l.ifra_amendement)) pb.push(`${ou} : ifra_amendement entier attendu.`);
+    if (!(num(l.ifra_cat4_max_pct_produit) && l.ifra_cat4_max_pct_produit > 0 && l.ifra_cat4_max_pct_produit <= 100)) pb.push(`${ou} : ifra_cat4_max_pct_produit entre 0 et 100 attendu.`);
+    for (const [s, v] of Object.entries(l.substances_ifra_pct || {})) {
+      if (!SUBST[s]) pb.push(`${ou} : substance « ${s} » absente de ifra_cat4.json.`);
+      if (!pct(v)) pb.push(`${ou} : % de ${s} incorrect (nombre ou [mini, maxi]).`);
     }
-    if (!texte(boutique.delai)) pb.push(`${ou} : delai manquant.`);
-    if (boutique.worker !== null && !url(boutique.worker)) pb.push(`${ou} : worker doit être null ou une adresse https://.`);
-    if (boutique.publie === true && (!boutique.liens_stripe || Object.values(boutique.liens_stripe).every(l => l === null)))
-      pb.push(`${ou} : publie vaut true mais aucun lien Stripe n'est rempli.`);
+    for (const [a, v] of Object.entries(l.allergenes_pct || {})) {
+      if (!ALL.has(a)) pb.push(`${ou} : allergène « ${a} » absent de allergenes.json.`);
+      if (!pct(v)) pb.push(`${ou} : % de ${a} incorrect (nombre ou [mini, maxi]).`);
+    }
+    if (!(objet(l.docs) && DOCS.every(k => typeof l.docs[k] === "boolean"))) pb.push(`${ou} : docs doit donner true ou false pour ${DOCS.join(", ")}.`);
+    if (l.fcf !== undefined && typeof l.fcf !== "boolean") pb.push(`${ou} : fcf doit valoir true ou false.`);
+    if (l.atranol_chloroatranol_ppm !== undefined && l.atranol_chloroatranol_ppm !== null && !(num(borneHaute(l.atranol_chloroatranol_ppm))))
+      pb.push(`${ou} : atranol_chloroatranol_ppm doit être un nombre.`);
+    if (!date(l.date_docs)) pb.push(`${ou} : date_docs au format AAAA-MM-JJ attendue.`);
+  }
+  for (const [id, n] of Object.entries(N)) {
+    if (n.lot_actif === null) continue;
+    const l = LOTS.get(n.lot_actif);
+    if (!l) pb.push(`notes.json, ${id} : lot_actif « ${n.lot_actif} » absent de matieres_lots.json.`);
+    else if (l.code_note !== n.code) pb.push(`notes.json, ${id} : le lot ${n.lot_actif} est celui d'une autre note (${l.code_note}).`);
+  }
+
+  // ---------- cadre_securite.json ----------
+  const C = d.cadre_securite || {};
+  if (C.version !== null && C.version !== undefined) {
+    if (!(texte(String(C.version)) && date(C.date) && texte(C.signataire))) pb.push("cadre_securite.json : version, date (AAAA-MM-JJ) et signataire attendus.");
+    if (!(objet(C.concentration) && num(C.concentration.min) && num(C.concentration.max) && C.concentration.min <= C.concentration.max))
+      pb.push("cadre_securite.json : concentration {min, max} attendue.");
+    if (!(objet(C.nombre_notes) && Number.isInteger(C.nombre_notes.min) && Number.isInteger(C.nombre_notes.max))) pb.push("cadre_securite.json : nombre_notes {min, max} attendu.");
+    if (!(objet(C.notes) && Object.keys(C.notes).length)) pb.push("cadre_securite.json : la liste des notes couvertes est vide.");
+    for (const [code, v] of Object.entries(C.notes || {}))
+      if (!connue(code) || !(num(v?.pmax) && v.pmax > 0 && v.pmax <= 100)) pb.push(`cadre_securite.json, ${code} : code connu et pmax entre 0 et 100 attendus.`);
+    if (C.allergenes_total_max_pct !== null && !(num(C.allergenes_total_max_pct) && C.allergenes_total_max_pct > 0))
+      pb.push("cadre_securite.json : allergenes_total_max_pct doit être null ou un nombre positif.");
+  } else if (Object.keys(C.notes || {}).length) pb.push("cadre_securite.json : des notes sont listées mais la version du rapport manque.");
+
+  // ---------- config/features.json ----------
+  const FE = d.features || {};
+  for (const k of ["inspiration_nommee", "ia_active", "mode_demo"])
+    if (typeof FE[k] !== "boolean") pb.push(`config/features.json : ${k} doit valoir true ou false.`);
+  if (!(Array.isArray(FE.vagues_actives) && FE.vagues_actives.every(v => [1, 2, 3].includes(v)))) pb.push("config/features.json : vagues_actives doit lister 1, 2 et/ou 3.");
+
+  // ---------- boutique.json ----------
+  const B = d.boutique;
+  if (B) {
+    if (typeof B.publie !== "boolean") pb.push("boutique.json : publie doit valoir true ou false.");
+    if (typeof B.vente_active !== "boolean") pb.push("boutique.json : vente_active doit valoir true ou false.");
+    for (const p of ["kit", "flacon_50", "flacon_100"]) if (!(num(B.prix_eur?.[p]) && B.prix_eur[p] > 0)) pb.push(`boutique.json : prix « ${p} » manquant.`);
+    if (!texte(B.delai)) pb.push("boutique.json : delai manquant.");
+    if (B.worker !== null && !url(B.worker)) pb.push("boutique.json : worker doit être null ou une adresse https://.");
+    if (B.vente_active === true && FE.mode_demo === true) pb.push("boutique.json : vente_active vaut true alors que le mode démonstration est actif (lots fictifs).");
+    if (B.vente_active === true && !(C.version && Object.keys(C.notes || {}).length)) pb.push("boutique.json : vente_active vaut true sans cadre de sécurité signé.");
   }
   return pb;
 }

@@ -3,9 +3,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { creerConfigurateur, lienPaiement } from "../../src/creer/configurateur.js";
-import { creerFabrication } from "../../src/creer/fabrication.js";
-import { controlerDonnees } from "../../src/creer/donnees.js";
+import { creerConfigurateur, lienPaiement } from "../../../src/creer/v1/configurateur.js";
+import { creerFabrication } from "../../../src/creer/v1/fabrication.js";
+import { controlerDonnees } from "../../../src/creer/v1/donnees.js";
 import { donnees, hasard, somme } from "./outils.mjs";
 
 const d = donnees();
@@ -124,7 +124,7 @@ test("visualisation : pyramide, roue des familles et frise cohérentes", () => {
 });
 
 test("aucun nom de marque dans les recettes, les notes et les descriptions", () => {
-  const parfums = JSON.parse(readFileSync(fileURLToPath(new URL("../../data/parfums.json", import.meta.url)), "utf8"));
+  const parfums = JSON.parse(readFileSync(fileURLToPath(new URL("../../../data/parfums.json", import.meta.url)), "utf8"));
   const sans = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const marques = new Set();
   // les marques seulement : des noms de parfums comme « Blanche » sont aussi des mots courants

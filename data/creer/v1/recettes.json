@@ -1,0 +1,74 @@
+{
+  "_aide": [
+    "Recettes de départ du mode guidé. Le client part toujours de l'une d'elles.",
+    "La clé (R01, R02…) apparaît dans le code de formule.",
+    "nom : nom affiché, une famille ou une ambiance. Jamais de nom de parfum de marque.",
+    "famille : une famille de regles.json. ambiance : fraiche, florale, boisee, chaude ou gourmande.",
+    "moment : jour et/ou soir. saisons : printemps, ete, automne, hiver. intensite : douce ou intense.",
+    "concentration : % d'huiles par défaut. marge : écart permis autour de chaque dose, en points de %.",
+    "notes : doses en % du mélange d'huiles. Le total doit faire 100.",
+    "RECETTES PROVISOIRES : conçues pour respecter toutes les règles, à remplacer par les recettes testées par Ethan."
+  ],
+  "recettes": {
+    "R01": {
+      "nom": "Agrumes et fleur d'oranger", "famille": "frais", "ambiance": "fraiche",
+      "moment": ["jour"], "saisons": ["printemps", "ete"], "intensite": "douce",
+      "concentration": 18, "marge": 5,
+      "notes": { "bergamote": 22, "mandarine": 18, "fleur_oranger": 25, "musc_blanc": 20, "cedre": 15 }
+    },
+    "R02": {
+      "nom": "Bergamote poivrée", "famille": "frais", "ambiance": "fraiche",
+      "moment": ["jour"], "saisons": ["printemps", "ete"], "intensite": "douce",
+      "concentration": 18, "marge": 5,
+      "notes": { "bergamote": 24, "poivre_rose": 8, "rose": 18, "iris": 10, "musc_blanc": 20, "cedre": 20 }
+    },
+    "R03": {
+      "nom": "Rose lumineuse", "famille": "floral", "ambiance": "florale",
+      "moment": ["jour"], "saisons": ["printemps", "ete"], "intensite": "douce",
+      "concentration": 18, "marge": 5,
+      "notes": { "mandarine": 15, "poivre_rose": 5, "rose": 28, "jasmin": 15, "musc_blanc": 20, "santal": 17 }
+    },
+    "R04": {
+      "nom": "Fleur d'oranger vanillée", "famille": "floral", "ambiance": "florale",
+      "moment": ["jour", "soir"], "saisons": ["printemps", "ete"], "intensite": "douce",
+      "concentration": 18, "marge": 5,
+      "notes": { "mandarine": 12, "bergamote": 8, "fleur_oranger": 28, "jasmin": 15, "musc_blanc": 20, "vanille": 17 }
+    },
+    "R05": {
+      "nom": "Cèdre et vétiver", "famille": "boise", "ambiance": "boisee",
+      "moment": ["jour"], "saisons": ["automne", "hiver"], "intensite": "intense",
+      "concentration": 18, "marge": 5,
+      "notes": { "bergamote": 17, "poivre_rose": 6, "iris": 10, "jasmin": 12, "cedre": 27, "vetiver": 8, "musc_blanc": 20 }
+    },
+    "R06": {
+      "nom": "Santal floral", "famille": "boise", "ambiance": "boisee",
+      "moment": ["jour", "soir"], "saisons": ["printemps", "ete", "automne", "hiver"], "intensite": "douce",
+      "concentration": 18, "marge": 5,
+      "notes": { "mandarine": 20, "rose": 10, "jasmin": 12, "santal": 30, "cedre": 10, "musc_blanc": 18 }
+    },
+    "R07": {
+      "nom": "Ambre patchouli", "famille": "ambre", "ambiance": "chaude",
+      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "intense",
+      "concentration": 18, "marge": 5,
+      "notes": { "bergamote": 15, "rose": 14, "jasmin": 8, "ambre": 35, "vanille": 19, "patchouli": 9 }
+    },
+    "R08": {
+      "nom": "Ambre poudré", "famille": "ambre", "ambiance": "chaude",
+      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "douce",
+      "concentration": 18, "marge": 5,
+      "notes": { "poivre_rose": 8, "bergamote": 7, "iris": 10, "rose": 12, "ambre": 30, "santal": 23, "vanille": 10 }
+    },
+    "R09": {
+      "nom": "Vanille tonka", "famille": "gourmand", "ambiance": "gourmande",
+      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "intense",
+      "concentration": 18, "marge": 5,
+      "notes": { "mandarine": 15, "jasmin": 12, "fleur_oranger": 12, "vanille": 25, "tonka": 15, "musc_blanc": 21 }
+    },
+    "R10": {
+      "nom": "Cuir et iris", "famille": "cuir", "ambiance": "chaude",
+      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "intense",
+      "concentration": 18, "marge": 5,
+      "notes": { "bergamote": 14, "poivre_rose": 4, "iris": 12, "rose": 10, "cuir": 5, "ambre": 35, "santal": 20 }
+    }
+  }
+}

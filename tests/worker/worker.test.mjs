@@ -3,8 +3,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import { creerApp, _interne } from "../../worker/app.js";
-import { creerFabrication } from "../../src/creer/fabrication.js";
-import { donnees } from "../creer/outils.mjs";
+import { creerFabrication } from "../../src/creer/v1/fabrication.js";
+import { donnees } from "../creer/v1/outils.mjs";
 
 const SECRET = "whsec_test_123";
 const MAINTENANT = Date.UTC(2026, 9, 21, 12, 0, 0);

@@ -2,9 +2,9 @@
 // notes proposées en un clic, prix attendu sur la page de fabrication, identifiants Stripe.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { creerConfigurateur } from "../../src/creer/configurateur.js";
-import { creerFabrication } from "../../src/creer/fabrication.js";
-import { controlerDonnees } from "../../src/creer/donnees.js";
+import { creerConfigurateur } from "../../../src/creer/v1/configurateur.js";
+import { creerFabrication } from "../../../src/creer/v1/fabrication.js";
+import { controlerDonnees } from "../../../src/creer/v1/donnees.js";
 import { donnees, moteur, hasard } from "./outils.mjs";
 
 const d = donnees();

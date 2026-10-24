@@ -1,7 +1,7 @@
 // Calculateur en grammes, code de formule, allergènes et fiche de la page privée.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { creerFabrication } from "../../src/creer/fabrication.js";
+import { creerFabrication } from "../../../src/creer/v1/fabrication.js";
 import { donnees, moteur, hasard, somme } from "./outils.mjs";
 
 const atelier = (d = donnees()) => creerFabrication(d);

@@ -1,0 +1,17 @@
+{
+ "_aide": [
+  "Cadre de sécurité signé par l'évaluateur (rapport de sécurité). VIDE tant qu'il n'y a pas de rapport : le moteur utilise alors les dose_max de notes.json et la vente reste bloquée.",
+  "version, date (AAAA-MM-JJ), signataire : à recopier du rapport. Chaque formule enregistre la version du cadre.",
+  "concentration : {\"min\": 15, \"max\": 20} en % de concentré dans le parfum fini. nombre_notes : {\"min\": 3, \"max\": 12}.",
+  "notes : liste fermée des notes couvertes, avec leur maximum signé en % du concentré, par exemple {\"BER\": {\"pmax\": 30}}. Une note absente de la liste est invisible et inutilisable.",
+  "allergenes_total_max_pct : maximum de tous les allergènes cumulés, en % du parfum fini.",
+  "Le moteur ne fait jamais plus large que ce cadre."
+ ],
+ "version": null,
+ "date": null,
+ "signataire": null,
+ "concentration": null,
+ "nombre_notes": null,
+ "notes": {},
+ "allergenes_total_max_pct": null
+}

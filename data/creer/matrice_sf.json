@@ -1,0 +1,328 @@
+{
+ "_aide": [
+  "Entente entre les 15 sous-familles (matrice M du moteur d'harmonie) : de -2 (se heurtent) à +2 (s'accordent très bien).",
+  "La matrice doit rester symétrique (même valeur pour hesp/bois et bois/hesp) : un test le vérifie.",
+  "sous_familles : nom affiché et famille maison (frais, floral, gourmand, boise, ambre).",
+  "Une exception de exceptions.json remplace la valeur de la matrice pour une paire de notes précise.",
+  "Inspiration : roue de Michael Edwards et classification de la Société Française des Parfumeurs. VALEURS DE DÉPART."
+ ],
+ "sous_familles": {
+  "hesp": {
+   "nom": "hespéridé",
+   "famille": "frais"
+  },
+  "arom": {
+   "nom": "aromatique",
+   "famille": "frais"
+  },
+  "vert": {
+   "nom": "vert",
+   "famille": "frais"
+  },
+  "aqua": {
+   "nom": "aquatique",
+   "famille": "frais"
+  },
+  "frui": {
+   "nom": "fruité",
+   "famille": "floral"
+  },
+  "epfr": {
+   "nom": "épicé frais",
+   "famille": "frais"
+  },
+  "epch": {
+   "nom": "épicé chaud",
+   "famille": "ambre"
+  },
+  "flro": {
+   "nom": "floral rosé",
+   "famille": "floral"
+  },
+  "flbl": {
+   "nom": "floral blanc",
+   "famille": "floral"
+  },
+  "poud": {
+   "nom": "poudré",
+   "famille": "floral"
+  },
+  "bois": {
+   "nom": "boisé (dont moussu)",
+   "famille": "boise"
+  },
+  "ambr": {
+   "nom": "ambré, résineux, oud",
+   "famille": "ambre"
+  },
+  "gour": {
+   "nom": "gourmand",
+   "famille": "gourmand"
+  },
+  "cuir": {
+   "nom": "cuir, animal",
+   "famille": "boise"
+  },
+  "musq": {
+   "nom": "musqué",
+   "famille": "ambre"
+  }
+ },
+ "matrice": {
+  "hesp": {
+   "hesp": 2,
+   "arom": 2,
+   "vert": 2,
+   "aqua": 2,
+   "frui": 1,
+   "epfr": 2,
+   "epch": 0,
+   "flro": 1,
+   "flbl": 1,
+   "poud": 0,
+   "bois": 1,
+   "ambr": 0,
+   "gour": -1,
+   "cuir": -1,
+   "musq": 2
+  },
+  "arom": {
+   "hesp": 2,
+   "arom": 2,
+   "vert": 1,
+   "aqua": 1,
+   "frui": 0,
+   "epfr": 1,
+   "epch": 0,
+   "flro": 0,
+   "flbl": -1,
+   "poud": 0,
+   "bois": 2,
+   "ambr": 1,
+   "gour": -1,
+   "cuir": 0,
+   "musq": 1
+  },
+  "vert": {
+   "hesp": 2,
+   "arom": 1,
+   "vert": 2,
+   "aqua": 1,
+   "frui": 1,
+   "epfr": 1,
+   "epch": -1,
+   "flro": 1,
+   "flbl": 1,
+   "poud": 1,
+   "bois": 1,
+   "ambr": -1,
+   "gour": -2,
+   "cuir": -1,
+   "musq": 1
+  },
+  "aqua": {
+   "hesp": 2,
+   "arom": 1,
+   "vert": 1,
+   "aqua": 2,
+   "frui": 1,
+   "epfr": 1,
+   "epch": -2,
+   "flro": 0,
+   "flbl": 0,
+   "poud": -1,
+   "bois": 1,
+   "ambr": -1,
+   "gour": -2,
+   "cuir": -2,
+   "musq": 2
+  },
+  "frui": {
+   "hesp": 1,
+   "arom": 0,
+   "vert": 1,
+   "aqua": 1,
+   "frui": 2,
+   "epfr": 1,
+   "epch": 0,
+   "flro": 2,
+   "flbl": 1,
+   "poud": 1,
+   "bois": 0,
+   "ambr": 0,
+   "gour": 2,
+   "cuir": -1,
+   "musq": 1
+  },
+  "epfr": {
+   "hesp": 2,
+   "arom": 1,
+   "vert": 1,
+   "aqua": 1,
+   "frui": 1,
+   "epfr": 2,
+   "epch": 1,
+   "flro": 1,
+   "flbl": 0,
+   "poud": 0,
+   "bois": 2,
+   "ambr": 1,
+   "gour": 0,
+   "cuir": 1,
+   "musq": 1
+  },
+  "epch": {
+   "hesp": 0,
+   "arom": 0,
+   "vert": -1,
+   "aqua": -2,
+   "frui": 0,
+   "epfr": 1,
+   "epch": 2,
+   "flro": 1,
+   "flbl": 0,
+   "poud": 0,
+   "bois": 1,
+   "ambr": 2,
+   "gour": 2,
+   "cuir": 1,
+   "musq": 0
+  },
+  "flro": {
+   "hesp": 1,
+   "arom": 0,
+   "vert": 1,
+   "aqua": 0,
+   "frui": 2,
+   "epfr": 1,
+   "epch": 1,
+   "flro": 2,
+   "flbl": 1,
+   "poud": 2,
+   "bois": 1,
+   "ambr": 1,
+   "gour": 1,
+   "cuir": 1,
+   "musq": 2
+  },
+  "flbl": {
+   "hesp": 1,
+   "arom": -1,
+   "vert": 1,
+   "aqua": 0,
+   "frui": 1,
+   "epfr": 0,
+   "epch": 0,
+   "flro": 1,
+   "flbl": 2,
+   "poud": 1,
+   "bois": 1,
+   "ambr": 1,
+   "gour": 1,
+   "cuir": 0,
+   "musq": 2
+  },
+  "poud": {
+   "hesp": 0,
+   "arom": 0,
+   "vert": 1,
+   "aqua": -1,
+   "frui": 1,
+   "epfr": 0,
+   "epch": 0,
+   "flro": 2,
+   "flbl": 1,
+   "poud": 2,
+   "bois": 1,
+   "ambr": 1,
+   "gour": 1,
+   "cuir": 1,
+   "musq": 2
+  },
+  "bois": {
+   "hesp": 1,
+   "arom": 2,
+   "vert": 1,
+   "aqua": 1,
+   "frui": 0,
+   "epfr": 2,
+   "epch": 1,
+   "flro": 1,
+   "flbl": 1,
+   "poud": 1,
+   "bois": 2,
+   "ambr": 2,
+   "gour": 1,
+   "cuir": 2,
+   "musq": 2
+  },
+  "ambr": {
+   "hesp": 0,
+   "arom": 1,
+   "vert": -1,
+   "aqua": -1,
+   "frui": 0,
+   "epfr": 1,
+   "epch": 2,
+   "flro": 1,
+   "flbl": 1,
+   "poud": 1,
+   "bois": 2,
+   "ambr": 2,
+   "gour": 2,
+   "cuir": 2,
+   "musq": 1
+  },
+  "gour": {
+   "hesp": -1,
+   "arom": -1,
+   "vert": -2,
+   "aqua": -2,
+   "frui": 2,
+   "epfr": 0,
+   "epch": 2,
+   "flro": 1,
+   "flbl": 1,
+   "poud": 1,
+   "bois": 1,
+   "ambr": 2,
+   "gour": 2,
+   "cuir": 0,
+   "musq": 1
+  },
+  "cuir": {
+   "hesp": -1,
+   "arom": 0,
+   "vert": -1,
+   "aqua": -2,
+   "frui": -1,
+   "epfr": 1,
+   "epch": 1,
+   "flro": 1,
+   "flbl": 0,
+   "poud": 1,
+   "bois": 2,
+   "ambr": 2,
+   "gour": 0,
+   "cuir": 2,
+   "musq": 1
+  },
+  "musq": {
+   "hesp": 2,
+   "arom": 1,
+   "vert": 1,
+   "aqua": 2,
+   "frui": 1,
+   "epfr": 1,
+   "epch": 0,
+   "flro": 2,
+   "flbl": 2,
+   "poud": 2,
+   "bois": 2,
+   "ambr": 1,
+   "gour": 1,
+   "cuir": 1,
+   "musq": 2
+  }
+ }
+}

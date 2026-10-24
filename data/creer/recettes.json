@@ -1,74 +1,601 @@
 {
-  "_aide": [
-    "Recettes de départ du mode guidé. Le client part toujours de l'une d'elles.",
-    "La clé (R01, R02…) apparaît dans le code de formule.",
-    "nom : nom affiché, une famille ou une ambiance. Jamais de nom de parfum de marque.",
-    "famille : une famille de regles.json. ambiance : fraiche, florale, boisee, chaude ou gourmande.",
-    "moment : jour et/ou soir. saisons : printemps, ete, automne, hiver. intensite : douce ou intense.",
-    "concentration : % d'huiles par défaut. marge : écart permis autour de chaque dose, en points de %.",
-    "notes : doses en % du mélange d'huiles. Le total doit faire 100.",
-    "RECETTES PROVISOIRES : conçues pour respecter toutes les règles, à remplacer par les recettes testées par Ethan."
-  ],
-  "recettes": {
-    "R01": {
-      "nom": "Agrumes et fleur d'oranger", "famille": "frais", "ambiance": "fraiche",
-      "moment": ["jour"], "saisons": ["printemps", "ete"], "intensite": "douce",
-      "concentration": 18, "marge": 5,
-      "notes": { "bergamote": 22, "mandarine": 18, "fleur_oranger": 25, "musc_blanc": 20, "cedre": 15 }
-    },
-    "R02": {
-      "nom": "Bergamote poivrée", "famille": "frais", "ambiance": "fraiche",
-      "moment": ["jour"], "saisons": ["printemps", "ete"], "intensite": "douce",
-      "concentration": 18, "marge": 5,
-      "notes": { "bergamote": 24, "poivre_rose": 8, "rose": 18, "iris": 10, "musc_blanc": 20, "cedre": 20 }
-    },
-    "R03": {
-      "nom": "Rose lumineuse", "famille": "floral", "ambiance": "florale",
-      "moment": ["jour"], "saisons": ["printemps", "ete"], "intensite": "douce",
-      "concentration": 18, "marge": 5,
-      "notes": { "mandarine": 15, "poivre_rose": 5, "rose": 28, "jasmin": 15, "musc_blanc": 20, "santal": 17 }
-    },
-    "R04": {
-      "nom": "Fleur d'oranger vanillée", "famille": "floral", "ambiance": "florale",
-      "moment": ["jour", "soir"], "saisons": ["printemps", "ete"], "intensite": "douce",
-      "concentration": 18, "marge": 5,
-      "notes": { "mandarine": 12, "bergamote": 8, "fleur_oranger": 28, "jasmin": 15, "musc_blanc": 20, "vanille": 17 }
-    },
-    "R05": {
-      "nom": "Cèdre et vétiver", "famille": "boise", "ambiance": "boisee",
-      "moment": ["jour"], "saisons": ["automne", "hiver"], "intensite": "intense",
-      "concentration": 18, "marge": 5,
-      "notes": { "bergamote": 17, "poivre_rose": 6, "iris": 10, "jasmin": 12, "cedre": 27, "vetiver": 8, "musc_blanc": 20 }
-    },
-    "R06": {
-      "nom": "Santal floral", "famille": "boise", "ambiance": "boisee",
-      "moment": ["jour", "soir"], "saisons": ["printemps", "ete", "automne", "hiver"], "intensite": "douce",
-      "concentration": 18, "marge": 5,
-      "notes": { "mandarine": 20, "rose": 10, "jasmin": 12, "santal": 30, "cedre": 10, "musc_blanc": 18 }
-    },
-    "R07": {
-      "nom": "Ambre patchouli", "famille": "ambre", "ambiance": "chaude",
-      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "intense",
-      "concentration": 18, "marge": 5,
-      "notes": { "bergamote": 15, "rose": 14, "jasmin": 8, "ambre": 35, "vanille": 19, "patchouli": 9 }
-    },
-    "R08": {
-      "nom": "Ambre poudré", "famille": "ambre", "ambiance": "chaude",
-      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "douce",
-      "concentration": 18, "marge": 5,
-      "notes": { "poivre_rose": 8, "bergamote": 7, "iris": 10, "rose": 12, "ambre": 30, "santal": 23, "vanille": 10 }
-    },
-    "R09": {
-      "nom": "Vanille tonka", "famille": "gourmand", "ambiance": "gourmande",
-      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "intense",
-      "concentration": 18, "marge": 5,
-      "notes": { "mandarine": 15, "jasmin": 12, "fleur_oranger": 12, "vanille": 25, "tonka": 15, "musc_blanc": 21 }
-    },
-    "R10": {
-      "nom": "Cuir et iris", "famille": "cuir", "ambiance": "chaude",
-      "moment": ["soir"], "saisons": ["automne", "hiver"], "intensite": "intense",
-      "concentration": 18, "marge": 5,
-      "notes": { "bergamote": 14, "poivre_rose": 4, "iris": 12, "rose": 10, "cuir": 5, "ambre": 35, "santal": 20 }
-    }
+ "_aide": [
+  "Les 36 recettes de base, en % du concentré (chaque recette fait 100).",
+  "structure : code de structures.json. vague : vague de la note la plus tardive de la recette.",
+  "statut : \"a_valider\" tant que tu ne l'as pas essayée, \"validee\" après la grille d'essai (note d'au moins 3,5 sur 5 et aucun défaut de stabilité).",
+  "Les grammes ne sont jamais stockés ici : la page de fabrication les calcule.",
+  "Chaque recette doit obtenir une harmonie d'au moins 70 et passer les règles de sécurité à 15, 18 et 20 % : les tests le vérifient."
+ ],
+ "recettes": {
+  "R01": {
+   "nom": "Cologne claire",
+   "structure": "S1",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 25,
+    "CIT": 15,
+    "MAN": 10,
+    "LAV": 10,
+    "JAS": 5,
+    "MUS": 20,
+    "CED": 15
+   }
+  },
+  "R02": {
+   "nom": "Agrumes poivrés",
+   "structure": "S1",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "PAM": 20,
+    "BER": 20,
+    "POI": 8,
+    "LAV": 7,
+    "ROS": 5,
+    "CAC": 20,
+    "VET": 10,
+    "MUS": 10
+   }
+  },
+  "R03": {
+   "nom": "Néroli lumineux",
+   "structure": "S1",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "NER": 20,
+    "BER": 20,
+    "PET": 15,
+    "MAN": 10,
+    "JAS": 5,
+    "MUS": 20,
+    "CED": 10
+   }
+  },
+  "R04": {
+   "nom": "Fougère moderne",
+   "structure": "S2",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "LAV": 20,
+    "POI": 5,
+    "ROS": 5,
+    "TON": 15,
+    "PAT": 10,
+    "VET": 10,
+    "CED": 10,
+    "MUS": 10
+   }
+  },
+  "R05": {
+   "nom": "Fougère classique",
+   "structure": "S2",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "LAV": 20,
+    "GER": 10,
+    "SAU": 5,
+    "TON": 15,
+    "MOU": 5,
+    "PAT": 10,
+    "CED": 10,
+    "MUS": 10
+   }
+  },
+  "R06": {
+   "nom": "Fougère ambrée",
+   "structure": "S2",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "LAV": 20,
+    "BER": 10,
+    "CAR": 5,
+    "GER": 5,
+    "TON": 15,
+    "AMB": 15,
+    "CAC": 15,
+    "VAN": 5,
+    "MUS": 10
+   }
+  },
+  "R07": {
+   "nom": "Néo-chypre rose",
+   "structure": "S3",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 20,
+    "MAN": 5,
+    "ROS": 20,
+    "JAS": 10,
+    "PAT": 20,
+    "VET": 5,
+    "AMB": 5,
+    "MUS": 15
+   }
+  },
+  "R08": {
+   "nom": "Chypre classique",
+   "structure": "S3",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 25,
+    "ROS": 15,
+    "JAS": 10,
+    "LAB": 10,
+    "MOU": 5,
+    "PAT": 15,
+    "VET": 5,
+    "MUS": 15
+   }
+  },
+  "R09": {
+   "nom": "Chypre fruité",
+   "structure": "S3",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "FRB": 10,
+    "ROS": 15,
+    "JAS": 10,
+    "PAT": 20,
+    "LAB": 10,
+    "MOU": 5,
+    "MUS": 15
+   }
+  },
+  "R10": {
+   "nom": "Ambre doux",
+   "structure": "S4",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "BER": 5,
+    "JAS": 5,
+    "ROS": 5,
+    "AMB": 30,
+    "VAN": 15,
+    "TON": 10,
+    "SAN": 10,
+    "MUS": 10
+   }
+  },
+  "R11": {
+   "nom": "Ambre résineux",
+   "structure": "S4",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "CAR": 5,
+    "ROS": 10,
+    "AMB": 25,
+    "BEN": 15,
+    "LAB": 10,
+    "ENC": 5,
+    "VAN": 10,
+    "SAN": 10
+   }
+  },
+  "R12": {
+   "nom": "Ambre épicé",
+   "structure": "S4",
+   "vague": 3,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "CAN": 2,
+    "GIR": 3,
+    "POI": 5,
+    "ROS": 10,
+    "AMB": 30,
+    "VAN": 15,
+    "TON": 10,
+    "PAT": 5,
+    "SAN": 10
+   }
+  },
+  "R13": {
+   "nom": "Jasmin solaire",
+   "structure": "S5",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 15,
+    "BER": 5,
+    "JAS": 35,
+    "ROS": 10,
+    "SAN": 15,
+    "VAN": 5,
+    "MUS": 15
+   }
+  },
+  "R14": {
+   "nom": "Fleurs blanches",
+   "structure": "S5",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "NER": 10,
+    "JAS": 25,
+    "YLA": 10,
+    "ROS": 5,
+    "SAN": 15,
+    "VAN": 10,
+    "MUS": 15
+   }
+  },
+  "R15": {
+   "nom": "Tubéreuse plage",
+   "structure": "S5",
+   "vague": 3,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "BER": 5,
+    "TUB": 25,
+    "JAS": 15,
+    "FLO": 10,
+    "SAN": 15,
+    "VAN": 5,
+    "MUS": 15
+   }
+  },
+  "R16": {
+   "nom": "Vanille tonka",
+   "structure": "S6",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "BER": 5,
+    "JAS": 5,
+    "ROS": 5,
+    "VAN": 30,
+    "TON": 15,
+    "AMB": 10,
+    "SAN": 10,
+    "MUS": 10
+   }
+  },
+  "R17": {
+   "nom": "Praliné patchouli",
+   "structure": "S6",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "FRB": 5,
+    "JAS": 10,
+    "PRA": 20,
+    "VAN": 15,
+    "TON": 10,
+    "PAT": 15,
+    "MUS": 15
+   }
+  },
+  "R18": {
+   "nom": "Café vanille",
+   "structure": "S6",
+   "vague": 3,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "CAR": 5,
+    "IRI": 5,
+    "ROS": 5,
+    "CAF": 15,
+    "VAN": 25,
+    "TON": 10,
+    "PAT": 10,
+    "CAC": 15
+   }
+  },
+  "R19": {
+   "nom": "Cèdre poivré",
+   "structure": "S7",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "PAM": 10,
+    "POI": 5,
+    "LAV": 10,
+    "ROS": 5,
+    "CED": 20,
+    "VET": 15,
+    "CAC": 15,
+    "MUS": 5
+   }
+  },
+  "R20": {
+   "nom": "Vétiver frais",
+   "structure": "S7",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "PAM": 10,
+    "GIN": 5,
+    "ROM": 5,
+    "SAU": 5,
+    "GER": 5,
+    "VET": 25,
+    "CED": 15,
+    "CAC": 10,
+    "MUS": 5
+   }
+  },
+  "R21": {
+   "nom": "Bois fumés",
+   "structure": "S7",
+   "vague": 3,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "POI": 5,
+    "CAR": 5,
+    "LAV": 10,
+    "GAI": 10,
+    "VET": 15,
+    "CED": 20,
+    "CAC": 15,
+    "AMB": 10
+   }
+  },
+  "R22": {
+   "nom": "Cuir propre",
+   "structure": "S8",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "POI": 5,
+    "ROS": 10,
+    "JAS": 5,
+    "CUI": 25,
+    "CED": 15,
+    "VET": 10,
+    "AMB": 10,
+    "MUS": 10
+   }
+  },
+  "R23": {
+   "nom": "Cuir safrané",
+   "structure": "S8",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "SAF": 5,
+    "ROS": 15,
+    "CUI": 25,
+    "OUD": 5,
+    "LAB": 10,
+    "VET": 10,
+    "AMB": 10,
+    "MUS": 10
+   }
+  },
+  "R24": {
+   "nom": "Cuir daim iris",
+   "structure": "S8",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "BER": 5,
+    "IRI": 10,
+    "VIO": 5,
+    "ROS": 5,
+    "CUI": 20,
+    "SAN": 15,
+    "MUS": 20,
+    "AMB": 10
+   }
+  },
+  "R25": {
+   "nom": "Bord de mer",
+   "structure": "S9",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "CIT": 10,
+    "PAM": 10,
+    "MAR": 10,
+    "LAV": 5,
+    "JAS": 5,
+    "CAC": 20,
+    "CED": 10,
+    "MUS": 15
+   }
+  },
+  "R26": {
+   "nom": "Aquatique boisé",
+   "structure": "S9",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "MAN": 10,
+    "MAR": 8,
+    "POI": 5,
+    "ROS": 2,
+    "CAC": 20,
+    "VET": 15,
+    "CED": 10,
+    "MUS": 15
+   }
+  },
+  "R27": {
+   "nom": "Eau verte",
+   "structure": "S9",
+   "vague": 3,
+   "statut": "a_valider",
+   "notes": {
+    "CIT": 15,
+    "BER": 10,
+    "CON": 5,
+    "MAR": 5,
+    "THE": 10,
+    "MUG": 10,
+    "CAC": 15,
+    "CED": 10,
+    "MUS": 20
+   }
+  },
+  "R28": {
+   "nom": "Iris poudré",
+   "structure": "S10",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 10,
+    "BER": 5,
+    "IRI": 20,
+    "VIO": 10,
+    "ROS": 10,
+    "SAN": 15,
+    "VAN": 5,
+    "MUS": 25
+   }
+  },
+  "R29": {
+   "nom": "Violette boisée",
+   "structure": "S10",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "POI": 5,
+    "VIO": 20,
+    "IRI": 10,
+    "ROS": 5,
+    "CED": 15,
+    "SAN": 10,
+    "MUS": 25
+   }
+  },
+  "R30": {
+   "nom": "Rouge à lèvres",
+   "structure": "S10",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "MAN": 5,
+    "FRB": 10,
+    "VIO": 15,
+    "IRI": 10,
+    "ROS": 15,
+    "VAN": 10,
+    "MUS": 25,
+    "SAN": 10
+   }
+  },
+  "R31": {
+   "nom": "Rose oud",
+   "structure": "S11",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "POI": 5,
+    "ROS": 30,
+    "OUD": 15,
+    "PAT": 10,
+    "AMB": 15,
+    "SAN": 5,
+    "MUS": 10
+   }
+  },
+  "R32": {
+   "nom": "Rose safran",
+   "structure": "S11",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "SAF": 5,
+    "ROS": 30,
+    "OUD": 15,
+    "PAT": 10,
+    "LAB": 5,
+    "AMB": 15,
+    "MUS": 10
+   }
+  },
+  "R33": {
+   "nom": "Oud encens",
+   "structure": "S11",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "CAR": 5,
+    "ROS": 20,
+    "OUD": 20,
+    "ENC": 10,
+    "PAT": 10,
+    "AMB": 15,
+    "CED": 10
+   }
+  },
+  "R34": {
+   "nom": "Linge propre",
+   "structure": "S12",
+   "vague": 1,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 15,
+    "MAN": 10,
+    "JAS": 5,
+    "ROS": 5,
+    "MUS": 40,
+    "CAC": 15,
+    "SAN": 10
+   }
+  },
+  "R35": {
+   "nom": "Peau musquée",
+   "structure": "S12",
+   "vague": 2,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "POM": 5,
+    "IRI": 5,
+    "ROS": 5,
+    "JAS": 5,
+    "MUS": 35,
+    "AMX": 15,
+    "SAN": 20
+   }
+  },
+  "R36": {
+   "nom": "Musc fleur d'oranger",
+   "structure": "S12",
+   "vague": 3,
+   "statut": "a_valider",
+   "notes": {
+    "BER": 10,
+    "NER": 10,
+    "FLO": 15,
+    "JAS": 5,
+    "MUS": 35,
+    "AMX": 10,
+    "SAN": 15
+   }
   }
+ }
 }

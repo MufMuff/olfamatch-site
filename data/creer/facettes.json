@@ -1,0 +1,141 @@
+{
+ "_aide": [
+  "Les 22 facettes d'odeur et leur entente deux à deux (table F du moteur d'harmonie).",
+  "facettes : identifiant → nom affiché.",
+  "affinites : [facette, facette, valeur] avec une valeur entre -1 (se gênent) et +1 (s'accordent). Une paire absente vaut 0. L'ordre des deux facettes ne compte pas.",
+  "intensites : intensité donnée à la 1re, 2e et 3e facette d'une note quand on la crée (notes.json garde les valeurs).",
+  "Mots du cahier sans facette exacte, traduits ainsi : amer → vert ; floral (lavande) → floral rosé ; terreux → moussu ; camphré → aromatique ; lacté et crémeux → boisé crémeux ; vanillé et miellé → gourmand ; chypré → boisé sec ; minéral → aquatique ; frais (menthe) → vert ; floral frais (muguet) → floral blanc ; torréfié → fumé ; solaire et propre : pas de facette.",
+  "VALEURS DE DÉPART, à ajuster après les essais."
+ ],
+ "facettes": {
+  "hesperide": "hespéridé",
+  "aromatique": "aromatique",
+  "vert": "vert",
+  "aquatique": "aquatique",
+  "ozonique": "ozonique",
+  "fruite": "fruité",
+  "epice_frais": "épicé frais",
+  "epice_chaud": "épicé chaud",
+  "floral_blanc": "floral blanc",
+  "floral_rose": "floral rosé",
+  "poudre": "poudré",
+  "boise_sec": "boisé sec",
+  "boise_cremeux": "boisé crémeux",
+  "moussu": "moussu",
+  "resineux": "résineux",
+  "ambre": "ambré",
+  "balsamique": "balsamique",
+  "gourmand": "gourmand",
+  "animal": "animal",
+  "cuir": "cuir",
+  "fume": "fumé",
+  "musque": "musqué"
+ },
+ "intensites": [
+  1.0,
+  0.5,
+  0.3
+ ],
+ "affinites": [
+  [
+   "hesperide",
+   "aromatique",
+   1
+  ],
+  [
+   "hesperide",
+   "musque",
+   1
+  ],
+  [
+   "vert",
+   "hesperide",
+   1
+  ],
+  [
+   "poudre",
+   "musque",
+   1
+  ],
+  [
+   "poudre",
+   "floral_rose",
+   1
+  ],
+  [
+   "boise_cremeux",
+   "floral_blanc",
+   1
+  ],
+  [
+   "ambre",
+   "balsamique",
+   1
+  ],
+  [
+   "ambre",
+   "resineux",
+   1
+  ],
+  [
+   "cuir",
+   "fume",
+   1
+  ],
+  [
+   "cuir",
+   "animal",
+   1
+  ],
+  [
+   "gourmand",
+   "balsamique",
+   1
+  ],
+  [
+   "moussu",
+   "floral_rose",
+   1
+  ],
+  [
+   "epice_chaud",
+   "ambre",
+   1
+  ],
+  [
+   "aquatique",
+   "gourmand",
+   -1
+  ],
+  [
+   "ozonique",
+   "animal",
+   -1
+  ],
+  [
+   "ozonique",
+   "epice_chaud",
+   -1
+  ],
+  [
+   "vert",
+   "gourmand",
+   -1
+  ],
+  [
+   "aromatique",
+   "floral_blanc",
+   -1
+  ],
+  [
+   "fume",
+   "fruite",
+   -1
+  ],
+  [
+   "animal",
+   "fruite",
+   -1
+  ]
+ ]
+}

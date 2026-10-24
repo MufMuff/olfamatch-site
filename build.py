@@ -279,7 +279,8 @@ def build_creer():
     """« Crée ton parfum » : modules de calcul, données publiques, page publique, page merci
     et page privée de fabrication. Les coûts et le stock (cout_g, stock_g) et les modes
     d'emploi (_aide) ne sont pas publiés. Renvoie les adresses à mettre dans le plan du site."""
-    src = ROOT / "src/creer"
+    # Version 1 de l'outil, gardée en service pendant la construction de la V2 (src/creer/v1, data/creer/v1).
+    src = ROOT / "src/creer/v1"
     if not src.exists(): return []
     out = DIST / "creer"
     out.mkdir(parents=True, exist_ok=True)
@@ -288,7 +289,7 @@ def build_creer():
         if isinstance(x, dict): return {k: sans_prive(v) for k, v in x.items() if not k.startswith("_") and k not in ("cout_g", "stock_g")}
         if isinstance(x, list): return [sans_prive(v) for v in x]
         return x
-    lire = lambda n: json.loads((ROOT / f"data/creer/{n}.json").read_text(encoding="utf-8"))
+    lire = lambda n: json.loads((ROOT / f"data/creer/v1/{n}.json").read_text(encoding="utf-8"))
     donnees = sans_prive({n: lire(n) for n in ("notes", "compatibilite", "recettes", "regles")})
     donnees["boutique"] = sans_prive(BOUTIQUE)
     (out / "donnees.json").write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

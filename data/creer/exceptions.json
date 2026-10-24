@@ -1,0 +1,790 @@
+{
+ "_aide": [
+  "Exceptions : pour une paire de notes précise, la valeur remplace celle de la matrice des sous-familles (de -2 à +2).",
+  "E001 à E060 : paires favorables. E061 à E100 : paires défavorables (valeurs de départ tirées des accords classiques : chypre, fougère, rose-oud…).",
+  "E101 et suivantes : associations « délicates » de la V1 (compatibilite.json) que la matrice notait positives : ramenées à 0 (neutre).",
+  "groupes : associations de 3 notes ou plus reprises de la V1. Si toutes les notes sont là, le score d'harmonie perd « points ».",
+  "a et b : codes de notes (BER, ROS…). Une même paire ne doit apparaître qu'une fois.",
+  "À CONFIRMER par tes essais sur mouillette."
+ ],
+ "exceptions": [
+  {
+   "id": "E001",
+   "a": "ROS",
+   "b": "OUD",
+   "valeur": 2,
+   "raison": "rose-oud classique"
+  },
+  {
+   "id": "E002",
+   "a": "BER",
+   "b": "PAT",
+   "valeur": 2,
+   "raison": "squelette du chypre"
+  },
+  {
+   "id": "E003",
+   "a": "BER",
+   "b": "MOU",
+   "valeur": 2,
+   "raison": "chypre"
+  },
+  {
+   "id": "E004",
+   "a": "LAV",
+   "b": "TON",
+   "valeur": 2,
+   "raison": "cœur de la fougère"
+  },
+  {
+   "id": "E005",
+   "a": "LAV",
+   "b": "VAN",
+   "valeur": 1,
+   "raison": "fougère ambrée"
+  },
+  {
+   "id": "E006",
+   "a": "LAV",
+   "b": "AMB",
+   "valeur": 1,
+   "raison": "fougère orientale"
+  },
+  {
+   "id": "E007",
+   "a": "GER",
+   "b": "TON",
+   "valeur": 1,
+   "raison": "fougère"
+  },
+  {
+   "id": "E008",
+   "a": "CIT",
+   "b": "VAN",
+   "valeur": 1,
+   "raison": "agrume confit"
+  },
+  {
+   "id": "E009",
+   "a": "MAN",
+   "b": "VAN",
+   "valeur": 2,
+   "raison": "hespéridé gourmand"
+  },
+  {
+   "id": "E010",
+   "a": "BER",
+   "b": "VAN",
+   "valeur": 2,
+   "raison": "tête classique des ambrés"
+  },
+  {
+   "id": "E011",
+   "a": "ORA",
+   "b": "CAN",
+   "valeur": 2,
+   "raison": "agrume épicé"
+  },
+  {
+   "id": "E012",
+   "a": "ORA",
+   "b": "GIR",
+   "valeur": 1,
+   "raison": "pomander"
+  },
+  {
+   "id": "E013",
+   "a": "BER",
+   "b": "CUI",
+   "valeur": 1,
+   "raison": "cuir « propre »"
+  },
+  {
+   "id": "E014",
+   "a": "BER",
+   "b": "BEN",
+   "valeur": 1,
+   "raison": "ouverture d'ambré"
+  },
+  {
+   "id": "E015",
+   "a": "PAM",
+   "b": "VET",
+   "valeur": 2,
+   "raison": "boisé frais"
+  },
+  {
+   "id": "E016",
+   "a": "PAM",
+   "b": "CAS",
+   "valeur": 2,
+   "raison": "agrume-bourgeon"
+  },
+  {
+   "id": "E017",
+   "a": "MAR",
+   "b": "SAU",
+   "valeur": 2,
+   "raison": "sauge marine"
+  },
+  {
+   "id": "E018",
+   "a": "MAR",
+   "b": "AMX",
+   "valeur": 2,
+   "raison": "ambré minéral"
+  },
+  {
+   "id": "E019",
+   "a": "MAR",
+   "b": "CAC",
+   "valeur": 2,
+   "raison": "base de l'aquatique moderne"
+  },
+  {
+   "id": "E020",
+   "a": "MAR",
+   "b": "FIG",
+   "valeur": 2,
+   "raison": "vert aquatique"
+  },
+  {
+   "id": "E021",
+   "a": "FIG",
+   "b": "SAN",
+   "valeur": 2,
+   "raison": "figue lactée"
+  },
+  {
+   "id": "E022",
+   "a": "THE",
+   "b": "JAS",
+   "valeur": 2,
+   "raison": "thé-jasmin"
+  },
+  {
+   "id": "E023",
+   "a": "THE",
+   "b": "MUS",
+   "valeur": 2,
+   "raison": "transparence"
+  },
+  {
+   "id": "E024",
+   "a": "GAL",
+   "b": "IRI",
+   "valeur": 2,
+   "raison": "iris vert"
+  },
+  {
+   "id": "E025",
+   "a": "GAL",
+   "b": "CUI",
+   "valeur": 1,
+   "raison": "cuir vert"
+  },
+  {
+   "id": "E026",
+   "a": "VIO",
+   "b": "CUI",
+   "valeur": 2,
+   "raison": "cuir daim"
+  },
+  {
+   "id": "E027",
+   "a": "IRI",
+   "b": "CUI",
+   "valeur": 2,
+   "raison": "cuir daim"
+  },
+  {
+   "id": "E028",
+   "a": "SAF",
+   "b": "CUI",
+   "valeur": 2,
+   "raison": "cuir safrané"
+  },
+  {
+   "id": "E029",
+   "a": "SAF",
+   "b": "ROS",
+   "valeur": 2,
+   "raison": "rose orientale"
+  },
+  {
+   "id": "E030",
+   "a": "SAF",
+   "b": "FRB",
+   "valeur": 1,
+   "raison": "framboise-safran"
+  },
+  {
+   "id": "E031",
+   "a": "FRB",
+   "b": "PAT",
+   "valeur": 2,
+   "raison": "patchouli fruité"
+  },
+  {
+   "id": "E032",
+   "a": "PEC",
+   "b": "MOU",
+   "valeur": 2,
+   "raison": "chypre fruité"
+  },
+  {
+   "id": "E033",
+   "a": "PEC",
+   "b": "JAS",
+   "valeur": 2,
+   "raison": "floral lactonique"
+  },
+  {
+   "id": "E034",
+   "a": "CAS",
+   "b": "VET",
+   "valeur": 1,
+   "raison": "vert boisé"
+  },
+  {
+   "id": "E035",
+   "a": "POM",
+   "b": "CAN",
+   "valeur": 2,
+   "raison": "gourmand épicé"
+  },
+  {
+   "id": "E036",
+   "a": "POM",
+   "b": "MUS",
+   "valeur": 2,
+   "raison": "fruité propre"
+  },
+  {
+   "id": "E037",
+   "a": "POI",
+   "b": "ROS",
+   "valeur": 2,
+   "raison": "rose épicée"
+  },
+  {
+   "id": "E038",
+   "a": "GIN",
+   "b": "VAN",
+   "valeur": 1,
+   "raison": "pain d'épices"
+  },
+  {
+   "id": "E039",
+   "a": "CAR",
+   "b": "CAF",
+   "valeur": 2,
+   "raison": "café cardamome"
+  },
+  {
+   "id": "E040",
+   "a": "CAR",
+   "b": "IRI",
+   "valeur": 1,
+   "raison": "iris épicé frais"
+  },
+  {
+   "id": "E041",
+   "a": "GIR",
+   "b": "ROS",
+   "valeur": 2,
+   "raison": "facette œillet"
+  },
+  {
+   "id": "E042",
+   "a": "GIR",
+   "b": "YLA",
+   "valeur": 1,
+   "raison": "facette épicée de l'ylang"
+  },
+  {
+   "id": "E043",
+   "a": "TUB",
+   "b": "CUI",
+   "valeur": 1,
+   "raison": "floral animal"
+  },
+  {
+   "id": "E044",
+   "a": "JAS",
+   "b": "CUI",
+   "valeur": 1,
+   "raison": "indole et animal"
+  },
+  {
+   "id": "E045",
+   "a": "YLA",
+   "b": "SAN",
+   "valeur": 2,
+   "raison": "floral crémeux"
+  },
+  {
+   "id": "E046",
+   "a": "NER",
+   "b": "ENC",
+   "valeur": 1,
+   "raison": "cologne résineuse"
+  },
+  {
+   "id": "E047",
+   "a": "ENC",
+   "b": "IRI",
+   "valeur": 2,
+   "raison": "encens poudré"
+  },
+  {
+   "id": "E048",
+   "a": "ENC",
+   "b": "THE",
+   "valeur": 1,
+   "raison": "thé fumé"
+  },
+  {
+   "id": "E049",
+   "a": "OUD",
+   "b": "BER",
+   "valeur": 1,
+   "raison": "ouverture de l'oud"
+  },
+  {
+   "id": "E050",
+   "a": "PAT",
+   "b": "PRA",
+   "valeur": 2,
+   "raison": "gourmand patchouli"
+  },
+  {
+   "id": "E051",
+   "a": "PAT",
+   "b": "VAN",
+   "valeur": 2,
+   "raison": "ambré boisé"
+  },
+  {
+   "id": "E052",
+   "a": "CED",
+   "b": "VIO",
+   "valeur": 2,
+   "raison": "cèdre-ionones"
+  },
+  {
+   "id": "E053",
+   "a": "SAN",
+   "b": "ROS",
+   "valeur": 2,
+   "raison": "rose boisée"
+  },
+  {
+   "id": "E054",
+   "a": "SAN",
+   "b": "IRI",
+   "valeur": 2,
+   "raison": "poudré boisé"
+  },
+  {
+   "id": "E055",
+   "a": "GAI",
+   "b": "ROS",
+   "valeur": 2,
+   "raison": "rose fumée"
+  },
+  {
+   "id": "E056",
+   "a": "CAF",
+   "b": "PAT",
+   "valeur": 2,
+   "raison": "gourmand sombre"
+  },
+  {
+   "id": "E057",
+   "a": "PRA",
+   "b": "FLO",
+   "valeur": 2,
+   "raison": "floral gourmand"
+  },
+  {
+   "id": "E058",
+   "a": "VAN",
+   "b": "JAS",
+   "valeur": 2,
+   "raison": "floral solaire"
+  },
+  {
+   "id": "E059",
+   "a": "TON",
+   "b": "IRI",
+   "valeur": 2,
+   "raison": "poudré gourmand"
+  },
+  {
+   "id": "E060",
+   "a": "AMX",
+   "b": "BER",
+   "valeur": 2,
+   "raison": "frais ambré moderne"
+  },
+  {
+   "id": "E061",
+   "a": "MEN",
+   "b": "ROS",
+   "valeur": -1,
+   "raison": "effet dentifrice"
+  },
+  {
+   "id": "E062",
+   "a": "MEN",
+   "b": "JAS",
+   "valeur": -2,
+   "raison": "menthe + indole"
+  },
+  {
+   "id": "E063",
+   "a": "MEN",
+   "b": "YLA",
+   "valeur": -2,
+   "raison": "idem"
+  },
+  {
+   "id": "E064",
+   "a": "MEN",
+   "b": "CAN",
+   "valeur": -2,
+   "raison": "chewing-gum"
+  },
+  {
+   "id": "E065",
+   "a": "GIR",
+   "b": "MEN",
+   "valeur": -2,
+   "raison": "cabinet dentaire"
+  },
+  {
+   "id": "E066",
+   "a": "GIR",
+   "b": "LAV",
+   "valeur": -1,
+   "raison": "médicinal"
+  },
+  {
+   "id": "E067",
+   "a": "CAN",
+   "b": "JAS",
+   "valeur": -1,
+   "raison": "écrase le floral"
+  },
+  {
+   "id": "E068",
+   "a": "CAN",
+   "b": "TUB",
+   "valeur": -1,
+   "raison": "saturation"
+  },
+  {
+   "id": "E069",
+   "a": "CAF",
+   "b": "CIT",
+   "valeur": -2,
+   "raison": "amer et acide"
+  },
+  {
+   "id": "E070",
+   "a": "CAF",
+   "b": "PAM",
+   "valeur": -2,
+   "raison": "idem"
+  },
+  {
+   "id": "E071",
+   "a": "PRA",
+   "b": "VET",
+   "valeur": -1,
+   "raison": "terreux sucré"
+  },
+  {
+   "id": "E072",
+   "a": "PRA",
+   "b": "CUI",
+   "valeur": -1,
+   "raison": "sucre + goudron"
+  },
+  {
+   "id": "E073",
+   "a": "PRA",
+   "b": "OUD",
+   "valeur": -1,
+   "raison": "sucre + médicinal"
+  },
+  {
+   "id": "E074",
+   "a": "OUD",
+   "b": "CON",
+   "valeur": -2,
+   "raison": "contresens"
+  },
+  {
+   "id": "E075",
+   "a": "OUD",
+   "b": "MEN",
+   "valeur": -2,
+   "raison": "médicinal"
+  },
+  {
+   "id": "E076",
+   "a": "OUD",
+   "b": "TUB",
+   "valeur": -1,
+   "raison": "deux notes envahissantes"
+  },
+  {
+   "id": "E077",
+   "a": "TUB",
+   "b": "MAR",
+   "valeur": -1,
+   "raison": "écrase l'ozonique"
+  },
+  {
+   "id": "E078",
+   "a": "MUG",
+   "b": "CUI",
+   "valeur": -1,
+   "raison": "contresens"
+  },
+  {
+   "id": "E079",
+   "a": "MUG",
+   "b": "OUD",
+   "valeur": -1,
+   "raison": "idem"
+  },
+  {
+   "id": "E080",
+   "a": "MUG",
+   "b": "CAF",
+   "valeur": -2,
+   "raison": "idem"
+  },
+  {
+   "id": "E081",
+   "a": "PIV",
+   "b": "OUD",
+   "valeur": -1,
+   "raison": "fraîcheur noyée"
+  },
+  {
+   "id": "E082",
+   "a": "CON",
+   "b": "PAT",
+   "valeur": -2,
+   "raison": "moisi"
+  },
+  {
+   "id": "E083",
+   "a": "CON",
+   "b": "ENC",
+   "valeur": -2,
+   "raison": "contresens"
+  },
+  {
+   "id": "E084",
+   "a": "CON",
+   "b": "ROS",
+   "valeur": -1,
+   "raison": "tourne « salade »"
+  },
+  {
+   "id": "E085",
+   "a": "MAR",
+   "b": "PAT",
+   "valeur": -1,
+   "raison": "terreux humide"
+  },
+  {
+   "id": "E086",
+   "a": "MAR",
+   "b": "ENC",
+   "valeur": -2,
+   "raison": "contresens"
+  },
+  {
+   "id": "E087",
+   "a": "LAV",
+   "b": "FRB",
+   "valeur": -1,
+   "raison": "lessive sucrée"
+  },
+  {
+   "id": "E088",
+   "a": "LAV",
+   "b": "TUB",
+   "valeur": -2,
+   "raison": "conflit"
+  },
+  {
+   "id": "E089",
+   "a": "ROM",
+   "b": "FRB",
+   "valeur": -1,
+   "raison": "contresens"
+  },
+  {
+   "id": "E090",
+   "a": "BAS",
+   "b": "VAN",
+   "valeur": -2,
+   "raison": "contresens"
+  },
+  {
+   "id": "E091",
+   "a": "BAS",
+   "b": "CUI",
+   "valeur": -1,
+   "raison": "contresens"
+  },
+  {
+   "id": "E092",
+   "a": "GER",
+   "b": "MAR",
+   "valeur": -1,
+   "raison": "métallique"
+  },
+  {
+   "id": "E093",
+   "a": "POM",
+   "b": "OUD",
+   "valeur": -2,
+   "raison": "shampoing médicinal"
+  },
+  {
+   "id": "E094",
+   "a": "PEC",
+   "b": "OUD",
+   "valeur": -1,
+   "raison": "idem"
+  },
+  {
+   "id": "E095",
+   "a": "FRB",
+   "b": "VET",
+   "valeur": -1,
+   "raison": "terreux sucré"
+  },
+  {
+   "id": "E096",
+   "a": "GAI",
+   "b": "MAR",
+   "valeur": -1,
+   "raison": "fumé + ozone"
+  },
+  {
+   "id": "E097",
+   "a": "MOU",
+   "b": "MAR",
+   "valeur": -1,
+   "raison": "humide"
+  },
+  {
+   "id": "E098",
+   "a": "MOU",
+   "b": "PRA",
+   "valeur": -1,
+   "raison": "contresens"
+  },
+  {
+   "id": "E099",
+   "a": "BEN",
+   "b": "CON",
+   "valeur": -2,
+   "raison": "contresens"
+  },
+  {
+   "id": "E100",
+   "a": "CAS",
+   "b": "CAF",
+   "valeur": -1,
+   "raison": "aigre"
+  },
+  {
+   "id": "E101",
+   "a": "MAN",
+   "b": "PAT",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  },
+  {
+   "id": "E102",
+   "a": "LAV",
+   "b": "OUD",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  },
+  {
+   "id": "E103",
+   "a": "ROS",
+   "b": "VET",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  },
+  {
+   "id": "E104",
+   "a": "FLO",
+   "b": "OUD",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  },
+  {
+   "id": "E105",
+   "a": "FLO",
+   "b": "PAT",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  },
+  {
+   "id": "E106",
+   "a": "FLO",
+   "b": "AMB",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  },
+  {
+   "id": "E107",
+   "a": "VAN",
+   "b": "VET",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  },
+  {
+   "id": "E108",
+   "a": "PAT",
+   "b": "OUD",
+   "valeur": 0,
+   "raison": "association délicate en V1 : neutre en attendant les essais"
+  }
+ ],
+ "groupes": [
+  {
+   "id": "G01",
+   "notes": [
+    "POI",
+    "VAN",
+    "TON"
+   ],
+   "points": 3,
+   "raison": "association délicate en V1 (poivre rose, vanille et tonka)"
+  },
+  {
+   "id": "G02",
+   "notes": [
+    "OUD",
+    "CUI",
+    "PAT"
+   ],
+   "points": 15,
+   "raison": "association interdite en V1 : trois notes très puissantes, trop chargé"
+  }
+ ]
+}

@@ -12,8 +12,8 @@
  * Ce fichier ne dépend pas de Cloudflare : index.js lui passe les vrais outils
  * (envoi d'e-mail, fetch), les tests lui passent des faux.
  */
-import { creerFabrication } from "../src/creer/fabrication.js";
-import { creerMoteur } from "../src/creer/moteur.js";
+import { creerFabrication } from "../src/creer/v1/fabrication.js";
+import { creerMoteur } from "../src/creer/v1/moteur.js";
 
 const API_ANTHROPIC = "https://api.anthropic.com/v1/messages";
 // Modèle peu coûteux par défaut pour un texte de 2 ou 3 phrases ; réglable avec MODELE_IA.
