@@ -16,7 +16,8 @@
   "kit : flacons d'échantillon (flacon_ml), mini-lot préparé par variante (lot_ml) et réglage des 3 variantes : fraicheur de −1 (plus de tête) à +1 (plus de fond), douceur de −1 à +1, intensite de −1 (concentration minimum) à +1 (maximum). Chaque variante repasse toutes les règles de sécurité.",
   "curseurs : effet des curseurs. fraicheur : coefficient par étage. douceur : coefficient par famille de note.",
   "etiquette : seuil d'étiquetage des allergènes (lu dans allergenes.json), noms INCI, mentions, personne responsable (obligatoire : sans elle, l'impression est refusée). À FAIRE VALIDER par l'évaluateur de sécurité.",
-  "volumes_ml : tailles de flacon vendues."
+  "volumes_ml : tailles de flacon vendues.",
+  "ia : réglages des textes écrits par l'IA. mots_min / mots_max : longueur acceptée de l'explication (le cahier demande 80 à 120 mots ; on tolère un peu autour). allegations_interdites : mots qui promettent un effet (santé, humeur, séduction) ; un texte qui en contient est refusé et remplacé par le texte préécrit. texte_max : longueur maximum de la description tapée par le client (porte P2)."
  ],
  "concentration": { "min": 15, "max": 20, "defaut": 18, "pas": 1 },
  "nombre_notes": { "min": 3, "max": 12 },
@@ -76,5 +77,14 @@
   "marquage_colis": "LQ",
   "responsable": null
  },
- "volumes_ml": [50, 100]
+ "volumes_ml": [50, 100],
+ "ia": {
+  "mots_min": 70,
+  "mots_max": 135,
+  "texte_max": 400,
+  "allegations_interdites": ["apaisant", "apaisante", "relaxant", "relaxante", "calmant", "calmante", "aphrodisiaque", "anti-stress", "antistress",
+   "stress", "anxiete", "angoisse", "sommeil", "endormir", "therapeutique", "soigne", "soigner", "guerit", "guerir", "sante", "bien-etre",
+   "energisant", "energisante", "tonifiant", "tonifiante", "stimulant", "stimulante", "seduction", "seduire", "attirer", "pheromone",
+   "hypoallergenique", "medical", "medicinal", "remede", "humeur", "moral", "dose", "pourcentage"]
+ }
 }

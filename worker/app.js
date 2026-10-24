@@ -5,6 +5,8 @@
  *   GET  /api/formule?code=…   un code → la formule, revérifiée avec les règles et les lots du jour
  *   POST /api/checkout         { code, format, quantite, code_kit? } → page de paiement Stripe
  *   POST /api/webhook-stripe   Stripe annonce un paiement : tout est recalculé et comparé
+ *   POST /api/ia/comprendre    { texte } → structure et notes souhaitées (porte « par ambiance »)
+ *   POST /api/ia/expliquer     { code } → explication de la formule en 80 à 120 mots
  *
  * Seul ce programme décide : il relance toujours le moteur (harmonie + sécurité) et calcule
  * lui-même le prix à partir de boutique.json. Il ne reprend jamais un montant envoyé par le navigateur.
@@ -18,6 +20,7 @@ import { formeCanonique, codeFormule, lireCode, sha256Hex, ALPHABET } from "../s
 import { creerControleTextes } from "../src/creer/mots.js";
 import { creerStripe, signatureValide } from "./stripe.js";
 import { messageBrut } from "./courriel.js";
+import { creerIA } from "./ia.js";
 
 export const FORMATS = {
   kit: { cle: "kit", nom: "Kit d'échantillons", detail: "3 × 2 ml" },
@@ -45,6 +48,7 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
     .map(s => s.trim().replace(/\/+$/, "")).filter(Boolean))];
   const SITE = (env.SITE_ORIGIN || ORIGINES[0] || "").replace(/\/+$/, "");
   const iso = () => new Date(maintenant()).toISOString();
+  const ia = creerIA({ donnees, moteur, controle, env, fetch: fetchFn, maintenant });
 
   // ---------------- outils communs ----------------
 
@@ -145,7 +149,7 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
         porte = CASE WHEN excluded.confirme > formules.confirme THEN excluded.porte ELSE formules.porte END`)
       .bind(code, hash, canonique, formule.concentration, JSON.stringify(formule.notes), versions.moteur_version, versions.cadre_version,
         versions.ifra_amendement, ev.harmonie.score, ev.harmonie.libelle, porte, confirme ? 1 : 0, iso()).run();
-    return json({ code, formule, ...resume(ev), vente: moteur.etatVente().ok });
+    return json({ code, formule, ...resume(ev), vente: moteur.etatVente().ok, prix: { ...B.prix_eur } });
   }
 
   async function relireFormule(url) {
@@ -161,7 +165,7 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
       return json({ code: lu.code, formule: trouve.formule, a_mettre_a_jour: true, message: "Formule à mettre à jour",
         ...resume(ev), variante: variante.ok ? variante.formule : null, changements: variante.changements.map(c => c.message) });
     }
-    return json({ code: lu.code, formule: trouve.formule, a_mettre_a_jour: false, ...resume(ev), vente: moteur.etatVente().ok });
+    return json({ code: lu.code, formule: trouve.formule, a_mettre_a_jour: false, ...resume(ev), vente: moteur.etatVente().ok, prix: { ...B.prix_eur } });
   }
 
   // ---------------- paiement ----------------
@@ -442,6 +446,27 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
     };
 
     if (chemin === "/api/formule" && requete.method === "GET") return avecCors(relireFormule(url));
+    if (chemin.startsWith("/api/ia/")) {
+      if (requete.method !== "POST") return json({ erreur: "Méthode non permise." }, 405, cors);
+      const lu = await lireJSON(requete, 2048);
+      if (lu.erreur) return json({ erreur: lu.erreur[0] }, lu.erreur[1], cors);
+      const ip = requete.headers.get("cf-connecting-ip") || "inconnue";
+      if (chemin === "/api/ia/comprendre") {
+        const r = await ia.comprendre(lu.valeur, ip);
+        return json(r.corps, r.statut, cors);
+      }
+      if (chemin === "/api/ia/expliquer") {
+        if (!clesPermises(lu.valeur, ["code"])) return json({ erreur: "Demande mal formée." }, 400, cors);
+        const code = lireCode(lu.valeur.code);
+        if (!code.ok) return json({ erreur: code.erreur }, 400, cors);
+        const trouve = await lireFormuleBase(code.code);
+        if (!trouve) return json({ erreur: "Ce code n'existe pas." }, 404, cors);
+        if (!(await integre(trouve.ligne))) return json({ erreur: "Cette formule ne peut pas être relue." }, 500, cors);
+        const r = await ia.expliquer(trouve.formule, code.code, ip);
+        return json(r.corps, r.statut, cors);
+      }
+      return json({ erreur: "Adresse inconnue." }, 404, cors);
+    }
     if ((chemin === "/api/formule" || chemin === "/api/checkout") && requete.method === "POST") {
       const lu = await lireJSON(requete);
       if (lu.erreur) return json({ erreur: lu.erreur[0] }, lu.erreur[1], cors);

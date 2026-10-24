@@ -616,6 +616,17 @@ export function creerMoteur(d) {
     return { ok: raisons.length === 0, raisons };
   }
 
+  // Familles maison les plus présentes (dose × puissance), sans les notes neutres comme le musc blanc.
+  function familles(formule) {
+    const t = {};
+    for (const [c, p] of Object.entries(formule?.notes || {})) {
+      const n = N.get(c);
+      if (n && n.famille !== "neutre" && Number(p) > 0) t[n.famille] = (t[n.famille] || 0) + Number(p) * n.puissance;
+    }
+    const total = somme(Object.values(t)) || 1;
+    return Object.entries(t).map(([famille, v]) => ({ famille, part: v / total })).sort((a, b) => b.part - a.part || (a.famille < b.famille ? -1 : 1));
+  }
+
   // Une recette, prête à évaluer.
   function recette(code, concentration = R.concentration.defaut) {
     if (!propre(REC, code)) return null;
@@ -623,7 +634,7 @@ export function creerMoteur(d) {
   }
 
   return {
-    harmonie, securite, evaluer, allergenes, contraintes, etages, structureProche,
+    harmonie, securite, evaluer, allergenes, contraintes, etages, structureProche, familles,
     normaliser, limitesNote, corriger, transformer, variantesKit,
     disponibilite, notesDisponibles, lotDe, lotValide, etatVente, recette,
     note: code => (connue(code) ? N.get(code) : null),

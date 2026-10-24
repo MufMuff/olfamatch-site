@@ -1,0 +1,29 @@
+{
+ "_aide": [
+  "Notes publiées des parfums de marque, pour la porte « Pars d'un parfum que tu aimes » (P1). Utilisé seulement si inspiration_nommee vaut true.",
+  "Clé = slug du parfum dans data/parfums.json. tete, coeur, fond : noms des notes tels que la marque les publie (français ou anglais). correspondances.json les traduit en notes Olfamatch.",
+  "source : où la pyramide a été lue (site officiel de la marque de préférence). date : date de la lecture (AAAA-MM-JJ). a_verifier : true tant que la pyramide n'a pas été contrôlée sur la source.",
+  "La collecte complète sera faite à part : ne pas recopier ces données depuis un autre site. Les 3 exemples ci-dessous viennent de connaissances générales et sont À VÉRIFIER.",
+  "Le nom du parfum reste dans la page du client : il n'est jamais envoyé au paiement, à la base de données, à l'étiquette, au code de formule ni aux e-mails."
+ ],
+ "parfums": {
+  "libre-yves-saint-laurent": {
+   "tete": ["mandarine", "lavande", "cassis", "petitgrain"],
+   "coeur": ["lavande", "fleur d'oranger", "jasmin"],
+   "fond": ["vanille", "musc", "cèdre", "ambre gris"],
+   "source": "connaissance générale, à vérifier sur le site de la marque", "date": null, "a_verifier": true
+  },
+  "sauvage-dior": {
+   "tete": ["bergamote", "poivre"],
+   "coeur": ["poivre de Sichuan", "lavande", "poivre rose", "vétiver", "patchouli", "géranium", "élémi"],
+   "fond": ["ambroxan", "cèdre", "labdanum"],
+   "source": "connaissance générale, à vérifier sur le site de la marque", "date": null, "a_verifier": true
+  },
+  "baccarat-rouge-540-maison-francis-kurkdjian": {
+   "tete": ["safran", "jasmin"],
+   "coeur": ["bois ambré", "ambre gris"],
+   "fond": ["résine de sapin", "cèdre"],
+   "source": "connaissance générale, à vérifier sur le site de la marque", "date": null, "a_verifier": true
+  }
+ }
+}

@@ -1,0 +1,331 @@
+{
+ "_aide": [
+  "Textes et réglages des 5 portes d'entrée de « Crée ton parfum ».",
+  "portes : titre et phrase de chaque porte sur l'écran d'accueil (P1 n'apparaît que si inspiration_nommee vaut true).",
+  "familles : nom affiché des familles maison (filtre du catalogue de recettes, porte P4).",
+  "familles_textes : mots utilisés dans la description préécrite (« Un parfum boisé avec une touche fraîche »).",
+  "ambiances (porte P2) : une carte par ambiance ; structures = codes de structures.json, de la plus proche à la moins proche. La porte propose jusqu'à 3 recettes de ces structures.",
+  "intensites : concentration choisie quand le client dit « discret », « moyen » ou « fort » (porte P2 avec l'IA, porte P3).",
+  "quiz (porte P3) : 6 questions, une par écran. Chaque réponse donne des points aux structures (points) ; certaines fixent la concentration. On garde les 2 structures qui ont le plus de points (quiz_structures).",
+  "Ajouter une ambiance ou changer des points : modifier ce fichier puis lancer les tests (node --test)."
+ ],
+ "portes": {
+  "P1": {
+   "titre": "Pars d'un parfum que tu aimes",
+   "texte": "Choisis un parfum : l'outil reprend les notes qu'il peut préparer."
+  },
+  "P2": {
+   "titre": "Par ambiance",
+   "texte": "Une plage, une forêt, une soirée… ou décris-le avec tes mots."
+  },
+  "P3": {
+   "titre": "Petit quiz",
+   "texte": "6 questions, une minute, deux pistes pour toi."
+  },
+  "P4": {
+   "titre": "Recettes de base",
+   "texte": "Pars d'une recette testée et modifie-la à ton goût."
+  },
+  "P5": {
+   "titre": "Mode expert",
+   "texte": "Compose librement, note par note."
+  }
+ },
+ "familles": {
+  "frais": "Frais",
+  "floral": "Floral",
+  "gourmand": "Gourmand",
+  "boise": "Boisé",
+  "ambre": "Ambré"
+ },
+ "familles_textes": {
+  "frais": {
+   "adjectif": "frais",
+   "touche": "fraîche"
+  },
+  "floral": {
+   "adjectif": "floral",
+   "touche": "florale"
+  },
+  "gourmand": {
+   "adjectif": "gourmand",
+   "touche": "gourmande"
+  },
+  "boise": {
+   "adjectif": "boisé",
+   "touche": "boisée"
+  },
+  "ambre": {
+   "adjectif": "ambré",
+   "touche": "ambrée"
+  }
+ },
+ "ambiances": [
+  {
+   "id": "plage",
+   "nom": "Plage",
+   "texte": "Embruns, agrumes et bois clair.",
+   "structures": [
+    "S9",
+    "S1"
+   ]
+  },
+  {
+   "id": "foret",
+   "nom": "Forêt",
+   "texte": "Bois secs, herbes et mousse.",
+   "structures": [
+    "S7",
+    "S2"
+   ]
+  },
+  {
+   "id": "linge",
+   "nom": "Linge propre",
+   "texte": "Musc doux, coton, peau propre.",
+   "structures": [
+    "S12"
+   ]
+  },
+  {
+   "id": "jardin",
+   "nom": "Jardin fleuri",
+   "texte": "Fleurs blanches, rose et soleil.",
+   "structures": [
+    "S5",
+    "S10",
+    "S3"
+   ]
+  },
+  {
+   "id": "soiree",
+   "nom": "Soirée",
+   "texte": "Rose sombre, ambre et bois précieux.",
+   "structures": [
+    "S11",
+    "S4"
+   ]
+  },
+  {
+   "id": "epices",
+   "nom": "Épices d'hiver",
+   "texte": "Ambre, résines et épices chaudes.",
+   "structures": [
+    "S4"
+   ]
+  },
+  {
+   "id": "cuir_bois",
+   "nom": "Cuir et bois",
+   "texte": "Cuir fumé, cèdre et vétiver.",
+   "structures": [
+    "S8",
+    "S7"
+   ]
+  },
+  {
+   "id": "douceur",
+   "nom": "Douceur sucrée",
+   "texte": "Vanille, tonka et caramel.",
+   "structures": [
+    "S6"
+   ]
+  }
+ ],
+ "intensites": {
+  "discrete": 16,
+  "moyenne": 18,
+  "forte": 20
+ },
+ "quiz_structures": 2,
+ "quiz": [
+  {
+   "id": "moment",
+   "question": "Tu le porteras plutôt…",
+   "reponses": [
+    {
+     "id": "jour",
+     "texte": "Le jour",
+     "points": {
+      "S1": 2,
+      "S9": 2,
+      "S12": 2,
+      "S5": 1,
+      "S7": 1,
+      "S2": 1,
+      "S10": 1
+     }
+    },
+    {
+     "id": "soir",
+     "texte": "Le soir",
+     "points": {
+      "S4": 2,
+      "S11": 2,
+      "S6": 2,
+      "S8": 2,
+      "S3": 1,
+      "S10": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "saison",
+   "question": "Ta saison préférée ?",
+   "reponses": [
+    {
+     "id": "printemps",
+     "texte": "Printemps",
+     "points": {
+      "S5": 1,
+      "S10": 2,
+      "S12": 1,
+      "S1": 1,
+      "S3": 1
+     }
+    },
+    {
+     "id": "ete",
+     "texte": "Été",
+     "points": {
+      "S1": 2,
+      "S9": 2,
+      "S5": 2
+     }
+    },
+    {
+     "id": "automne",
+     "texte": "Automne",
+     "points": {
+      "S7": 2,
+      "S2": 1,
+      "S3": 1,
+      "S8": 1,
+      "S11": 1
+     }
+    },
+    {
+     "id": "hiver",
+     "texte": "Hiver",
+     "points": {
+      "S4": 2,
+      "S6": 2,
+      "S11": 1,
+      "S8": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "temperature",
+   "question": "Plutôt frais ou plutôt chaud ?",
+   "reponses": [
+    {
+     "id": "frais",
+     "texte": "Frais",
+     "points": {
+      "S1": 3,
+      "S9": 3,
+      "S2": 1,
+      "S7": 1,
+      "S12": 1
+     }
+    },
+    {
+     "id": "chaud",
+     "texte": "Chaud",
+     "points": {
+      "S4": 3,
+      "S6": 2,
+      "S11": 2,
+      "S8": 2
+     }
+    }
+   ]
+  },
+  {
+   "id": "sucre",
+   "question": "Un peu sucré ?",
+   "reponses": [
+    {
+     "id": "oui",
+     "texte": "Oui, j'aime le sucré",
+     "points": {
+      "S6": 3,
+      "S4": 2,
+      "S10": 1,
+      "S5": 1
+     }
+    },
+    {
+     "id": "non",
+     "texte": "Non, plutôt sec",
+     "points": {
+      "S1": 1,
+      "S2": 1,
+      "S7": 2,
+      "S8": 1,
+      "S9": 1,
+      "S3": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "fleurs",
+   "question": "Des fleurs ?",
+   "reponses": [
+    {
+     "id": "oui",
+     "texte": "Oui, des fleurs",
+     "points": {
+      "S5": 3,
+      "S10": 2,
+      "S3": 2,
+      "S11": 1,
+      "S12": 1
+     }
+    },
+    {
+     "id": "non",
+     "texte": "Pas de fleurs",
+     "points": {
+      "S7": 2,
+      "S8": 2,
+      "S2": 1,
+      "S9": 1,
+      "S6": 1,
+      "S4": 1
+     }
+    }
+   ]
+  },
+  {
+   "id": "sillage",
+   "question": "Ton sillage ?",
+   "reponses": [
+    {
+     "id": "discret",
+     "texte": "Discret, près de la peau",
+     "points": {
+      "S12": 2,
+      "S1": 1,
+      "S10": 1
+     },
+     "intensite": "discrete"
+    },
+    {
+     "id": "fort",
+     "texte": "Fort, qu'on le remarque",
+     "points": {
+      "S11": 2,
+      "S4": 1,
+      "S8": 1
+     },
+     "intensite": "forte"
+    }
+   ]
+  }
+ ]
+}

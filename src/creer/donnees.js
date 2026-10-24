@@ -17,7 +17,7 @@ const FAMILLES = ["frais", "floral", "gourmand", "boise", "ambre"];
 const DOCS = ["fds", "ifra", "coa", "allergenes"];
 
 export const FICHIERS = ["notes", "facettes", "matrice_sf", "exceptions", "structures", "recettes", "ifra_cat4",
-  "allergenes", "matieres_lots", "cadre_securite", "regles", "boutique"];
+  "allergenes", "matieres_lots", "cadre_securite", "regles", "boutique", "portes", "notes_publiees", "correspondances"];
 
 export function controlerDonnees(d) {
   const pb = [];
@@ -31,6 +31,7 @@ export function controlerDonnees(d) {
   const LOTS = new Map();
   const codes = new Map();
   const PAS = R.pas_pourcentage;
+  const STRUCT = d.structures?.structures || {};
 
   // ---------- regles.json ----------
   const c = R.concentration || {};
@@ -157,7 +158,6 @@ export function controlerDonnees(d) {
   }
 
   // ---------- structures.json ----------
-  const STRUCT = d.structures?.structures || {};
   for (const [s, st] of Object.entries(STRUCT)) {
     const ou = `structures.json, ${s}`;
     const p = st.pyramide || {};
@@ -262,6 +262,44 @@ export function controlerDonnees(d) {
   for (const k of ["inspiration_nommee", "ia_active", "mode_demo"])
     if (typeof FE[k] !== "boolean") pb.push(`config/features.json : ${k} doit valoir true ou false.`);
   if (!(Array.isArray(FE.vagues_actives) && FE.vagues_actives.every(v => [1, 2, 3].includes(v)))) pb.push("config/features.json : vagues_actives doit lister 1, 2 et/ou 3.");
+
+  // ---------- portes.json ----------
+  const PO = d.portes;
+  if (PO) {
+    for (const p of ["P1", "P2", "P3", "P4", "P5"]) if (!(texte(PO.portes?.[p]?.titre) && texte(PO.portes?.[p]?.texte))) pb.push(`portes.json : titre et texte de la porte ${p} manquants.`);
+    for (const f of FAMILLES) if (!texte(PO.familles?.[f])) pb.push(`portes.json : nom de la famille ${f} manquant.`);
+    for (const f of FAMILLES) if (!(texte(PO.familles_textes?.[f]?.adjectif) && texte(PO.familles_textes?.[f]?.touche))) pb.push(`portes.json : familles_textes.${f} (adjectif et touche) manquant.`);
+    const ids = new Set();
+    for (const a of PO.ambiances || []) {
+      if (!texte(a.id) || ids.has(a.id)) pb.push(`portes.json : ambiance « ${a.id} » sans identifiant unique.`);
+      ids.add(a.id);
+      if (!(texte(a.nom) && texte(a.texte))) pb.push(`portes.json, ambiance ${a.id} : nom et texte attendus.`);
+      if (!(Array.isArray(a.structures) && a.structures.length && a.structures.every(x => STRUCT[x]))) pb.push(`portes.json, ambiance ${a.id} : structures inconnues.`);
+    }
+    if ((PO.ambiances || []).length !== 8) pb.push("portes.json : 8 ambiances attendues.");
+    for (const [k, v] of Object.entries(PO.intensites || {}))
+      if (!(num(v) && v >= c.min && v <= c.max)) pb.push(`portes.json : intensité ${k} hors de la plage de concentration.`);
+    if ((PO.quiz || []).length !== 6) pb.push("portes.json : le quiz doit avoir 6 questions.");
+    for (const q of PO.quiz || []) {
+      if (!(texte(q.id) && texte(q.question) && Array.isArray(q.reponses) && q.reponses.length >= 2)) pb.push(`portes.json, question ${q.id} : question et au moins 2 réponses attendues.`);
+      for (const r of q.reponses || []) {
+        if (!(texte(r.id) && texte(r.texte))) pb.push(`portes.json, question ${q.id} : réponse sans texte.`);
+        for (const [s2, v] of Object.entries(r.points || {})) if (!STRUCT[s2] || !num(v)) pb.push(`portes.json, question ${q.id}, réponse ${r.id} : points pour une structure inconnue (${s2}).`);
+        if (r.intensite !== undefined && !num(PO.intensites?.[r.intensite])) pb.push(`portes.json, question ${q.id}, réponse ${r.id} : intensité inconnue.`);
+      }
+    }
+  }
+
+  // ---------- notes_publiees.json et correspondances.json ----------
+  for (const [slug, p] of Object.entries(d.notes_publiees?.parfums || {})) {
+    if (!ETAGES.every(e => Array.isArray(p[e]) && p[e].every(texte))) pb.push(`notes_publiees.json, ${slug} : listes tete, coeur et fond attendues.`);
+    if (typeof p.a_verifier !== "boolean") pb.push(`notes_publiees.json, ${slug} : a_verifier doit valoir true ou false.`);
+    if (d.parfums && !d.parfums.some(x => x.slug === slug)) pb.push(`notes_publiees.json : parfum « ${slug} » absent de data/parfums.json.`);
+  }
+  for (const [n, code] of Object.entries(d.correspondances?.notes || {}))
+    if (!connue(code)) pb.push(`correspondances.json : « ${n} » renvoie vers un code inconnu (${code}).`);
+  for (const [a, sf] of Object.entries(d.correspondances?.accords || {}))
+    if (!SF[sf]) pb.push(`correspondances.json : l'accord « ${a} » renvoie vers une sous-famille inconnue (${sf}).`);
 
   // ---------- boutique.json ----------
   const B = d.boutique;

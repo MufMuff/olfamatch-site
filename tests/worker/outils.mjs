@@ -98,19 +98,40 @@ export function donneesEnVente({ vagues = [1, 2, 3] } = {}) {
   return d;
 }
 
-export async function monter({ d = donneesEnVente(), env = {}, stock = 1000 } = {}) {
+// Fausse mémoire Cloudflare (KV) : garde aussi la durée demandée pour chaque clé.
+export function fausseMemoire() {
+  const valeurs = new Map(), durees = new Map();
+  return {
+    valeurs, durees,
+    async get(cle) { return valeurs.has(cle) ? valeurs.get(cle) : null; },
+    async put(cle, valeur, options = {}) { valeurs.set(cle, valeur); durees.set(cle, options.expirationTtl); },
+  };
+}
+
+// ia : fonction (corps de la demande) → réponse de l'API Claude ; les appels sont gardés dans appelsIA.
+export async function monter({ d = donneesEnVente(), env = {}, stock = 1000, ia = null } = {}) {
   const db = fausseD1();
   const stripe = fauxStripe();
-  const envoyes = [];
+  const envoyes = [], appelsIA = [];
+  const fetchTout = async (url, init = {}) => {
+    if (String(url).startsWith("https://api.anthropic.com/")) {
+      const corps = JSON.parse(init.body);
+      appelsIA.push({ url, init, corps });
+      if (!ia) throw new Error("pas de réseau");
+      const r = await ia(corps);
+      return r instanceof Response ? r : Response.json(r);
+    }
+    return stripe.fetch(url, init);
+  };
   if (stock !== null) for (const n of Object.values(d.notes.notes))
     await db.prepare("INSERT INTO stocks (code_note, lot, grammes, maj_le) VALUES (?, ?, ?, ?)").bind(n.code, n.lot_actif, stock, "2026-11-01").run();
   const app = creerApp({
     donnees: d, parfums: PARFUMS,
     env: { DB: db, STRIPE_SECRET_KEY: "sk_test_x", STRIPE_WEBHOOK_SECRET: SECRET, SITE_ORIGIN: SITE, SITE_ORIGINS: SITE,
       EMAIL_ATELIER: "atelier@exemple.fr", EMAIL_EXPEDITEUR: "robot@olfamatch.fr", EMAIL: { send: async m => { envoyes.push(m); } }, ...env },
-    fetch: stripe.fetch, EmailMessage: FauxEmail, maintenant: () => MAINTENANT,
+    fetch: fetchTout, EmailMessage: FauxEmail, maintenant: () => MAINTENANT,
   });
-  return { app, db, stripe, envoyes, d };
+  return { app, db, stripe, envoyes, d, appelsIA };
 }
 
 export const appel = (app, chemin, { methode = "POST", corps, origine = SITE, ip = "1.2.3.4" } = {}) =>

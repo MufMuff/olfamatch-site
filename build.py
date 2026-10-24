@@ -126,6 +126,10 @@ CONTACT = "olfamatch.contact@gmail.com"
 # « Crée ton parfum » : réglages de vente ; tant que publie vaut false, l'outil reste hors du menu et non référencé.
 BOUTIQUE = json.loads((ROOT / "data/creer/boutique.json").read_text(encoding="utf-8")) if (ROOT / "data/creer/boutique.json").exists() else {}
 CREER_PUBLIE = bool(BOUTIQUE.get("publie"))
+FEATURES = json.loads((ROOT / "data/creer/config/features.json").read_text(encoding="utf-8")) if (ROOT / "data/creer/config/features.json").exists() else {}
+# Porte « Pars d'un parfum que tu aimes » : outil publié et interrupteur inspiration_nommee allumé.
+INSPIRATION = CREER_PUBLIE and FEATURES.get("inspiration_nommee") is True
+NOTES_PUBLIEES = set(json.loads((ROOT / "data/creer/notes_publiees.json").read_text(encoding="utf-8")).get("parfums", {})) if (ROOT / "data/creer/notes_publiees.json").exists() else set()
 
 def rs(url, w):
     """Version redimensionnée en WebP (proxy d'images de Higgsfield)."""
@@ -276,38 +280,55 @@ def accords_block(o, b):
 <div class="ac-chart">{legend}{rows}<p class="fine">Accords principaux d'après la communauté Fragrantica, en intensité relative.</p></div></section>'''
 
 def build_creer():
-    """« Crée ton parfum » : modules de calcul, données publiques, page publique, page merci
-    et page privée de fabrication. Les coûts et le stock (cout_g, stock_g) et les modes
-    d'emploi (_aide) ne sont pas publiés. Renvoie les adresses à mettre dans le plan du site."""
-    # Version 1 de l'outil, gardée en service pendant la construction de la V2 (src/creer/v1, data/creer/v1).
-    src = ROOT / "src/creer/v1"
+    """« Crée ton parfum » V2 : modules (moteur, portes, interface), données publiques, page publique
+    et page merci. Coûts, stocks, fournisseurs et modes d'emploi (_aide) ne sont pas publiés.
+    La page privée de fabrication V1 reste servie (dossier /creer/v1/) jusqu'à son remplacement.
+    Renvoie les adresses à mettre dans le plan du site."""
+    src = ROOT / "src/creer"
     if not src.exists(): return []
     out = DIST / "creer"
     out.mkdir(parents=True, exist_ok=True)
     for f in [*src.glob("*.js"), *src.glob("*.css")]: shutil.copy(f, out / f.name)
+    PRIVE = ("cout_g", "stock_g", "fournisseur", "date_docs")
     def sans_prive(x):
-        if isinstance(x, dict): return {k: sans_prive(v) for k, v in x.items() if not k.startswith("_") and k not in ("cout_g", "stock_g")}
+        if isinstance(x, dict): return {k: sans_prive(v) for k, v in x.items() if not k.startswith("_") and k not in PRIVE}
         if isinstance(x, list): return [sans_prive(v) for v in x]
         return x
-    lire = lambda n: json.loads((ROOT / f"data/creer/v1/{n}.json").read_text(encoding="utf-8"))
-    donnees = sans_prive({n: lire(n) for n in ("notes", "compatibilite", "recettes", "regles")})
+    lire = lambda n: json.loads((ROOT / f"data/creer/{n}.json").read_text(encoding="utf-8"))
+    noms = ("notes", "facettes", "matrice_sf", "exceptions", "structures", "recettes", "ifra_cat4", "allergenes",
+            "matieres_lots", "cadre_securite", "regles", "portes", "correspondances")
+    donnees = sans_prive({n: lire(n) for n in noms})
+    donnees["features"] = sans_prive(FEATURES)
     donnees["boutique"] = sans_prive(BOUTIQUE)
+    if INSPIRATION:
+        # Porte « Pars d'un parfum que tu aimes » : seulement quand l'interrupteur est allumé.
+        pub = lire("notes_publiees")
+        donnees["notes_publiees"] = sans_prive(pub)
+        slugs = set(pub.get("parfums", {})) | set(accords)
+        donnees["parfums_inspiration"] = [{"slug": o["slug"], "name": o["name"], "brand": o["brand"]} for o in data if o["slug"] in slugs]
+        donnees["accords"] = {k: v for k, v in accords.items() if k in slugs}
     (out / "donnees.json").write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    # Page privée : pas de lien, pas dans le plan du site, noindex.
-    (DIST / "fabrication").mkdir(exist_ok=True)
-    shutil.copy(src / "fabrication.html", DIST / "fabrication/index.html")
 
-    # Page publique : tout se calcule dans le navigateur (interface.js).
-    prix100 = (BOUTIQUE.get("prix_eur") or {}).get("flacon_100")
-    prix = f" 100 ml à {prix100} €." if prix100 else ""
+    # Page privée de fabrication (V1 pour l'instant) : pas de lien, pas dans le plan du site, noindex.
+    v1, out1 = src / "v1", out / "v1"
+    out1.mkdir(exist_ok=True)
+    for f in v1.glob("*.js"): shutil.copy(f, out1 / f.name)
+    lire1 = lambda n: json.loads((ROOT / f"data/creer/v1/{n}.json").read_text(encoding="utf-8"))
+    d1 = sans_prive({n: lire1(n) for n in ("notes", "compatibilite", "recettes", "regles", "boutique")})
+    (out1 / "donnees.json").write_text(json.dumps(d1, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    (DIST / "fabrication").mkdir(exist_ok=True)
+    fab = (v1 / "fabrication.html").read_text(encoding="utf-8").replace("../creer/fabrication.js", "../creer/v1/fabrication.js").replace("../creer/donnees.json", "../creer/v1/donnees.json")
+    (DIST / "fabrication/index.html").write_text(fab, encoding="utf-8")
+
+    # Page publique : tout se calcule dans le navigateur (interface.js), le programme Cloudflare décide.
     corps = f'''<section class="wrap sec first cp"><link rel="stylesheet" href="../creer/creer.css"><p class="tag">Crée ton parfum</p>
 <h1 class="h1">Ton parfum,<br><span>composé par toi.</span></h1>
-<p class="lead">Tu pars d'une recette testée et tu l'ajustes à ton goût. L'outil vérifie seul l'équilibre, les doses et les associations. Préparé à la main en France.{e(prix)}</p>
+<p class="lead">Choisis une porte d'entrée : l'outil vérifie seul l'harmonie et la sécurité de ta formule. Préparé à la main en France.</p>
 <div id="cp-app" class="cp-app"><p class="sub">Chargement de l'atelier…</p></div>
 <noscript><p class="sub">Cet outil a besoin de JavaScript pour fonctionner.</p></noscript></section>
 <script type="module" src="../creer/interface.js"></script>'''
     page("creer-mon-parfum/index.html", "Crée ton parfum | Olfamatch",
-         "Compose ton eau de parfum en ligne à partir de recettes testées : l'outil vérifie l'équilibre, les doses et les associations.",
+         "Compose ton eau de parfum en ligne : par ambiance, par quiz, à partir d'une recette ou note par note. L'outil vérifie l'harmonie et la sécurité.",
          corps, "creer", robots=not CREER_PUBLIE)
     delai = BOUTIQUE.get("delai") or "quelques jours"
     merci = f'''<section class="wrap sec first cp"><p class="tag">Merci</p><h1 class="h1">Ta commande<br><span>est bien reçue.</span></h1>
@@ -487,6 +508,7 @@ def build():
 <div class="vs-ring" style="--p:{(b["index"] or 0)}">{RING}<b>{b["index"]}<small>%</small></b><span>ressemblance</span></div>
 <figure class="vs-card vs-a">{b_pic}<figcaption><span>L'alternative</span><b>{e(b["name"])}</b><i>{e(b["brand"])}</i>{bprice}</figcaption></figure></div>
 <div class="verdict">{vsave}<div class="v-cta">{vbuy}{fav}</div>
+{f'<p class="v-creer"><a class="btn ghost" href="{rel}creer-mon-parfum/?parfum={o["slug"]}">Compose ton parfum avec ces notes</a></p>' if INSPIRATION and o["slug"] in NOTES_PUBLIEES else ""}
 <p class="v-more"><a href="#echantillon">Échantillon 2 ml : me prévenir</a>{' · <a href="#autres">' + str(len(o["dupes"])-1) + ' autre' + ("s" if len(o["dupes"]) > 2 else "") + ' piste' + ("s" if len(o["dupes"]) > 2 else "") + '</a>' if len(o["dupes"]) > 1 else ""}</p>
 {'<p class="aff">Lien affilié · ' + e(b["priceDetail"]) + '</p>' if b["link"] and b["priceDetail"] else ""}
 <p class="v-meta">Fiche mise à jour en {MAJ} · <a href="{e(report)}">Signaler une erreur</a></p></div></div></section>
