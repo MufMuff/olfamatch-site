@@ -1,9 +1,8 @@
 /*
  * Point d'entrée du programme Cloudflare (Worker) d'Olfamatch « Crée ton parfum » V2.
  * Il charge les fichiers de données et passe les vrais outils de Cloudflare (base D1, envoi
- * d'e-mails) au programme principal, app.js. Mise en ligne : voir LISEZMOI.md.
+ * d'e-mails par Cloudflare Email Service) au programme principal, app.js. Mise en ligne : voir LISEZMOI.md.
  */
-import { EmailMessage } from "cloudflare:email";
 import { creerApp } from "./app.js";
 import notes from "../data/creer/notes.json";
 import facettes from "../data/creer/facettes.json";
@@ -27,7 +26,7 @@ let app = null, envConnu = null;
 
 export default {
   fetch(request, env) {
-    if (!app || envConnu !== env) { app = creerApp({ donnees, parfums, env, EmailMessage }); envConnu = env; }
+    if (!app || envConnu !== env) { app = creerApp({ donnees, parfums, env }); envConnu = env; }
     return app.traiter(request);
   },
 };

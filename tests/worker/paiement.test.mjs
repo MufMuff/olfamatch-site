@@ -154,11 +154,23 @@ test("notification : paiement conforme = commande payée, numéro de lot L2611-0
   assert.equal(c.montant_recu_centimes, 4800);
   assert.equal(JSON.parse(c.lots).BER, "BER-2026-01");
   assert.ok((await db.prepare("SELECT * FROM lots WHERE lot = 'BER-2026-01'").first()), "lot archivé");
-  assert.equal(envoyes.length, 1);
+  assert.equal(envoyes.length, 2, "un e-mail à l'atelier, une confirmation au client");
   const m = texteEmail(envoyes[0]);
+  assert.equal(m.a, "atelier@exemple.fr");
+  assert.deepEqual(m.de, { email: "robot@olfamatch.fr", name: "Olfamatch" });
   assert.match(m.sujet, /Nouvelle commande L2611-0001/);
   assert.match(m.corps, new RegExp(x.code));
-  assert.ok(ctl.propre(m.sujet) && ctl.tournures(m.corps).length === 0 && !ctl.marquesCitees(m.corps).length);
+  assert.match(m.corps, /Fiche de fabrication : https:\/\/atelier\.exemple\.workers\.dev\/fabrication\?commande=cs_test_1/);
+  const client = texteEmail(envoyes[1]);
+  assert.equal(client.a, "camille@exemple.fr");
+  assert.match(client.sujet, /Ta commande Olfamatch est confirmée/);
+  assert.match(client.corps, new RegExp(x.code));
+  assert.match(client.corps, /Flacon 100 ml/);
+  assert.match(client.corps, /environ 3 semaines, macération comprise/);
+  for (const e of [m, client]) {
+    assert.ok(ctl.propre(e.sujet) && ctl.tournures(e.corps).length === 0 && !ctl.marquesCitees(e.corps).length);
+    assert.ok(!/apaisant|aphrodisiaque|santé|bien-être/i.test(e.corps));
+  }
   // deuxième commande du mois : L2611-0002
   const y = await commander(app, { format: "50" });
   assert.equal((await (await app.traiter(notificationStripe(evenementPaye(y.session)))).json()).numero_lot, "L2611-0002");
@@ -174,7 +186,7 @@ test("notification rejouée (même événement deux fois) = une seule commande t
   // autre événement pour la même session (async_payment_succeeded) : la commande est déjà payée
   const autre = await (await app.traiter(notificationStripe(evenementPaye(x.session, { id: "evt_autre", type: "checkout.session.async_payment_succeeded" })))).json();
   assert.equal(autre.traite, false);
-  assert.equal(envoyes.length, 1);
+  assert.equal(envoyes.length, 2, "un seul couple d'e-mails (atelier + client)");
 });
 
 test("notification : signature invalide, trop ancienne ou secret manquant = refus, rien n'est traité", async () => {
@@ -227,7 +239,7 @@ test("notification : une formule devenue non conforme entre le paiement et la no
   d2.matieres_lots.lots.find(l => l.code_note === "BER").docs.ifra = false;
   const { creerApp } = await import("../../worker/app.js");
   const envoyes = [];
-  const app2 = creerApp({ donnees: d2, parfums: PARFUMS, fetch: stripe.fetch, EmailMessage: class { constructor(a, b, c) { this.brut = c; } },
+  const app2 = creerApp({ donnees: d2, parfums: PARFUMS, fetch: stripe.fetch,
     env: { DB: db, STRIPE_SECRET_KEY: "sk", STRIPE_WEBHOOK_SECRET: "whsec_test_123", SITE_ORIGIN: SITE, EMAIL: { send: async m => envoyes.push(m) }, EMAIL_ATELIER: "a@b.fr", EMAIL_EXPEDITEUR: "r@b.fr" },
     maintenant: () => Date.UTC(2026, 10, 5, 12, 0, 0) });
   const r = await (await app2.traiter(notificationStripe(evenementPaye(x.session)))).json();

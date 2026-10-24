@@ -7,20 +7,22 @@
  *   POST /api/webhook-stripe   Stripe annonce un paiement : tout est recalculé et comparé
  *   POST /api/ia/comprendre    { texte } → structure et notes souhaitées (porte « par ambiance »)
  *   POST /api/ia/expliquer     { code } → explication de la formule en 80 à 120 mots
+ *   /fabrication, /api/fabrication/*  atelier privé (Cloudflare Access), voir atelier.js
  *
  * Seul ce programme décide : il relance toujours le moteur (harmonie + sécurité) et calcule
  * lui-même le prix à partir de boutique.json. Il ne reprend jamais un montant envoyé par le navigateur.
  *
  * Ce fichier ne dépend pas de Cloudflare : index.js lui passe la base (D1), l'envoi d'e-mails
- * et fetch ; les tests lui passent des faux.
+ * (Cloudflare Email Service) et fetch ; les tests lui passent des faux.
  */
 import { creerMoteur } from "../src/creer/moteur.js";
 import { creerFabrication } from "../src/creer/fabrication.js";
 import { formeCanonique, codeFormule, lireCode, sha256Hex, ALPHABET } from "../src/creer/code.js";
 import { creerControleTextes } from "../src/creer/mots.js";
 import { creerStripe, signatureValide } from "./stripe.js";
-import { messageBrut } from "./courriel.js";
 import { creerIA } from "./ia.js";
+import { creerAcces } from "./acces.js";
+import { creerAtelier } from "./atelier.js";
 
 export const FORMATS = {
   kit: { cle: "kit", nom: "Kit d'échantillons", detail: "3 × 2 ml" },
@@ -37,7 +39,7 @@ const texte = (contenu, statut) => new Response(contenu, { status: statut, heade
 const euros = centimes => `${(centimes / 100).toFixed(2).replace(".", ",")} €`;
 const propre = (o, k) => o != null && Object.prototype.hasOwnProperty.call(o, k);
 
-export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = globalThis.fetch, EmailMessage, maintenant = () => Date.now() }) {
+export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = globalThis.fetch, maintenant = () => Date.now() }) {
   const moteur = creerMoteur(donnees);
   const atelier = creerFabrication(donnees, moteur);
   const controle = creerControleTextes(parfums);
@@ -49,6 +51,8 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
   const SITE = (env.SITE_ORIGIN || ORIGINES[0] || "").replace(/\/+$/, "");
   const iso = () => new Date(maintenant()).toISOString();
   const ia = creerIA({ donnees, moteur, controle, env, fetch: fetchFn, maintenant });
+  const acces = creerAcces({ env, fetch: fetchFn, maintenant });
+  // (l'atelier est créé plus bas, une fois les e-mails prêts)
 
   // ---------------- outils communs ----------------
 
@@ -261,11 +265,12 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
 
   // ---------------- notification de paiement (webhook) ----------------
 
-  async function envoyerEmail(sujet, corps) {
-    if (!env.EMAIL || !EmailMessage || !env.EMAIL_ATELIER || !env.EMAIL_EXPEDITEUR) { console.log(`E-mail non envoyé (pas configuré) : ${sujet}`); return; }
-    const raw = messageBrut({ de: env.EMAIL_EXPEDITEUR, a: env.EMAIL_ATELIER, sujet, corps, date: new Date(maintenant()) });
-    await env.EMAIL.send(new EmailMessage(env.EMAIL_EXPEDITEUR, env.EMAIL_ATELIER, raw));
+  // E-mails en texte simple (Cloudflare Email Service). Jamais de nom de marque ni d'allégation.
+  async function envoyer(a, sujet, corps) {
+    if (!env.EMAIL || !env.EMAIL_EXPEDITEUR || !a) { console.log(`E-mail non envoyé (pas configuré) : ${sujet}`); return; }
+    await env.EMAIL.send({ from: { email: env.EMAIL_EXPEDITEUR, name: "Olfamatch" }, to: a, subject: sujet, text: corps });
   }
+  const envoyerEmail = (sujet, corps) => envoyer(env.EMAIL_ATELIER, sujet, corps);
 
   // Numéro de lot LAAMM-NNNN : L + année + mois + compteur du mois (ex. L2611-0042).
   async function numeroLot() {
@@ -321,6 +326,7 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
   }
 
   async function webhook(requete) {
+    const origineProgramme = new URL(requete.url).origin;
     if (!env.STRIPE_WEBHOOK_SECRET) return texte("Configuration incomplète : secret Stripe manquant.", 500);
     if (Number(requete.headers.get("content-length") || 0) > TAILLE_MAX_STRIPE) return texte("Message trop gros.", 413);
     const brut = await requete.text();
@@ -388,7 +394,7 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
         `Montant reçu : ${euros(session.amount_total)}`, `Client : ${client.name || "?"} <${client.email || "?"}>`, `Adresse : ${adresse || "non renseignée"}`,
         kit ? `Code de réduction à glisser dans le colis : ${kit.code} (10 €, valable jusqu'au ${kit.expire.slice(0, 10)}, pour un flacon de la même formule)` : null,
         commande.code_kit ? `Code de réduction du kit utilisé : ${commande.code_kit}` : null,
-        "", SITE ? `Fiche de fabrication : ${SITE}/fabrication/?commande=${encodeURIComponent(commande.session_id)}` : "Fiche : page privée de fabrication.",
+        "", `Fiche de fabrication : ${origineProgramme}/fabrication?commande=${encodeURIComponent(commande.session_id)}`,
       ].filter(l => l !== null).join("\n"));
 
       // Le numéro de lot est unique : en cas de commande simultanée, on prend le suivant.
@@ -410,6 +416,18 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
       if (kit) await db.prepare("INSERT OR IGNORE INTO codes_kit (code_promo, formule, stripe_promotion_id, session_kit, expire_le, utilise) VALUES (?, ?, ?, ?, ?, 0)")
         .bind(kit.code, commande.code, kit.id, commande.session_id, kit.expire).run();
       if (commande.code_kit) await db.prepare("UPDATE codes_kit SET utilise = 1 WHERE code_promo = ?").bind(commande.code_kit).run();
+      // Confirmation au client : après l'enregistrement, et sans bloquer la commande si elle échoue.
+      try {
+        await envoyer(client.email, `Ta commande Olfamatch est confirmée · ${commande.code}`, [
+          `Bonjour${client.name ? ` ${String(client.name).split(" ")[0]}` : ""},`, "",
+          "Merci pour ta commande. Elle est bien reçue et payée.",
+          `Ce que tu as commandé : ${FORMATS[commande.format].nom}${commande.quantite > 1 ? ` × ${commande.quantite}` : ""}.`,
+          `Code de ta formule : ${commande.code}. Garde-le : il permet de recommander exactement le même parfum.`,
+          `Ton parfum est préparé à la main, puis il repose pour que les notes se lient. Délai : ${B.delai || "environ 3 semaines"}.`,
+          kit ? "Dans le colis, tu trouveras un code de réduction de 10 € valable 90 jours sur un flacon de la même formule." : null,
+          "On t'écrit dès qu'il part, avec le numéro de suivi.", "", "À bientôt,", "Olfamatch",
+        ].filter(l => l !== null).join("\n"));
+      } catch (e) { console.log(`Confirmation client non envoyée pour ${commande.session_id} : ${e && (e.code || e.message)}`); }
       return json({ recu: true, traite: true, statut: "payee", numero_lot: numero });
     } catch (e) {
       // Échec (Stripe injoignable, e-mail refusé…) : on oublie la notification pour que Stripe la renvoie.
@@ -419,11 +437,16 @@ export function creerApp({ donnees, parfums = [], env = {}, fetch: fetchFn = glo
     }
   }
 
+  const atelierPrive = creerAtelier({ donnees, moteur, atelier, acces, db, maintenant, FORMATS,
+    envoyerEmailClient: (a, sujet, corps) => envoyer(a, sujet, corps) });
+
   // ---------------- aiguillage ----------------
 
   async function traiter(requete) {
     const url = new URL(requete.url);
     const chemin = url.pathname;
+    const prive = await atelierPrive.traiter(requete, url);
+    if (prive) return prive;
     if (chemin === "/api/webhook-stripe") return requete.method === "POST" ? webhook(requete) : texte("Méthode non permise.", 405);
     if (!chemin.startsWith("/api/")) return texte("Page introuvable.", 404);
 

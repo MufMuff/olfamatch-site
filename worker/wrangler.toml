@@ -11,10 +11,10 @@ binding = "DB"
 database_name = "olfamatch"
 database_id = "IDENTIFIANT-D1-A-REMPLACER"
 
-# Envoi d'e-mails (Cloudflare Email Routing). L'adresse doit être vérifiée dans Email Routing.
+# Envoi d'e-mails (Cloudflare Email Service) : à l'atelier et aux clients.
+# Il faut d'abord activer l'envoi sur ton nom de domaine : « npx wrangler email sending enable TON-DOMAINE.fr ».
 [[send_email]]
 name = "EMAIL"
-destination_address = "ADRESSE-DE-L-ATELIER@exemple.fr"
 
 # Mémoire (KV) : descriptions écrites par l'IA (30 jours) et compteur d'appels du jour.
 # Créer une fois avec « npx wrangler kv namespace create MEMOIRE », puis coller l'identifiant affiché.
@@ -47,10 +47,15 @@ SITE_ORIGIN = "https://olfamatch.pages.dev"
 # Toutes les adresses du site autorisées à appeler le programme, séparées par des virgules.
 # Le jour où le nom de domaine arrive : "https://olfamatch.pages.dev,https://olfamatch.fr,https://www.olfamatch.fr"
 SITE_ORIGINS = "https://olfamatch.pages.dev"
-# Adresse qui reçoit les commandes et les alertes (la même que destination_address ci-dessus).
+# Adresse qui reçoit les commandes et les alertes.
 EMAIL_ATELIER = "ADRESSE-DE-L-ATELIER@exemple.fr"
-# Adresse d'envoi : elle doit appartenir au nom de domaine où Email Routing est activé.
+# Adresse d'envoi : elle doit appartenir au nom de domaine activé dans Email Service.
 EMAIL_EXPEDITEUR = "atelier@VOTRE-DOMAINE.fr"
+# Atelier privé (/fabrication) : Cloudflare Access. Nom de l'équipe Access (xxx.cloudflareaccess.com),
+# identifiant « Application Audience (AUD) » de l'application Access, et adresses e-mail autorisées.
+ACCESS_EQUIPE = "NOM-EQUIPE-ACCESS"
+ACCESS_AUD = "AUD-A-REMPLACER"
+ACCESS_EMAILS = "ADRESSE-D-ETHAN@exemple.fr"
 # Porte « Pars d'un parfum que tu aimes » : "true" seulement si config/features.json dit aussi true.
 INSPIRATION_NOMMEE = "false"
 # Nombre maximum d'appels à l'IA par jour, tous visiteurs confondus.

@@ -26,14 +26,8 @@ export function fausseD1() {
   return { prepare: sql => requete(sql), base };
 }
 
-export class FauxEmail { constructor(de, a, brut) { Object.assign(this, { de, a, brut }); } }
-
-// Lit le texte d'un e-mail (corps en base64).
-export function texteEmail(m) {
-  const [entetes, corps] = m.brut.split("\r\n\r\n");
-  const sujet = entetes.match(/Subject: ([\s\S]*?)\r\nDate/)[1].split("\r\n ").map(x => Buffer.from(x.match(/B\?(.*)\?=/)[1], "base64").toString("utf8")).join("");
-  return { sujet, corps: Buffer.from(corps.replace(/\r\n/g, ""), "base64").toString("utf8") };
-}
+// Un e-mail envoyé (Cloudflare Email Service) : destinataire, expéditeur, sujet et texte.
+export const texteEmail = m => ({ a: m.to, de: m.from, sujet: m.subject, corps: m.text });
 
 /*
  * Faux Stripe : garde les sessions créées et renvoie, à la relecture, une session « payée »
@@ -109,7 +103,9 @@ export function fausseMemoire() {
 }
 
 // ia : fonction (corps de la demande) → réponse de l'API Claude ; les appels sont gardés dans appelsIA.
-export async function monter({ d = donneesEnVente(), env = {}, stock = 1000, ia = null } = {}) {
+// certs : clés publiques de Cloudflare Access (faux) ; horloge.t : l'heure du programme, modifiable.
+export async function monter({ d = donneesEnVente(), env = {}, stock = 1000, ia = null, certs = [] } = {}) {
+  const horloge = { t: MAINTENANT };
   const db = fausseD1();
   const stripe = fauxStripe();
   const envoyes = [], appelsIA = [];
@@ -121,6 +117,7 @@ export async function monter({ d = donneesEnVente(), env = {}, stock = 1000, ia 
       const r = await ia(corps);
       return r instanceof Response ? r : Response.json(r);
     }
+    if (String(url).endsWith(".cloudflareaccess.com/cdn-cgi/access/certs")) return Response.json({ keys: certs });
     return stripe.fetch(url, init);
   };
   if (stock !== null) for (const n of Object.values(d.notes.notes))
@@ -129,9 +126,9 @@ export async function monter({ d = donneesEnVente(), env = {}, stock = 1000, ia 
     donnees: d, parfums: PARFUMS,
     env: { DB: db, STRIPE_SECRET_KEY: "sk_test_x", STRIPE_WEBHOOK_SECRET: SECRET, SITE_ORIGIN: SITE, SITE_ORIGINS: SITE,
       EMAIL_ATELIER: "atelier@exemple.fr", EMAIL_EXPEDITEUR: "robot@olfamatch.fr", EMAIL: { send: async m => { envoyes.push(m); } }, ...env },
-    fetch: fetchTout, EmailMessage: FauxEmail, maintenant: () => MAINTENANT,
+    fetch: fetchTout, maintenant: () => horloge.t,
   });
-  return { app, db, stripe, envoyes, d, appelsIA };
+  return { app, db, stripe, envoyes, d, appelsIA, horloge };
 }
 
 export const appel = (app, chemin, { methode = "POST", corps, origine = SITE, ip = "1.2.3.4" } = {}) =>

@@ -282,7 +282,7 @@ def accords_block(o, b):
 def build_creer():
     """« Crée ton parfum » V2 : modules (moteur, portes, interface), données publiques, page publique
     et page merci. Coûts, stocks, fournisseurs et modes d'emploi (_aide) ne sont pas publiés.
-    La page privée de fabrication V1 reste servie (dossier /creer/v1/) jusqu'à son remplacement.
+    La page privée de fabrication est servie par le programme Cloudflare (worker/atelier.js).
     Renvoie les adresses à mettre dans le plan du site."""
     src = ROOT / "src/creer"
     if not src.exists(): return []
@@ -309,16 +309,14 @@ def build_creer():
         donnees["accords"] = {k: v for k, v in accords.items() if k in slugs}
     (out / "donnees.json").write_text(json.dumps(donnees, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
-    # Page privée de fabrication (V1 pour l'instant) : pas de lien, pas dans le plan du site, noindex.
-    v1, out1 = src / "v1", out / "v1"
-    out1.mkdir(exist_ok=True)
-    for f in v1.glob("*.js"): shutil.copy(f, out1 / f.name)
-    lire1 = lambda n: json.loads((ROOT / f"data/creer/v1/{n}.json").read_text(encoding="utf-8"))
-    d1 = sans_prive({n: lire1(n) for n in ("notes", "compatibilite", "recettes", "regles", "boutique")})
-    (out1 / "donnees.json").write_text(json.dumps(d1, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    # La page privée de fabrication est servie par le programme Cloudflare (protégée par Cloudflare Access) :
+    # sur le site, /fabrication/ ne fait que renvoyer vers elle. Pas de lien, pas dans le plan du site, noindex.
     (DIST / "fabrication").mkdir(exist_ok=True)
-    fab = (v1 / "fabrication.html").read_text(encoding="utf-8").replace("../creer/fabrication.js", "../creer/v1/fabrication.js").replace("../creer/donnees.json", "../creer/v1/donnees.json")
-    (DIST / "fabrication/index.html").write_text(fab, encoding="utf-8")
+    cible = (BOUTIQUE.get("worker") or "").rstrip("/")
+    lien = f'<a href="{e(cible)}/fabrication">Ouvrir l’atelier</a>' if cible else "Le programme Cloudflare n'est pas encore relié (boutique.json, worker)."
+    (DIST / "fabrication/index.html").write_text(f'''<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Atelier | Olfamatch</title></head>
+<body style="font-family:system-ui;background:#160A13;color:#F2E4D8;padding:24px"><p>La page de fabrication est privée. {lien}</p></body></html>''', encoding="utf-8")
 
     # Page publique : tout se calcule dans le navigateur (interface.js), le programme Cloudflare décide.
     corps = f'''<section class="wrap sec first cp"><link rel="stylesheet" href="../creer/creer.css"><p class="tag">Crée ton parfum</p>
