@@ -506,8 +506,7 @@ def build():
 <div class="vs-ring" style="--p:{(b["index"] or 0)}">{RING}<b>{b["index"]}<small>%</small></b><span>ressemblance</span></div>
 <figure class="vs-card vs-a">{b_pic}<figcaption><span>L'alternative</span><b>{e(b["name"])}</b><i>{e(b["brand"])}</i>{bprice}</figcaption></figure></div>
 <div class="verdict">{vsave}<div class="v-cta">{vbuy}{fav}</div>
-{f'<p class="v-creer"><a class="btn ghost" href="{rel}creer-mon-parfum/?parfum={o["slug"]}">Compose ton parfum avec ces notes</a></p>' if INSPIRATION and o["slug"] in NOTES_PUBLIEES else ""}
-<p class="v-more"><a href="#echantillon">Échantillon 2 ml : me prévenir</a>{' · <a href="#autres">' + str(len(o["dupes"])-1) + ' autre' + ("s" if len(o["dupes"]) > 2 else "") + ' piste' + ("s" if len(o["dupes"]) > 2 else "") + '</a>' if len(o["dupes"]) > 1 else ""}</p>
+{f'<p class="v-creer"><a class="btn ghost" href="{rel}creer-mon-parfum/?parfum={o["slug"]}">Compose ton parfum avec ces notes</a></p>' if INSPIRATION and o["slug"] in NOTES_PUBLIEES else ""}<p class="v-more"><a href="#echantillon">Échantillon 2 ml : me prévenir</a>{' · <a href="#autres">' + str(len(o["dupes"])-1) + ' autre' + ("s" if len(o["dupes"]) > 2 else "") + ' piste' + ("s" if len(o["dupes"]) > 2 else "") + '</a>' if len(o["dupes"]) > 1 else ""}</p>
 {'<p class="aff">Lien affilié · ' + e(b["priceDetail"]) + '</p>' if b["link"] and b["priceDetail"] else ""}
 <p class="v-meta">Fiche mise à jour en {MAJ} · <a href="{e(report)}">Signaler une erreur</a></p></div></div></section>
 <div class="v-band" aria-hidden="true"><div class="vn-track">{('<span>' + e(o["name"]) + '</span><span class="alt">' + e(b["name"]) + '</span>') * 4}</div></div>
